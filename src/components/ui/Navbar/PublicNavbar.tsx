@@ -85,6 +85,83 @@ const PublicNavbar = () => {
                   Home
                 </a>
               </li>
+
+              {/* DESKTOP ONLY */}
+              <li className="nav-item dropdown d-none d-lg-block">
+                <a
+                  className="nav-link dropdown-toggle fw-medium"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Categories
+                </a>
+
+                <ul className="dropdown-menu">
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Electronics
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Clothing
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Books
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Accessories
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              {/* MOBILE ONLY */}
+              <li className="nav-item d-lg-none">
+                <a
+                  className="nav-link fw-medium d-flex justify-content-between align-items-center"
+                  data-bs-toggle="collapse"
+                  href="#mobileCategories"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="mobileCategories"
+                >
+                  Categories
+                  <i className="icon-base ti tabler-chevron-down"></i>
+                </a>
+
+                <div className="collapse ps-4" id="mobileCategories">
+                  <ul className="list-unstyled mb-2">
+                    <li className="py-1">
+                      <a className="nav-link" href="#">
+                        Electronics
+                      </a>
+                    </li>
+                    <li className="py-1">
+                      <a className="nav-link" href="#">
+                        Clothing
+                      </a>
+                    </li>
+                    <li className="py-1">
+                      <a className="nav-link" href="#">
+                        Books
+                      </a>
+                    </li>
+                    <li className="py-1">
+                      <a className="nav-link" href="#">
+                        Accessories
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
               <li className="nav-item">
                 <a className="nav-link fw-medium" href="#">
                   Features
