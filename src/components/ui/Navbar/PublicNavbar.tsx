@@ -79,13 +79,7 @@ const PublicNavbar = () => {
               <i className="icon-base ti tabler-x icon-lg"></i>
             </button>
 
-            <ul className="navbar-nav me-auto">
-              <li className="nav-item">
-                <a className="nav-link fw-medium" href="#">
-                  Home
-                </a>
-              </li>
-
+            <ul className="navbar-nav align-items-center">
               {/* DESKTOP ONLY */}
               <li className="nav-item dropdown d-none d-lg-block">
                 <a
@@ -161,27 +155,23 @@ const PublicNavbar = () => {
                   </ul>
                 </div>
               </li>
-
-              <li className="nav-item">
-                <a className="nav-link fw-medium" href="#">
-                  Features
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link fw-medium" href="#">
-                  Team
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link fw-medium" href="#">
-                  FAQ
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link fw-medium" href="#">
-                  Contact us
-                </a>
-              </li>
+              {/* Search box (desktop only) */}
+              <form
+                className="d-none d-lg-flex align-items-center ms-3"
+                role="search"
+              >
+                <div className="input-group" style={{ width: "380px" }}>
+                  <input
+                    type="search"
+                    className="form-control border-end-0"
+                    placeholder="Search products..."
+                    aria-label="Search"
+                  />
+                  <span className="input-group-text bg-transparent">
+                    <i className="icon-base ti tabler-search"></i>
+                  </span>
+                </div>
+              </form>
             </ul>
           </div>
 
@@ -189,6 +179,12 @@ const PublicNavbar = () => {
 
           {/* Right toolbar */}
           <ul className="navbar-nav flex-row align-items-center ms-auto">
+            <li className="me-2">
+              <a href="#" className="btn btn-icon btn-outline-primary">
+                <i className="icon-base ti tabler-shopping-cart"></i>
+              </a>
+            </li>
+
             <li>
               <a href="#" className="btn btn-primary">
                 <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
