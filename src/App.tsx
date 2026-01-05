@@ -1,11 +1,10 @@
-import PublicLayout from "./layouts/PublicLayout";
+import { Routes } from "react-router-dom";
+import PublicRoutes from "./routes/PublicRoutes";
+//import AdminRoutes from "./routes/AdminRoutes";
+//import ProtectedRoutes from "./routes/ProtectedRoutes";
 
 function App() {
-  return (
-    <div dir="rtl">
-      <PublicLayout />
-    </div>
-  );
+  return <Routes>{PublicRoutes()}</Routes>;
 }
 
 export default App;
