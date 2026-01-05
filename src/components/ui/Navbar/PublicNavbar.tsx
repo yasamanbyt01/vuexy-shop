@@ -1,6 +1,6 @@
 const PublicNavbar = () => {
   return (
-    <nav className="layout-navbar shadow-none py-0">
+    <nav className="layout-navbar py-1 bg-body">
       <div className="container">
         <div className="navbar navbar-expand-lg landing-navbar px-3 px-md-8">
           {/* Logo + mobile toggle */}
@@ -160,7 +160,7 @@ const PublicNavbar = () => {
                 className="d-none d-lg-flex align-items-center ms-3"
                 role="search"
               >
-                <div className="input-group" style={{ width: "380px" }}>
+                <div className="input-group" style={{ width: "390px" }}>
                   <input
                     type="search"
                     className="form-control border-end-0"
@@ -180,7 +180,7 @@ const PublicNavbar = () => {
           {/* Right toolbar */}
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="me-2">
-              <a href="#" className="btn btn-icon btn-outline-primary">
+              <a href="#" className="btn btn-outline-primary px-3">
                 <i className="icon-base ti tabler-shopping-cart"></i>
               </a>
             </li>
