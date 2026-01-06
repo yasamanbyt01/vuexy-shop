@@ -1,15 +1,9 @@
+import HeroCarousel from "../../components/ui/Home/HeroCarousel";
+
 const Home = () => {
   return (
     <main>
-      {/* Hero */}
-      <section className="py-10 bg-light">
-        <div className="container">
-          <h1 className="fw-bold mb-3">Discover amazing products</h1>
-          <p className="text-muted">
-            Shop the best products across all categories
-          </p>
-        </div>
-      </section>
+      <HeroCarousel />
 
       {/* Categories preview */}
       <section className="py-8">

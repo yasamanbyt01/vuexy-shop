@@ -18,6 +18,10 @@ import "./assets/vendor/js/helpers.js";
 import "./assets/js/config.js";
 import "./assets/vendor/js/bootstrap.js";
 
+import "./assets/vendor/libs/swiper/swiper.js";
+
+import "./assets/vendor/js/bootstrap.js";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
