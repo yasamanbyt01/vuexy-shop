@@ -1,4 +1,7 @@
 import HeroCarousel from "../../components/ui/Home/HeroCarousel";
+import CategoryCard from "../../components/ui/Home/Card/CategoryCard";
+import ProductCard from "../../components/ui/Home/Card/ProductCard";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -11,23 +14,23 @@ const Home = () => {
           <h4 className="fw-semibold mb-4">Shop by category</h4>
           <div className="row g-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="col-6 col-md-3">
-                <div className="card text-center p-4">Category {i}</div>
-              </div>
+              <Link to="/categoty" key={i} className="col-6 col-md-3">
+                <CategoryCard />
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* Featured products */}
-      <section className="py-8 bg-body-secondary">
+      <section className="py-8 bg-body">
         <div className="container">
           <h4 className="fw-semibold mb-4">Featured products</h4>
           <div className="row g-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="col-6 col-md-3">
-                <div className="card p-3">Product {i}</div>
-              </div>
+              <Link to="/ProductDetail" key={i} className="col-6 col-md-3">
+                <ProductCard />
+              </Link>
             ))}
           </div>
         </div>
