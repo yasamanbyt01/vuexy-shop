@@ -4,6 +4,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import Home from "../pages/public/Home";
 import ProductDetails from "../pages/public/ProductDetails";
 import Register from "../pages/public/Register";
+import Login from "../pages/public/Login";
 
 const PublicRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const PublicRoutes = () => {
       {/* Auth pages WITHOUT navbar/footer */}
       <Route element={<AuthLayout />}>
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Route>
     </>
   );
