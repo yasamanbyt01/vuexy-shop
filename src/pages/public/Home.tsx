@@ -1,7 +1,9 @@
-import HeroCarousel from "../../components/ui/Home/HeroCarousel";
-import CategoryCard from "../../components/ui/Home/Card/CategoryCard";
-import ProductCard from "../../components/ui/Home/Card/ProductCard";
+import HeroCarousel from "../../components/Home/HeroCarousel";
+import CategoryCard from "../../components/Home/CategoryCard";
+import ProductCard from "../../components/Home/ProductCard";
 import { Link } from "react-router-dom";
+import { homeCategories } from "../../mock/homeCategories";
+import { featuredProducts } from "../../mock/featuredProducts";
 
 const Home = () => {
   return (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { mockProduct, mockReviews } from "../../mock/product";
-import BreadCrumbs from "../../components/ui/‌‌BreadCrumbs/BreadCrumbs";
+import BreadCrumbs from "../../components/ui/BreadCrumbs";
 import ProductDetailCarousel from "../../components/ProductDetail/ProductDetailCarousel";
 import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs";
 
