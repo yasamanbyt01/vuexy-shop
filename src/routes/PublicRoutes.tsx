@@ -5,6 +5,7 @@ import Home from "../pages/public/Home";
 import ProductDetails from "../pages/public/ProductDetails";
 import Register from "../pages/public/Register";
 import Login from "../pages/public/Login";
+import ForgotPassword from "../pages/public/ForgotPassword";
 
 const PublicRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const PublicRoutes = () => {
       <Route element={<AuthLayout />}>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
     </>
   );
