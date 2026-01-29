@@ -22,10 +22,12 @@ import "./assets/vendor/libs/swiper/swiper.js";
 
 import "./assets/vendor/js/bootstrap.js";
 
+import "./assets/vendor/css/pages/page-auth.css";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

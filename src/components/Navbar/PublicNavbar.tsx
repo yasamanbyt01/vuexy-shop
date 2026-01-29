@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const PublicNavbar = () => {
   return (
     <nav className="layout-navbar py-1 bg-body">
@@ -17,7 +19,7 @@ const PublicNavbar = () => {
               <i className="icon-base ti tabler-menu-2 icon-lg align-middle text-heading fw-medium"></i>
             </button>
 
-            <a href="#" className="app-brand-link">
+            <Link to="/" className="app-brand-link">
               <span className="app-brand-logo demo">
                 <span className="text-primary">
                   <svg
@@ -59,7 +61,7 @@ const PublicNavbar = () => {
               <span className="app-brand-text demo menu-text fw-bold ms-2 ps-1">
                 Vuexy
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Menu */}
@@ -186,10 +188,10 @@ const PublicNavbar = () => {
             </li>
 
             <li>
-              <a href="#" className="btn btn-primary">
+              <Link to="/register" className="btn btn-primary">
                 <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
                 <span className="d-none d-md-block">Login / Register</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
