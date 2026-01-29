@@ -15,9 +15,13 @@ const Home = () => {
         <div className="container">
           <h4 className="fw-semibold mb-4">Shop by category</h4>
           <div className="row g-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Link to="/categoty" key={i} className="col-6 col-md-3">
-                <CategoryCard />
+            {homeCategories.map((cat) => (
+              <Link
+                to="/category"
+                key={cat.id}
+                className="col-6 col-md-3 text-decoration-none"
+              >
+                <CategoryCard title={cat.title} image={cat.image} />
               </Link>
             ))}
           </div>
@@ -29,9 +33,17 @@ const Home = () => {
         <div className="container">
           <h4 className="fw-semibold mb-4">Featured products</h4>
           <div className="row g-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Link to="/ProductDetail" key={i} className="col-6 col-md-3">
-                <ProductCard />
+            {featuredProducts.map((product) => (
+              <Link
+                to="ProductDetail"
+                key={product.id}
+                className="col-6 col-md-3 text-decoration-none"
+              >
+                <ProductCard
+                  title={product.title}
+                  price={product.price}
+                  image={product.image}
+                />
               </Link>
             ))}
           </div>
