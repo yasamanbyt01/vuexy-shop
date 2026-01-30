@@ -1,18 +1,49 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { validateLoginForm } from "../../utils/validation";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login form submitted");
+
+    const validation = validateLoginForm(formData);
+    setErrors(validation.errors);
+
+    if (!validation.isValid) return;
+
+    console.log("✅ Login successful");
+    // In a real app, you would make an API call here
+    // Then redirect to home or dashboard
+    navigate("/");
   };
 
   return (
@@ -78,6 +109,7 @@ const Login = () => {
                 id="formAuthentication"
                 className="mb-4"
                 onSubmit={handleSubmit}
+                noValidate
               >
                 <div className="mb-6 form-control-validation">
                   <label htmlFor="email" className="form-label">
@@ -85,25 +117,36 @@ const Login = () => {
                   </label>
                   <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
                     id="email"
-                    name="email-username"
+                    name="email"
                     placeholder="Enter your email or username"
+                    value={formData.email}
+                    onChange={handleChange}
                     autoFocus
                   />
+                  {errors.email && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{errors.email}</div>
+                    </div>
+                  )}
                 </div>
+
                 <div className="mb-6 form-password-toggle form-control-validation">
                   <label className="form-label" htmlFor="password">
                     Password
                   </label>
-                  <div className="input-group input-group-merge">
+                  <div
+                    className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
+                  >
                     <input
                       type={showPassword ? "text" : "password"}
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
                       id="password"
-                      className="form-control"
                       name="password"
                       placeholder="••••••••"
-                      aria-describedby="password"
+                      value={formData.password}
+                      onChange={handleChange}
                     />
                     <span
                       className="input-group-text cursor-pointer"
@@ -115,7 +158,13 @@ const Login = () => {
                       ></i>
                     </span>
                   </div>
+                  {errors.password && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{errors.password}</div>
+                    </div>
+                  )}
                 </div>
+
                 <div className="my-8">
                   <div className="d-flex justify-content-between">
                     <div className="form-check mb-0 ms-2">
@@ -127,8 +176,7 @@ const Login = () => {
                         onChange={(e) => setRememberMe(e.target.checked)}
                       />
                       <label className="form-check-label" htmlFor="remember-me">
-                        {" "}
-                        Remember Me{" "}
+                        Remember Me
                       </label>
                     </div>
                     <Link to="/forgot-password">
@@ -136,6 +184,7 @@ const Login = () => {
                     </Link>
                   </div>
                 </div>
+
                 <div className="mb-6">
                   <button
                     className="btn btn-primary d-grid w-100"
@@ -176,7 +225,6 @@ const Login = () => {
               </div>
             </div>
           </div>
-          {/* /Login */}
         </div>
       </div>
     </div>

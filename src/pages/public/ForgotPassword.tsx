@@ -1,13 +1,32 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { validateForgotPasswordForm } from "../../utils/validation";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle forgot password logic here
+
+    const validation = validateForgotPasswordForm(email);
+
+    if (!validation.isValid) {
+      setError(validation.errors.email || "");
+      return;
+    }
+
     console.log("Forgot password form submitted for email:", email);
+
+    // In a real app, you would make an API call here
+    // For now, navigate to reset-password with the email as state
+    navigate("/reset-password", { state: { email } });
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (error) setError("");
   };
 
   return (
@@ -71,21 +90,26 @@ const ForgotPassword = () => {
                 password
               </p>
 
-              <form className="mb-6" onSubmit={handleSubmit}>
+              <form className="mb-6" onSubmit={handleSubmit} noValidate>
                 <div className="mb-6 form-control-validation">
                   <label htmlFor="email" className="form-label">
                     Email
                   </label>
                   <input
                     type="email"
-                    className="form-control"
+                    className={`form-control ${error ? "is-invalid" : ""}`}
                     id="email"
                     name="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     autoFocus
                   />
+                  {error && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{error}</div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-6">
@@ -109,7 +133,6 @@ const ForgotPassword = () => {
               </div>
             </div>
           </div>
-          {/* /Forgot Password */}
         </div>
       </div>
     </div>

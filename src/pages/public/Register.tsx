@@ -1,11 +1,52 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { validateRegisterForm } from "../../utils/validation";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    terms: false,
+  });
+  const [errors, setErrors] = useState<{
+    username?: string;
+    email?: string;
+    password?: string;
+    terms?: string;
+  }>({});
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validation = validateRegisterForm(formData);
+    setErrors(validation.errors);
+
+    if (!validation.isValid) return;
+
+    console.log("✅ Registration successful:", formData);
+    // In a real app, you would make an API call here
+    // Then redirect to login or home page
+    navigate("/login");
   };
 
   return (
@@ -25,7 +66,7 @@ const Register = () => {
               <h4 className="mb-1">Adventure starts here 🚀</h4>
               <p className="mb-6">Create your account</p>
 
-              <form className="mb-6">
+              <form className="mb-6" onSubmit={handleSubmit} noValidate>
                 <div className="mb-6">
                   <label htmlFor="username" className="form-label">
                     Username
@@ -33,9 +74,17 @@ const Register = () => {
                   <input
                     type="text"
                     id="username"
-                    className="form-control"
+                    name="username"
+                    className={`form-control ${errors.username ? "is-invalid" : ""}`}
                     placeholder="Enter your username"
+                    value={formData.username}
+                    onChange={handleChange}
                   />
+                  {errors.username && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{errors.username}</div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-6">
@@ -45,21 +94,34 @@ const Register = () => {
                   <input
                     type="email"
                     id="email"
-                    className="form-control"
+                    name="email"
+                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
                     placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
                   />
+                  {errors.email && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{errors.email}</div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-6 form-password-toggle">
                   <label htmlFor="password" className="form-label">
                     Password
                   </label>
-                  <div className="input-group input-group-merge">
+                  <div
+                    className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
+                  >
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="form-control"
+                      name="password"
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
                       placeholder="••••••••"
+                      value={formData.password}
+                      onChange={handleChange}
                     />
                     <span
                       className="input-group-text cursor-pointer"
@@ -71,18 +133,31 @@ const Register = () => {
                       ></i>
                     </span>
                   </div>
+                  {errors.password && (
+                    <div className="fv-plugins-message-container invalid-feedback d-block">
+                      <div className="fv-help-block">{errors.password}</div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="my-8">
                   <div className="form-check ms-2">
                     <input
-                      className="form-check-input"
+                      className={`form-check-input ${errors.terms ? "is-invalid" : ""}`}
                       type="checkbox"
                       id="terms"
+                      name="terms"
+                      checked={formData.terms}
+                      onChange={handleChange}
                     />
                     <label className="form-check-label" htmlFor="terms">
                       I agree to <a href="#">privacy policy & terms</a>
                     </label>
+                    {errors.terms && (
+                      <div className="fv-plugins-message-container invalid-feedback d-block">
+                        <div className="fv-help-block">{errors.terms}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -90,6 +165,7 @@ const Register = () => {
                   Sign up
                 </button>
               </form>
+
               <p className="text-center">
                 <span>Already have an account?</span>{" "}
                 <Link to="/login">Sign in instead</Link>
@@ -118,7 +194,6 @@ const Register = () => {
               </div>
             </div>
           </div>
-          {/* /Register Card */}
         </div>
       </div>
     </div>
