@@ -1,0 +1,32 @@
+/* src/assets/css/form-validation.css */
+
+/* Ensure validation messages are styled properly */
+.fv-plugins-message-container {
+  margin-top: 0.25rem;
+}
+
+.fv-help-block {
+  font-size: 0.875rem; /* 14px */
+  color: #ea5455; /* Red color matching Vuexy */
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Invalid input styling */
+.form-control.is-invalid,
+.form-select.is-invalid,
+.input-group.is-invalid .form-control,
+.input-group.is-invalid .input-group-text {
+  border-color: #ea5455 !important;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(234, 84, 85, 0.25);
+}
+
+/* Valid input styling (if needed) */
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: #28c76f !important;
+}
