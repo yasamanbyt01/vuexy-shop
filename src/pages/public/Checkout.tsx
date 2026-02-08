@@ -2,6 +2,7 @@ import Stepper from "bs-stepper";
 import { useEffect, useRef } from "react";
 import CartStep from "../../components/Checkout/CartStep";
 import AddressStep from "../../components/Checkout/AddressStep";
+import PaymentStep from "../../components/Checkout/PaymentStep";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
@@ -98,18 +99,10 @@ const Checkout = () => {
               />
 
               {/* Payment */}
-              <div id="checkout-payment" className="content">
-                <h5>Payment Step</h5>
-                <p className="text-muted">Static payment step placeholder.</p>
-
-                <button
-                  type="button"
-                  className="btn btn-primary btn-next"
-                  onClick={() => stepperRef.current?.next()}
-                >
-                  Continue
-                </button>
-              </div>
+              <PaymentStep
+                onPrev={() => stepperRef.current?.previous()}
+                onNext={() => stepperRef.current?.next()}
+              />
 
               {/* Confirmation */}
               <div id="checkout-confirmation" className="content">
