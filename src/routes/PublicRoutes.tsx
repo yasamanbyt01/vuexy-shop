@@ -7,6 +7,7 @@ import Register from "../pages/public/Register";
 import Login from "../pages/public/Login";
 import ForgotPassword from "../pages/public/ForgotPassword";
 import ResetPassword from "../pages/public/ResetPassword";
+import Checkout from "../pages/public/Checkout";
 
 const PublicRoutes = () => {
   return (
@@ -15,7 +16,7 @@ const PublicRoutes = () => {
       <Route element={<PublicLayout />}>
         <Route index element={<Home />} />
         <Route path="/ProductDetail" element={<ProductDetails />} />
-        {/* Add other public pages here */}
+        <Route path="/checkout" element={<Checkout />} />
       </Route>
 
       {/* Auth pages WITHOUT navbar/footer */}
