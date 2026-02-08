@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import CartStep from "../../components/Checkout/CartStep";
 import AddressStep from "../../components/Checkout/AddressStep";
 import PaymentStep from "../../components/Checkout/PaymentStep";
+import ConfirmationStep from "../../components/Checkout/ConfirmationStep";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
@@ -105,10 +106,12 @@ const Checkout = () => {
               />
 
               {/* Confirmation */}
-              <div id="checkout-confirmation" className="content">
-                <h4>Thank You! 😇</h4>
-                <p>Your order has been placed.</p>
-              </div>
+              <ConfirmationStep
+                onComplete={() => {
+                  // You can do additional actions here if needed, like redirecting to home
+                  console.log("Order completed!");
+                }}
+              />
             </form>
           </div>
         </div>
