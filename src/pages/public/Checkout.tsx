@@ -1,6 +1,7 @@
 import Stepper from "bs-stepper";
 import { useEffect, useRef } from "react";
 import CartStep from "../../components/Checkout/CartStep";
+import AddressStep from "../../components/Checkout/AddressStep";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
@@ -87,24 +88,14 @@ const Checkout = () => {
               <CartStep onNext={() => stepperRef.current?.next()} />
 
               {/* Address */}
-              <div id="checkout-address" className="content">
-                <h5>Address Step</h5>
-                <p className="text-muted">Static address step placeholder.</p>
-                <button
-                  type="button"
-                  className="btn btn-label-secondary me-2"
-                  onClick={() => stepperRef.current?.previous()}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-next"
-                  onClick={() => stepperRef.current?.next()}
-                >
-                  Continue
-                </button>
-              </div>
+              <AddressStep
+                onPrev={() => stepperRef.current?.previous()}
+                onNext={() => stepperRef.current?.next()}
+                onShowAddressModal={() => {
+                  // TODO: implement modal if needed
+                  console.log("Show address modal");
+                }}
+              />
 
               {/* Payment */}
               <div id="checkout-payment" className="content">
