@@ -1,5 +1,6 @@
 import Stepper from "bs-stepper";
 import { useEffect, useRef } from "react";
+import CartStep from "../../components/Checkout/CartStep";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
@@ -83,20 +84,7 @@ const Checkout = () => {
           <div className="bs-stepper-content border-top">
             <form>
               {/* Cart */}
-              <div id="checkout-cart" className="content active">
-                <h5>My Shopping Bag (Static)</h5>
-                <p className="text-muted">
-                  Cart UI only – logic will be added later.
-                </p>
-
-                <button
-                  type="button"
-                  className="btn btn-primary btn-next"
-                  onClick={() => stepperRef.current?.next()}
-                >
-                  Place Order
-                </button>
-              </div>
+              <CartStep onNext={() => stepperRef.current?.next()} />
 
               {/* Address */}
               <div id="checkout-address" className="content">
