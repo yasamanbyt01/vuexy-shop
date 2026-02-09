@@ -182,9 +182,9 @@ const PublicNavbar = () => {
           {/* Right toolbar */}
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="me-2">
-              <a href="#" className="btn btn-outline-primary px-3">
+              <Link to="/checkout" className="btn btn-outline-primary px-3">
                 <i className="icon-base ti tabler-shopping-cart"></i>
-              </a>
+              </Link>
             </li>
 
             <li>
