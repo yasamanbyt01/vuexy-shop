@@ -1,35 +1,30 @@
 import React, { useState } from "react";
+import type { Address } from "../../types/Cart";
 
 interface AddressStepProps {
+  addresses: Address[];
+  selectedAddressId: number | undefined;
+  onSelectAddress: (id: number) => void;
+  onRemoveAddress: (id: number) => void;
+  onEditAddress: (id: number) => void;
+  onSetDefaultAddress: (id: number) => void;
   onNext: () => void;
   onPrev: () => void;
   onShowAddressModal: () => void;
 }
 
 const AddressStep: React.FC<AddressStepProps> = ({
+  addresses,
+  selectedAddressId,
+  onSelectAddress,
+  onRemoveAddress,
+  onEditAddress,
+  onSetDefaultAddress,
   onNext,
   onPrev,
   onShowAddressModal,
 }) => {
-  const [selectedAddress, setSelectedAddress] = useState<string>("1");
   const [deliverySpeed, setDeliverySpeed] = useState<string>("standard");
-
-  const addresses = [
-    {
-      id: "1",
-      name: "John Doe (Default)",
-      type: "home" as const,
-      address: "4135 Parkway Street, Los Angeles, CA, 90017.",
-      phone: "+1 234 567 8900",
-    },
-    {
-      id: "2",
-      name: "ACME Inc.",
-      type: "office" as const,
-      address: "87 Hoffman Avenue, New York, NY, 10016.",
-      phone: "+1 234 567 8901",
-    },
-  ];
 
   const deliveryOptions = [
     {
@@ -55,6 +50,12 @@ const AddressStep: React.FC<AddressStepProps> = ({
     },
   ];
 
+  const getAddressDisplay = (address: Address) => {
+    return `${address.addressLine1}${
+      address.addressLine2 ? `, ${address.addressLine2}` : ""
+    }, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`;
+  };
+
   return (
     <div id="checkout-address" className="content">
       <div className="row">
@@ -68,39 +69,79 @@ const AddressStep: React.FC<AddressStepProps> = ({
             {addresses.map((address) => (
               <div key={address.id} className="col-md">
                 <div
-                  className={`form-check custom-option custom-option-basic ${selectedAddress === address.id ? "checked" : ""}`}
+                  className={`form-check custom-option custom-option-basic ${
+                    selectedAddressId === address.id ? "checked" : ""
+                  }`}
                 >
                   <label className="form-check-label custom-option-content">
                     <input
                       type="radio"
                       name="address"
                       className="form-check-input"
-                      checked={selectedAddress === address.id}
-                      onChange={() => setSelectedAddress(address.id)}
+                      checked={selectedAddressId === address.id}
+                      onChange={() => onSelectAddress(address.id)}
                     />
                     <span className="custom-option-header mb-2">
                       <span className="fw-medium text-heading mb-0">
                         {address.name}
+                        {address.isDefault && " (Default)"}
                       </span>
                       <span
-                        className={`badge ${address.type === "home" ? "bg-label-primary" : "bg-label-success"}`}
+                        className={`badge ${
+                          address.type === "home"
+                            ? "bg-label-primary"
+                            : "bg-label-success"
+                        }`}
                       >
                         {address.type === "home" ? "Home" : "Office"}
                       </span>
                     </span>
                     <span className="custom-option-body">
                       <small>
-                        {address.address}
+                        {getAddressDisplay(address)}
                         <br />
                         Mobile : {address.phone} Card / Cash on delivery
                         available
                       </small>
                       <span className="my-3 border-bottom d-block"></span>
                       <span className="d-flex">
-                        <a className="me-4" href="javascript:void(0)">
+                        <button
+                          type="button"
+                          className="btn btn-link p-0 me-4 text-decoration-none"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onEditAddress(address.id);
+                          }}
+                        >
                           Edit
-                        </a>
-                        <a href="javascript:void(0)">Remove</a>
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-link p-0 me-4 text-decoration-none"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (!address.isDefault) {
+                              onSetDefaultAddress(address.id);
+                            }
+                          }}
+                          disabled={address.isDefault}
+                        >
+                          {address.isDefault ? "Default" : "Set as Default"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-link p-0 text-decoration-none text-danger"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (addresses.length > 1) {
+                              onRemoveAddress(address.id);
+                            } else {
+                              alert("You must have at least one address");
+                            }
+                          }}
+                        >
+                          Remove
+                        </button>
                       </span>
                     </span>
                   </label>
@@ -123,7 +164,9 @@ const AddressStep: React.FC<AddressStepProps> = ({
             {deliveryOptions.map((option) => (
               <div key={option.id} className="col-md mb-md-0 mb-2">
                 <div
-                  className={`form-check custom-option custom-option-icon position-relative ${deliverySpeed === option.id ? "checked" : ""}`}
+                  className={`form-check custom-option custom-option-icon position-relative ${
+                    deliverySpeed === option.id ? "checked" : ""
+                  }`}
                 >
                   <label className="form-check-label custom-option-content">
                     <span className="custom-option-body">
@@ -134,7 +177,11 @@ const AddressStep: React.FC<AddressStepProps> = ({
                         {option.title}
                       </span>
                       <span
-                        className={`badge ${option.price === "FREE" ? "bg-label-success" : "bg-label-secondary"} btn-pinned`}
+                        className={`badge ${
+                          option.price === "FREE"
+                            ? "bg-label-success"
+                            : "bg-label-secondary"
+                        } btn-pinned`}
                       >
                         {option.price}
                       </span>
@@ -163,14 +210,14 @@ const AddressStep: React.FC<AddressStepProps> = ({
               <li className="d-flex gap-4 align-items-center py-2 mb-4">
                 <div className="flex-shrink-0">
                   <img
-                    src="../../assets/img/products/1.png"
+                    src="/assets/img/products/1.png"
                     alt="google home"
                     className="w-px-50"
                   />
                 </div>
                 <div className="flex-grow-1">
                   <p className="mb-0">
-                    <a className="text-body" href="javascript:void(0)">
+                    <a className="text-body" href="#">
                       Google - Google Home - White
                     </a>
                   </p>
@@ -180,14 +227,14 @@ const AddressStep: React.FC<AddressStepProps> = ({
               <li className="d-flex gap-4 align-items-center py-2">
                 <div className="flex-shrink-0">
                   <img
-                    src="../../assets/img/products/2.png"
+                    src="/assets/img/products/2.png"
                     alt="google home"
                     className="w-px-50"
                   />
                 </div>
                 <div className="flex-grow-1">
                   <p className="mb-0">
-                    <a className="text-body" href="javascript:void(0)">
+                    <a className="text-body" href="#">
                       Apple iPhone 11 (64GB, Black)
                     </a>
                   </p>

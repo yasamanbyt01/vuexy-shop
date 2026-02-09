@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import type { Address } from "../../types/Cart";
 
 interface PaymentStepProps {
+  selectedAddress?: Address;
   onNext: () => void;
   onPrev: () => void;
 }
 
-const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
+const PaymentStep: React.FC<PaymentStepProps> = ({
+  selectedAddress,
+  onNext,
+  onPrev,
+}) => {
   const [activePaymentTab, setActivePaymentTab] = useState<string>("cc");
   const [saveCard, setSaveCard] = useState<boolean>(false);
 
@@ -62,7 +68,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
                 {paymentTabs.map((tab) => (
                   <li key={tab.id} className="nav-item" role="presentation">
                     <button
-                      className={`nav-link ${activePaymentTab === tab.id ? "active" : ""}`}
+                      className={`nav-link ${
+                        activePaymentTab === tab.id ? "active" : ""
+                      }`}
                       onClick={() => setActivePaymentTab(tab.id)}
                       type="button"
                       role="tab"
@@ -76,7 +84,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
             <div className="tab-content px-0 pb-0" id="paymentTabsContent">
               {/* Credit card */}
               <div
-                className={`tab-pane fade ${activePaymentTab === "cc" ? "show active" : ""}`}
+                className={`tab-pane fade ${
+                  activePaymentTab === "cc" ? "show active" : ""
+                }`}
               >
                 <div className="row g-6">
                   <div className="col-12">
@@ -172,7 +182,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
 
               {/* COD */}
               <div
-                className={`tab-pane fade ${activePaymentTab === "cod" ? "show active" : ""}`}
+                className={`tab-pane fade ${
+                  activePaymentTab === "cod" ? "show active" : ""
+                }`}
               >
                 <p>
                   Cash on Delivery is a type of payment method where the
@@ -183,7 +195,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
 
               {/* Gift card */}
               <div
-                className={`tab-pane fade ${activePaymentTab === "gift-card" ? "show active" : ""}`}
+                className={`tab-pane fade ${
+                  activePaymentTab === "gift-card" ? "show active" : ""
+                }`}
               >
                 <h6>Enter Gift Card Details</h6>
                 <div className="row g-5">
@@ -239,23 +253,39 @@ const PaymentStep: React.FC<PaymentStepProps> = ({ onNext, onPrev }) => {
 
               <dt className="col-6 fw-medium text-heading">Deliver to:</dt>
               <dd className="col-6 fw-medium text-end mb-0">
-                <span className="badge bg-label-primary">Home</span>
+                <span
+                  className={`badge ${
+                    selectedAddress?.type === "home"
+                      ? "bg-label-primary"
+                      : "bg-label-success"
+                  }`}
+                >
+                  {selectedAddress?.type === "home" ? "Home" : "Office"}
+                </span>
               </dd>
             </dl>
             {/* Address Details */}
-            <address>
-              <span className="text-heading fw-medium">
-                {" "}
-                John Doe (Default),
-              </span>
-              <br />
-              4135 Parkway Street, <br />
-              Los Angeles, CA, 90017. <br />
-              Mobile : +1 906 568 2332
-            </address>
-            <a href="javascript:void(0)" className="fw-medium">
-              Change address
-            </a>
+            {selectedAddress && (
+              <address>
+                <span className="text-heading fw-medium">
+                  {selectedAddress.name}
+                  {selectedAddress.isDefault && " (Default)"},
+                </span>
+                <br />
+                {selectedAddress.addressLine1}
+                {selectedAddress.addressLine2 && (
+                  <>
+                    <br />
+                    {selectedAddress.addressLine2}
+                  </>
+                )}
+                <br />
+                {selectedAddress.city}, {selectedAddress.state},{" "}
+                {selectedAddress.zipCode}
+                <br />
+                Mobile : {selectedAddress.phone}
+              </address>
+            )}
           </div>
           <div className="d-flex gap-2 mt-4">
             <button

@@ -1,14 +1,25 @@
 import React from "react";
 import { useCart } from "../../context/CartContext";
+import type { Address } from "../../types/Cart";
 
 interface ConfirmationStepProps {
+  selectedAddress?: Address;
   onComplete: () => void;
 }
 
-const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ onComplete }) => {
+const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
+  selectedAddress,
+  onComplete,
+}) => {
   const { items, clearCart, getTotalPrice } = useCart();
   const orderNumber = "1536548131";
-  const orderDate = "25/05/2020 13:35pm";
+  const orderDate = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const handleComplete = () => {
     clearCart();
@@ -22,7 +33,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ onComplete }) => {
           <h4>Thank You! 😇</h4>
           <p>
             Your order{" "}
-            <a href="javascript:void(0)" className="text-heading fw-medium">
+            <a href="#" className="text-heading fw-medium">
               #{orderNumber}
             </a>{" "}
             has been placed!
@@ -56,14 +67,29 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ onComplete }) => {
                 <i className="icon-base ti tabler-map-pin"></i> Shipping
               </h6>
               <address className="mb-0">
-                John Doe <br />
-                4135 Parkway Street,
-                <br />
-                Los Angeles, CA 90017,
-                <br />
-                USA
+                {selectedAddress ? (
+                  <>
+                    {selectedAddress.name} <br />
+                    {selectedAddress.addressLine1}
+                    {selectedAddress.addressLine2 && (
+                      <>
+                        <br />
+                        {selectedAddress.addressLine2}
+                      </>
+                    )}
+                    <br />
+                    {selectedAddress.city}, {selectedAddress.state}{" "}
+                    {selectedAddress.zipCode}
+                    <br />
+                    {selectedAddress.country}
+                  </>
+                ) : (
+                  "No address selected"
+                )}
               </address>
-              <p className="mb-0 mt-4">+123456789</p>
+              <p className="mb-0 mt-4">
+                {selectedAddress?.phone || "No phone provided"}
+              </p>
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
               <h6 className="d-flex align-items-center gap-2">
@@ -71,14 +97,29 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ onComplete }) => {
                 Address
               </h6>
               <address className="mb-0">
-                John Doe <br />
-                4135 Parkway Street,
-                <br />
-                Los Angeles, CA 90017,
-                <br />
-                USA
+                {selectedAddress ? (
+                  <>
+                    {selectedAddress.name} <br />
+                    {selectedAddress.addressLine1}
+                    {selectedAddress.addressLine2 && (
+                      <>
+                        <br />
+                        {selectedAddress.addressLine2}
+                      </>
+                    )}
+                    <br />
+                    {selectedAddress.city}, {selectedAddress.state}{" "}
+                    {selectedAddress.zipCode}
+                    <br />
+                    {selectedAddress.country}
+                  </>
+                ) : (
+                  "No address selected"
+                )}
               </address>
-              <p className="mb-0 mt-4">+123456789</p>
+              <p className="mb-0 mt-4">
+                {selectedAddress?.phone || "No phone provided"}
+              </p>
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
               <h6 className="d-flex align-items-center gap-2">
@@ -106,12 +147,12 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ onComplete }) => {
                   <div className="flex-grow-1">
                     <div className="row">
                       <div className="col-md-8">
-                        <a href="javascript:void(0)">
+                        <a href="#">
                           <h6 className="mb-2">{item.name}</h6>
                         </a>
                         <div className="text-body mb-2 d-flex flex-wrap">
                           <span className="me-1">Sold by:</span>
-                          <a href="javascript:void(0)" className="me-3">
+                          <a href="#" className="me-3">
                             {item.seller}
                           </a>
                           <span className="badge bg-label-success">
