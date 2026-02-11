@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { mockProduct, mockReviews } from "../../mock/product";
+import { Link, useParams } from "react-router-dom";
+import { products } from "../../mock/products";
+import { mockReviews } from "../../mock/reviews";
 import BreadCrumbs from "../../components/ui/BreadCrumbs";
 import ProductDetailCarousel from "../../components/ProductDetail/ProductDetailCarousel";
 import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs";
@@ -10,32 +11,46 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedSize, setSelectedSize] = useState("M");
 
-  const product = mockProduct;
-  const reviews = mockReviews;
+  const { id } = useParams<{ id: string }>();
+  const productId = Number(id);
+
+  const product = products.find((p) => p.id === productId);
+
+  if (!product) {
+    return (
+      <div className="container py-6">
+        <h4>Product not found</h4>
+      </div>
+    );
+  }
+
+  const reviews = mockReviews.filter((r) => r.productId === productId);
 
   // Breadcrumb items
   const breadcrumbItems = [
     { label: "Home", path: "/" },
     { label: "Products", path: "/products" },
-    { label: "Clothing", path: "/category/clothing" },
-    { label: "T-Shirts", path: "/category/clothing/t-shirts" },
+    {
+      label: product.category,
+      path: `/category/${product.category}`,
+    },
     { label: product.name },
   ];
 
-  // Calculate savings
-  const priceNum = parseFloat(product.price.replace("$", ""));
+  // Price & discount logic (single source of truth)
+  const price = product.price;
 
-  let originalPriceNum: number | null = null;
-  let savingsPercentage: number | null = null;
-  let savingsAmount: string | null = null;
+  const hasDiscount =
+    typeof product.originalPrice === "number" &&
+    product.originalPrice > product.price;
 
-  if (product.originalPrice) {
-    originalPriceNum = parseFloat(product.originalPrice.replace("$", ""));
-    savingsPercentage = Math.round(
-      ((originalPriceNum - priceNum) / originalPriceNum) * 100,
-    );
-    savingsAmount = (originalPriceNum - priceNum).toFixed(2);
-  }
+  const originalPrice = hasDiscount ? product.originalPrice! : null;
+
+  const savingsAmount = hasDiscount ? originalPrice! - price : 0;
+
+  const savingsPercentage = hasDiscount
+    ? Math.round((savingsAmount / originalPrice!) * 100)
+    : 0;
 
   return (
     <main className="py-6 bg-body">
@@ -92,21 +107,40 @@ const ProductDetails = () => {
 
               {/* Price & Savings */}
               <div className="mb-4 p-3 bg-light rounded">
-                <div className="d-flex align-items-center mb-2">
-                  <span className="h2 text-primary fw-bold">
-                    {product.price}
-                  </span>
-                  <span className="text-muted text-decoration-line-through ms-3">
-                    {product.originalPrice}
-                  </span>
-                  <span className="badge bg-danger ms-3">
-                    Save {savingsPercentage}%
-                  </span>
+                <div className="mb-4 p-3 bg-light rounded">
+                  <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
+                    {/* Main price – always visible */}
+                    <span className="h2 text-primary fw-bold">
+                      ${price.toFixed(2)}
+                    </span>
+
+                    {hasDiscount ? (
+                      <>
+                        <span className="text-muted text-decoration-line-through ms-2">
+                          ${originalPrice!.toFixed(2)}
+                        </span>
+
+                        <span className="badge bg-danger ms-2">
+                          Save {savingsPercentage}%
+                        </span>
+                      </>
+                    ) : (
+                      <span className="badge bg-success ms-2">Best price</span>
+                    )}
+                  </div>
+
+                  {hasDiscount ? (
+                    <p className="mb-0 text-success small">
+                      <i className="ti tabler-discount me-1"></i>
+                      You save ${savingsAmount.toFixed(2)}
+                    </p>
+                  ) : (
+                    <p className="mb-0 text-muted small">
+                      <i className="ti tabler-shield-check me-1"></i>
+                      Fair price · No discount available
+                    </p>
+                  )}
                 </div>
-                <p className="mb-0 text-success small">
-                  <i className="ti tabler-discount me-1"></i>
-                  You save ${savingsAmount}
-                </p>
               </div>
 
               {/* Description */}
@@ -234,7 +268,7 @@ const ProductDetails = () => {
               <div className="d-grid gap-3 mb-4">
                 <button className="btn btn-primary btn-lg py-3">
                   <i className="ti tabler-shopping-cart me-2"></i>
-                  Add to Cart - ${(priceNum * quantity).toFixed(2)}
+                  Add to Cart - ${(price * quantity).toFixed(2)}
                 </button>
                 <div className="d-flex gap-2">
                   <button className="btn btn-outline-primary flex-grow-1">
