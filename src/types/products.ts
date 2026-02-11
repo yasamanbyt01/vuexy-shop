@@ -4,8 +4,8 @@ export interface Product {
   sku: string;
   category: string;
 
-  price: string;
-  originalPrice?: string;
+  price: number;
+  originalPrice?: number;
   rating: number;
   reviewsCount: number;
 
@@ -33,13 +33,4 @@ export interface Product {
     delivery: string;
     returns: string;
   };
-}
-
-export interface Review {
-  id: number | string;
-  name: string;
-  rating: number;
-  comment: string;
-  date: string;
-  verified: boolean;
 }
