@@ -15,7 +15,7 @@ const PublicRoutes = () => {
       {/* Public pages WITH navbar/footer */}
       <Route element={<PublicLayout />}>
         <Route index element={<Home />} />
-        <Route path="/ProductDetail" element={<ProductDetails />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/checkout" element={<Checkout />} />
       </Route>
 

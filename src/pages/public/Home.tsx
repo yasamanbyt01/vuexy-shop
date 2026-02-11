@@ -3,7 +3,7 @@ import CategoryCard from "../../components/Home/CategoryCard";
 import ProductCard from "../../components/Home/ProductCard";
 import { Link } from "react-router-dom";
 import { homeCategories } from "../../mock/homeCategories";
-import { featuredProducts } from "../../mock/featuredProducts";
+import { products } from "../../mock/products";
 
 const Home = () => {
   return (
@@ -33,16 +33,16 @@ const Home = () => {
         <div className="container">
           <h4 className="fw-semibold mb-4">Featured products</h4>
           <div className="row g-4">
-            {featuredProducts.map((product) => (
+            {products.slice(0, 4).map((product) => (
               <Link
-                to="ProductDetail"
+                to={`/products/${product.id}`}
                 key={product.id}
                 className="col-6 col-md-3 text-decoration-none"
               >
                 <ProductCard
-                  title={product.title}
+                  title={product.name}
                   price={product.price}
-                  image={product.image}
+                  image={product.images[0]}
                 />
               </Link>
             ))}
