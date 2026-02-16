@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import MegaDropdown from "./MegaDropdown";
+import MegaDropdownMobile from "./MegaDropdownMobile";
 
 const PublicNavbar = () => {
   return (
-    <nav className="layout-navbar py-1 bg-body">
+    <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky">
       <div className="container">
         <div className="navbar navbar-expand-lg landing-navbar px-3 px-md-8">
           {/* Logo + mobile toggle */}
@@ -59,7 +61,7 @@ const PublicNavbar = () => {
                 </span>
               </span>
               <span className="app-brand-text demo menu-text fw-bold ms-2 ps-1">
-                Vuexy
+                فروشگاه
               </span>
             </Link>
           </div>
@@ -83,80 +85,11 @@ const PublicNavbar = () => {
 
             <ul className="navbar-nav align-items-center">
               {/* DESKTOP ONLY */}
-              <li className="nav-item dropdown d-none d-lg-block">
-                <a
-                  className="nav-link dropdown-toggle fw-medium"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Categories
-                </a>
-
-                <ul className="dropdown-menu">
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Electronics
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Clothing
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Books
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Accessories
-                    </a>
-                  </li>
-                </ul>
-              </li>
+              <MegaDropdown />
 
               {/* MOBILE ONLY */}
-              <li className="nav-item d-lg-none">
-                <a
-                  className="nav-link fw-medium d-flex justify-content-between align-items-center"
-                  data-bs-toggle="collapse"
-                  href="#mobileCategories"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="mobileCategories"
-                >
-                  Categories
-                  <i className="icon-base ti tabler-chevron-down"></i>
-                </a>
+              <MegaDropdownMobile />
 
-                <div className="collapse ps-4" id="mobileCategories">
-                  <ul className="list-unstyled mb-2">
-                    <li className="py-1">
-                      <a className="nav-link" href="#">
-                        Electronics
-                      </a>
-                    </li>
-                    <li className="py-1">
-                      <a className="nav-link" href="#">
-                        Clothing
-                      </a>
-                    </li>
-                    <li className="py-1">
-                      <a className="nav-link" href="#">
-                        Books
-                      </a>
-                    </li>
-                    <li className="py-1">
-                      <a className="nav-link" href="#">
-                        Accessories
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
               {/* Search box (desktop only) */}
               <form
                 className="d-none d-lg-flex align-items-center ms-3"
@@ -166,7 +99,7 @@ const PublicNavbar = () => {
                   <input
                     type="search"
                     className="form-control border-end-0"
-                    placeholder="Search products..."
+                    placeholder="جستجو در محصولات..."
                     aria-label="Search"
                   />
                   <span className="input-group-text bg-transparent">
@@ -190,7 +123,7 @@ const PublicNavbar = () => {
             <li>
               <Link to="/register" className="btn btn-primary">
                 <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
-                <span className="d-none d-md-block">Login / Register</span>
+                <span className="d-none d-md-block">ورود/ثبت نام</span>
               </Link>
             </li>
           </ul>
