@@ -11,17 +11,21 @@ import "./assets/vendor/libs/bs-stepper/bs-stepper.css";
 import "./assets/vendor/libs/swiper/swiper.css";
 import "./assets/vendor/fonts/iconify-icons.css";
 
-// 2. Form validation CSS (IMPORTANT for your login/register pages)
+//2. Fonts
+import "./assets/css/vazirmatn.css";
+
+// 3. Form validation CSS (IMPORTANT for your login/register pages)
 import "./assets/vendor/libs/@form-validation/form-validation.css";
 
-// 3. Auth pages CSS
+// 4. Auth pages CSS
 import "./assets/vendor/css/pages/page-auth.css";
 
-// 4. Your custom CSS (loaded last to override vendor styles)
+// 5. Your custom CSS (loaded last to override vendor styles)
+import "./assets/css/typography.css";
 import "./assets/css/demo.css";
 import "./assets/css/form-validation.css";
 
-// 5. JavaScript files
+// 6. JavaScript files
 import "./assets/vendor/js/helpers.js";
 import "./assets/js/config.js";
 import "./assets/vendor/libs/node-waves/node-waves.js";
