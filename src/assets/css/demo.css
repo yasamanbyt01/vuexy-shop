@@ -21,7 +21,9 @@
 .layout-navbar-fixed .layout-wrapper:not(.layout-without-menu) .layout-page {
   padding-top: 64px !important;
 }
-.layout-navbar-fixed .layout-wrapper:not(.layout-horizontal):not(.layout-without-menu) .layout-page {
+.layout-navbar-fixed
+  .layout-wrapper:not(.layout-horizontal):not(.layout-without-menu)
+  .layout-page {
   padding-top: 72px !important;
 }
 /* Navbar page z-index issue solution */
@@ -102,4 +104,21 @@
 .layout-demo-info {
   text-align: center;
   margin-top: 1rem;
+}
+
+/* ================================
+   Carousel CTA buttons 
+
+   #swiper-home-hero .btn-outline-light:hover {
+  color: #212529; 
+  background-color: #f8f9fa;
+}
+================================ */
+
+/* ================================
+   Prevent navbar from being overlapped by pagination/content
+================================ */
+
+.layout-navbar {
+  z-index: 1030 !important;
 }
