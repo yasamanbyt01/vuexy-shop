@@ -8,6 +8,7 @@ import Login from "../pages/public/Login";
 import ForgotPassword from "../pages/public/ForgotPassword";
 import ResetPassword from "../pages/public/ResetPassword";
 import Checkout from "../pages/public/Checkout";
+import Products from "../pages/public/Products";
 
 const PublicRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const PublicRoutes = () => {
         <Route index element={<Home />} />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/products" element={<Products />} />
       </Route>
 
       {/* Auth pages WITHOUT navbar/footer */}

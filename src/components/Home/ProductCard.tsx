@@ -1,12 +1,19 @@
+import { Link } from "react-router-dom";
+import { formatPrice } from "../../utils/price";
+
 interface ProductCardProps {
+  id: number;
   title: string;
   image: string;
   price: number;
 }
 
-const ProductCard = ({ title, image, price }: ProductCardProps) => {
+const ProductCard = ({ id, title, image, price }: ProductCardProps) => {
   return (
-    <div className="card border-0 shadow-sm h-100 product-card">
+    <Link
+      to={`/products/${id}`}
+      className="card border-0 shadow-sm h-100 product-card text-decoration-none text-body"
+    >
       <div className="ratio ratio-1x1">
         <img
           src={image}
@@ -17,13 +24,13 @@ const ProductCard = ({ title, image, price }: ProductCardProps) => {
 
       <div className="card-body d-flex flex-column">
         <h6 className="fw-semibold">{title}</h6>
-        <span className="text-primary fw-bold mb-3">${price}</span>
+        <span className="text-primary fw-bold mb-3">{formatPrice(price)}</span>
 
         <button className="btn btn-sm btn-outline-primary mt-auto">
-          View product
+          مشاهده محصول
         </button>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -34,17 +34,17 @@ const Home = () => {
           <h4 className="fw-semibold mb-4">Featured products</h4>
           <div className="row g-4">
             {products.slice(0, 4).map((product) => (
-              <Link
-                to={`/products/${product.id}`}
+              <div
                 key={product.id}
                 className="col-6 col-md-3 text-decoration-none"
               >
                 <ProductCard
+                  id={product.id}
                   title={product.name}
                   price={product.price}
                   image={product.images[0]}
                 />
-              </Link>
+              </div>
             ))}
           </div>
         </div>
