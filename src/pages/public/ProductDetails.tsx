@@ -121,9 +121,6 @@ const ProductDetails = () => {
                 <span className="text-muted small mx-2">
                   {toFarsiNumber(product.rating)}/۵
                 </span>
-                <Link to="#reviews" className="text-primary small">
-                  ({toFarsiNumber(product.reviewsCount)} دیدگاه)
-                </Link>
               </div>
 
               {/* Price & Savings */}

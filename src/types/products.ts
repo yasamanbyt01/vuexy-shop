@@ -7,7 +7,6 @@ export interface Product {
   price: number;
   originalPrice?: number;
   rating: number;
-  reviewsCount: number;
 
   description: string;
   longDescription: string;

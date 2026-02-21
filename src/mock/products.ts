@@ -9,7 +9,7 @@ export const products: Product[] = [
     price: 49.0,
     originalPrice: 69.99,
     rating: 4.6,
-    reviewsCount: 128,
+
     description: "تی‌شرت نخی نرم و باکیفیت مناسب استفاده روزمره.",
     longDescription:
       "تی‌شرت با کیفیت بالا از پارچه نخی نرم، مناسب استفاده روزمره و راحتی بیشتر.",
@@ -26,9 +26,9 @@ export const products: Product[] = [
     tags: ["تی‌شرت", "نخی", "روزمره"],
     specifications: { material: "پنبه", fit: "اسلیم" },
     shippingInfo: {
-      freeOver: 50,
-      delivery: "3‑5 days",
-      returns: "30 days",
+      freeOver: 5,
+      delivery: "۳ تا ۵ روز کاری",
+      returns: "۳۰ روز",
     },
   },
 
@@ -39,7 +39,7 @@ export const products: Product[] = [
     category: "کفش",
     price: 89.0,
     rating: 4.8,
-    reviewsCount: 220,
+
     description: "کفش سبک و راحت مناسب دویدن.",
     longDescription:
       "کفش ورزشی راحت و سبک، طراحی‌شده برای دویدن روزانه و تمرینات ورزشی.",
@@ -52,7 +52,7 @@ export const products: Product[] = [
     tags: ["دویدن", "ورزشی"],
     specifications: { sole: "لاستیکی", weight: "280g" },
     shippingInfo: {
-      freeOver: 70,
+      freeOver: 7,
       delivery: "۲ تا ۴ روز کاری",
       returns: "۱۴ روز",
     },
@@ -65,7 +65,7 @@ export const products: Product[] = [
     category: "کیف",
     price: 129.0,
     rating: 4.4,
-    reviewsCount: 76,
+
     description: "کوله‌پشتی چرمی شیک.",
     longDescription: "کوله‌پشتی ساخته‌شده از چرم بادوام، مناسب محل کار و سفر.",
     features: ["چرم طبیعی", "محفظه مخصوص لپ‌تاپ"],
@@ -77,7 +77,7 @@ export const products: Product[] = [
     tags: ["کوله‌پشتی", "چرمی"],
     specifications: { material: "چرم", capacity: "20L" },
     shippingInfo: {
-      freeOver: 100,
+      freeOver: 10,
       delivery: "۴ تا ۶ روز کاری",
       returns: "۳۰ روز",
     },
@@ -90,7 +90,7 @@ export const products: Product[] = [
     category: "پوشاک",
     price: 99.0,
     rating: 4.5,
-    reviewsCount: 94,
+
     description: "کاپشن جین آبی کلاسیک.",
     longDescription: "کاپشن جین ماندگار با طراحی مدرن و دوخت باکیفیت.",
     features: ["پارچه بادوام", "فیت معمولی"],
@@ -102,7 +102,7 @@ export const products: Product[] = [
     tags: ["کاپشن", "جین"],
     specifications: { material: "جین", fit: "معمولی" },
     shippingInfo: {
-      freeOver: 80,
+      freeOver: 8,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
@@ -115,7 +115,7 @@ export const products: Product[] = [
     category: "الکترونیک",
     price: 149.0,
     rating: 4.7,
-    reviewsCount: 310,
+
     description: "هدفون با قابلیت حذف نویز.",
     longDescription: "هدفون بی‌سیم با بیس عمیق و فناوری حذف نویز.",
     features: ["بلوتوث ۵.۰", "حذف نویز"],
@@ -127,7 +127,7 @@ export const products: Product[] = [
     tags: ["صوتی", "بی‌سیم"],
     specifications: { battery: "30h", range: "10m" },
     shippingInfo: {
-      freeOver: 100,
+      freeOver: 10,
       delivery: "۲ تا ۳ روز کاری",
       returns: "۱۴ روز",
     },
@@ -140,7 +140,7 @@ export const products: Product[] = [
     category: "الکترونیک",
     price: 199.0,
     rating: 4.6,
-    reviewsCount: 185,
+
     description: "ساعت هوشمند مدرن.",
     longDescription: "پیگیری فعالیت‌های ورزشی، اعلان‌ها و سلامت بدن.",
     features: ["سنجش ضربان قلب", "مقاوم در برابر آب"],
@@ -152,7 +152,7 @@ export const products: Product[] = [
     tags: ["ساعت", "هوشمند"],
     specifications: { display: "AMOLED", battery: "48h" },
     shippingInfo: {
-      freeOver: 120,
+      freeOver: 12,
       delivery: "۲ تا ۴ روز کاری",
       returns: "۱۴ روز",
     },
@@ -165,7 +165,7 @@ export const products: Product[] = [
     category: "اکسسوری",
     price: 39.0,
     rating: 4.3,
-    reviewsCount: 58,
+
     description: "کیف پول چرمی باریک.",
     longDescription: "طراحی مینیمال با چرم طبیعی و کیفیت بالا.",
     features: ["محافظت RFID", "طراحی باریک"],
@@ -177,7 +177,7 @@ export const products: Product[] = [
     tags: ["کیف پول", "چرمی"],
     specifications: { slots: 6 },
     shippingInfo: {
-      freeOver: 40,
+      freeOver: 4,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
@@ -190,7 +190,7 @@ export const products: Product[] = [
     category: "کیف",
     price: 59.0,
     rating: 4.4,
-    reviewsCount: 102,
+
     description: "ساک ورزشی جادار.",
     longDescription: "مناسب باشگاه، سفر و فعالیت‌های ورزشی.",
     features: ["ضد آب", "محفظه کفش"],
@@ -202,7 +202,7 @@ export const products: Product[] = [
     tags: ["باشگاه", "ورزشی"],
     specifications: { capacity: "35L" },
     shippingInfo: {
-      freeOver: 60,
+      freeOver: 6,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
@@ -215,7 +215,7 @@ export const products: Product[] = [
     category: "پوشاک",
     price: 44.0,
     rating: 4.2,
-    reviewsCount: 67,
+
     description: "پولوشرت راحت و کاربردی.",
     longDescription: "پارچه نرم و مناسب استفاده روزمره.",
     features: ["قابل تنفس", "فیت معمولی"],
@@ -227,7 +227,7 @@ export const products: Product[] = [
     tags: ["پولوشرت", "مردانه"],
     specifications: { material: "ترکیب پنبه" },
     shippingInfo: {
-      freeOver: 50,
+      freeOver: 5,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
@@ -240,7 +240,7 @@ export const products: Product[] = [
     category: "اکسسوری",
     price: 79.0,
     rating: 4.5,
-    reviewsCount: 140,
+
     description: "عینک آفتابی با محافظت UV.",
     longDescription: "طراحی شیک با محافظت کامل در برابر اشعه UV.",
     features: ["UV400", "سبک وزن"],
@@ -252,7 +252,7 @@ export const products: Product[] = [
     tags: ["عینک آفتابی"],
     specifications: { lens: "پلاریزه" },
     shippingInfo: {
-      freeOver: 70,
+      freeOver: 7,
       delivery: "۲ تا ۴ روز کاری",
       returns: "۱۴ روز",
     },
@@ -265,7 +265,7 @@ export const products: Product[] = [
     category: "خانه",
     price: 249.0,
     rating: 4.6,
-    reviewsCount: 89,
+
     description: "صندلی اداری ارگونومیک.",
     longDescription: "طراحی‌شده برای ساعات کاری طولانی با پشتیبانی کمر.",
     features: ["ارگونومیک", "تنظیم ارتفاع"],
@@ -277,7 +277,7 @@ export const products: Product[] = [
     tags: ["اداری", "صندلی"],
     specifications: { maxWeight: "120kg" },
     shippingInfo: {
-      freeOver: 200,
+      freeOver: 20,
       delivery: "۵ تا ۷ روز کاری",
       returns: "۳۰ روز",
     },
@@ -290,7 +290,7 @@ export const products: Product[] = [
     category: "خانه",
     price: 59.0,
     rating: 4.3,
-    reviewsCount: 41,
+
     description: "چراغ رومیزی مدرن.",
     longDescription: "چراغ چوبی مینیمال با نور گرم.",
     features: ["LED", "مصرف انرژی کم"],
@@ -302,7 +302,7 @@ export const products: Product[] = [
     tags: ["چراغ", "میز"],
     specifications: { power: "8W" },
     shippingInfo: {
-      freeOver: 60,
+      freeOver: 6,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
@@ -315,7 +315,7 @@ export const products: Product[] = [
     category: "الکترونیک",
     price: 49.0,
     rating: 4.7,
-    reviewsCount: 312,
+
     description: "ماوس گیمینگ با دقت بالا.",
     longDescription: "ماوس مخصوص بازی با DPI قابل تنظیم و نورپردازی RGB.",
     features: ["نورپردازی RGB", "DPI قابل تنظیم"],
@@ -327,7 +327,7 @@ export const products: Product[] = [
     tags: ["گیمینگ", "ماوس"],
     specifications: { dpi: 16000 },
     shippingInfo: {
-      freeOver: 50,
+      freeOver: 5,
       delivery: "۲ تا ۳ روز کاری",
       returns: "۱۴ روز",
     },
@@ -340,7 +340,7 @@ export const products: Product[] = [
     category: "الکترونیک",
     price: 119.0,
     rating: 4.8,
-    reviewsCount: 198,
+
     description: "کیبورد مکانیکی RGB.",
     longDescription: "سوییچ‌های مکانیکی با نورپردازی RGB قابل شخصی‌سازی.",
     features: ["سوییچ مکانیکی", "RGB"],
@@ -352,7 +352,7 @@ export const products: Product[] = [
     tags: ["کیبورد", "گیمینگ"],
     specifications: { switch: "آبی" },
     shippingInfo: {
-      freeOver: 100,
+      freeOver: 10,
       delivery: "۲ تا ۴ روز کاری",
       returns: "۱۴ روز",
     },
@@ -365,7 +365,7 @@ export const products: Product[] = [
     category: "کیف",
     price: 179.0,
     rating: 4.4,
-    reviewsCount: 66,
+
     description: "چمدان مقاوم مسافرتی.",
     longDescription: "چمدان سبک با سیستم قفل ایمن.",
     features: ["قفل TSA", "چرخ ۳۶۰ درجه"],
@@ -377,7 +377,7 @@ export const products: Product[] = [
     tags: ["سفر", "چمدان"],
     specifications: { weight: "4.5kg" },
     shippingInfo: {
-      freeOver: 150,
+      freeOver: 15,
       delivery: "۵ تا ۷ روز کاری",
       returns: "۳۰ روز",
     },
@@ -390,7 +390,7 @@ export const products: Product[] = [
     category: "اکسسوری",
     price: 24.0,
     rating: 4.2,
-    reviewsCount: 54,
+
     description: "قمقمه قابل استفاده مجدد.",
     longDescription: "قمقمه دوستدار محیط زیست، مناسب ورزش و سفر.",
     features: ["فاقد BPA", "ضد نشت"],
@@ -402,7 +402,7 @@ export const products: Product[] = [
     tags: ["ورزشی", "قمقمه"],
     specifications: { capacity: "750ml" },
     shippingInfo: {
-      freeOver: 30,
+      freeOver: 5,
       delivery: "۳ تا ۵ روز کاری",
       returns: "۳۰ روز",
     },
