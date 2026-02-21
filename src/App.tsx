@@ -1,10 +1,14 @@
 import { Routes } from "react-router-dom";
 import PublicRoutes from "./routes/PublicRoutes";
-//import AdminRoutes from "./routes/AdminRoutes";
-//import ProtectedRoutes from "./routes/ProtectedRoutes";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 function App() {
-  return <Routes>{PublicRoutes()}</Routes>;
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>{PublicRoutes()}</Routes>
+    </>
+  );
 }
 
 export default App;
