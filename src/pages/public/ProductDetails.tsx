@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { products } from "../../mock/products";
 import { mockReviews } from "../../mock/reviews";
 import BreadCrumbs from "../../components/ui/BreadCrumbs";
 import ProductDetailCarousel from "../../components/ProductDetail/ProductDetailCarousel";
 import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs";
+import { SPEC_LABELS } from "../../constants/specificationLabels";
+import { formatPrice } from "../../utils/price";
+import { toFarsiNumber } from "../../utils/numbers";
+import { formatSpecValue } from "../../utils/SpecValue";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState("blue");
-  const [selectedSize, setSelectedSize] = useState("M");
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
@@ -19,17 +23,31 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <div className="container py-6">
-        <h4>Product not found</h4>
+        <h4>محصول مورد نظر یافت نشد</h4>
       </div>
     );
   }
+
+  useEffect(() => {
+    if (product?.colors && product.colors.length > 0) {
+      setSelectedColor(product.colors[0].value);
+    }
+  }, [product]);
+
+  useEffect(() => {
+    if (product?.sizes && product.sizes.length > 0) {
+      setSelectedSize(product.sizes[0]);
+    } else {
+      setSelectedSize(null);
+    }
+  }, [product]);
 
   const reviews = mockReviews.filter((r) => r.productId === productId);
 
   // Breadcrumb items
   const breadcrumbItems = [
-    { label: "Home", path: "/" },
-    { label: "Products", path: "/products" },
+    { label: "خانه", path: "/" },
+    { label: "محصولات", path: "/products" },
     {
       label: product.category,
       path: `/category/${product.category}`,
@@ -75,15 +93,18 @@ const ProductDetails = () => {
                   <span className="badge bg-light text-dark me-2">
                     {product.category}
                   </span>
-                  <span className="text-muted small">SKU: {product.sku}</span>
+                  <span className="text-muted small">
+                    {" "}
+                    کد محصول: {toFarsiNumber(product.sku)}
+                  </span>
                 </div>
                 {product.inStock ? (
-                  <span className="badge bg-success">
-                    <i className="ti tabler-check me-1"></i> In Stock (
-                    {product.stockCount})
+                  <span className="badge bg-success d-flex align-items-center">
+                    <i className="ti tabler-check me-1"></i>
+                    موجود ({toFarsiNumber(product.stockCount)})
                   </span>
                 ) : (
-                  <span className="badge bg-danger">Out of Stock</span>
+                  <span className="badge bg-danger">ناموجود</span>
                 )}
               </div>
 
@@ -98,10 +119,10 @@ const ProductDetails = () => {
                   {"☆".repeat(5 - Math.ceil(product.rating))}
                 </div>
                 <span className="text-muted small mx-2">
-                  {product.rating}/5
+                  {toFarsiNumber(product.rating)}/۵
                 </span>
                 <Link to="#reviews" className="text-primary small">
-                  ({product.reviewsCount} reviews)
+                  ({toFarsiNumber(product.reviewsCount)} دیدگاه)
                 </Link>
               </div>
 
@@ -111,33 +132,33 @@ const ProductDetails = () => {
                   <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
                     {/* Main price – always visible */}
                     <span className="h2 text-primary fw-bold">
-                      ${price.toFixed(2)}
+                      {formatPrice(price)}
                     </span>
 
                     {hasDiscount ? (
                       <>
                         <span className="text-muted text-decoration-line-through ms-2">
-                          ${originalPrice!.toFixed(2)}
+                          {formatPrice(originalPrice!)}
                         </span>
 
                         <span className="badge bg-danger ms-2">
-                          Save {savingsPercentage}%
+                          {toFarsiNumber(savingsPercentage)}٪ تخفیف
                         </span>
                       </>
                     ) : (
-                      <span className="badge bg-success ms-2">Best price</span>
+                      <span className="badge bg-success ms-2">بهترین قیمت</span>
                     )}
                   </div>
 
                   {hasDiscount ? (
                     <p className="mb-0 text-success small">
                       <i className="ti tabler-discount me-1"></i>
-                      You save ${savingsAmount.toFixed(2)}
+                      شما {formatPrice(savingsAmount)} صرفه‌جویی می‌کنید
                     </p>
                   ) : (
                     <p className="mb-0 text-muted small">
                       <i className="ti tabler-shield-check me-1"></i>
-                      Fair price · No discount available
+                      قیمت منصفانه · بدون تخفیف
                     </p>
                   )}
                 </div>
@@ -150,7 +171,7 @@ const ProductDetails = () => {
               <div className="mb-4">
                 <h6 className="mb-2 d-flex justify-content-between">
                   <span>
-                    Color:{" "}
+                    رنگ:{" "}
                     <strong>
                       {
                         product.colors.find((c) => c.value === selectedColor)
@@ -158,7 +179,7 @@ const ProductDetails = () => {
                       }
                     </strong>
                   </span>
-                  <span className="text-primary small">Required</span>
+                  <span className="text-primary small">انتخاب الزامی</span>
                 </h6>
 
                 <div className="d-flex gap-2">
@@ -202,32 +223,42 @@ const ProductDetails = () => {
               </div>
 
               {/* Size Selection */}
-              <div className="mb-4">
-                <h6 className="mb-2 d-flex justify-content-between">
-                  <span>
-                    Size: <strong>{selectedSize}</strong>
-                  </span>
-                  <Link to="#" className="text-primary small">
-                    Size Guide
-                  </Link>
-                </h6>
-                <div className="d-flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      className={`btn ${selectedSize === size ? "btn-primary" : "btn-outline-secondary"}`}
-                      onClick={() => setSelectedSize(size)}
-                      style={{ minWidth: "50px" }}
-                    >
-                      {size}
-                    </button>
-                  ))}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-4">
+                  <h6 className="mb-2 d-flex justify-content-between">
+                    <span>
+                      سایز:{" "}
+                      <strong>
+                        {" "}
+                        {selectedSize ? toFarsiNumber(selectedSize) : "—"}
+                      </strong>
+                    </span>
+                    <Link to="#" className="text-primary small">
+                      راهنمای سایز
+                    </Link>
+                  </h6>
+
+                  <div className="d-flex flex-wrap gap-2">
+                    {product.sizes.map((size) => (
+                      <button
+                        key={size}
+                        className={`btn ${
+                          selectedSize === size
+                            ? "btn-primary"
+                            : "btn-outline-secondary"
+                        }`}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {toFarsiNumber(size)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Quantity */}
               <div className="mb-4">
-                <h6 className="mb-2">Quantity:</h6>
+                <h6 className="mb-2">تعداد:</h6>
                 <div
                   className="d-flex align-items-center"
                   style={{ maxWidth: "150px" }}
@@ -242,7 +273,7 @@ const ProductDetails = () => {
                   <input
                     type="text"
                     className="form-control text-center border-0"
-                    value={quantity}
+                    value={toFarsiNumber(quantity)}
                     readOnly
                     style={{
                       maxWidth: "60px",
@@ -260,7 +291,7 @@ const ProductDetails = () => {
                   </button>
                 </div>
                 <small className="text-muted mt-1 d-block">
-                  Only {product.stockCount} items left
+                  فقط {toFarsiNumber(product.stockCount)} عدد باقی مانده
                 </small>
               </div>
 
@@ -268,12 +299,12 @@ const ProductDetails = () => {
               <div className="d-grid gap-3 mb-4">
                 <button className="btn btn-primary btn-lg py-3">
                   <i className="ti tabler-shopping-cart me-2"></i>
-                  Add to Cart - ${(price * quantity).toFixed(2)}
+                  افزودن به سبد خرید – {formatPrice(price * quantity)}
                 </button>
                 <div className="d-flex gap-2">
                   <button className="btn btn-outline-primary flex-grow-1">
                     <i className="ti tabler-heart me-2"></i>
-                    Add to Wishlist
+                    افزودن به علاقه مندی ها
                   </button>
                   <button className="btn btn-outline-secondary">
                     <i className="ti tabler-repeat"></i>
@@ -290,25 +321,25 @@ const ProductDetails = () => {
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-shield-check text-success me-2"></i>
-                      <span className="small">Secure Payment</span>
+                      <span className="small">پرداخت امن</span>
                     </div>
                   </div>
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-truck text-primary me-2"></i>
-                      <span className="small">Free Shipping</span>
+                      <span className="small">ارسال رایگان</span>
                     </div>
                   </div>
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-rotate-clockwise text-info me-2"></i>
-                      <span className="small">30-Day Returns</span>
+                      <span className="small">بازگشت ۳۰ روزه</span>
                     </div>
                   </div>
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-headset text-warning me-2"></i>
-                      <span className="small">24/7 Support</span>
+                      <span className="small">پشتیبانی ۲۴/۷</span>
                     </div>
                   </div>
                 </div>
@@ -321,9 +352,9 @@ const ProductDetails = () => {
             {/* Product Highlights */}
             <div className="card mb-4">
               <div className="card-header bg-light">
-                <h6 className="mb-0">
+                <h6 className="mb-0 d-flex align-items-center">
                   <i className="ti tabler-sparkles me-2"></i>
-                  Highlights
+                  مزایای محصول
                 </h6>
               </div>
               <div className="card-body p-3">
@@ -341,30 +372,27 @@ const ProductDetails = () => {
             {/* Specifications */}
             <div className="card mb-4">
               <div className="card-header bg-light">
-                <h6 className="mb-0">
+                <h6 className="mb-0 d-flex align-items-center">
                   <i className="ti tabler-list-details me-2"></i>
-                  Specifications
+                  مشخصات
                 </h6>
               </div>
               <div className="card-body p-3">
                 <dl className="row mb-0">
-                  <dt className="col-6 small text-muted">Material</dt>
-                  <dd className="col-6 small">
-                    {product.specifications.material}
-                  </dd>
-
-                  <dt className="col-6 small text-muted">Weight</dt>
-                  <dd className="col-6 small">
-                    {product.specifications.weight}
-                  </dd>
-
-                  <dt className="col-6 small text-muted">Fit</dt>
-                  <dd className="col-6 small">{product.specifications.fit}</dd>
-
-                  <dt className="col-6 small text-muted">Origin</dt>
-                  <dd className="col-6 small">
-                    {product.specifications.origin}
-                  </dd>
+                  {product.specifications &&
+                    Object.entries(product.specifications).map(
+                      ([key, value]) => (
+                        <>
+                          <dt className="col-6 small text-muted">
+                            {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ??
+                              key}
+                          </dt>
+                          <dd className="col-6 small">
+                            {formatSpecValue(value)}
+                          </dd>
+                        </>
+                      ),
+                    )}
                 </dl>
               </div>
             </div>
@@ -372,9 +400,9 @@ const ProductDetails = () => {
             {/* Tags */}
             <div className="card mb-4">
               <div className="card-header bg-light">
-                <h6 className="mb-0">
+                <h6 className="mb-0 d-flex align-items-center">
                   <i className="ti tabler-tags me-2"></i>
-                  Tags
+                  برچسب ها
                 </h6>
               </div>
               <div className="card-body p-3">
@@ -395,7 +423,7 @@ const ProductDetails = () => {
             {/* Share Product */}
             <div className="card">
               <div className="card-body p-3 text-center">
-                <h6 className="mb-3">Share this product</h6>
+                <h6 className="mb-3">اشتراک‌گذاری محصول</h6>
                 <div className="d-flex justify-content-center gap-2">
                   <button className="btn btn-outline-primary btn-sm">
                     <i className="ti tabler-brand-facebook"></i>
