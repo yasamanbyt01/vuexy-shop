@@ -1,5 +1,10 @@
 import React from "react";
-import type { Product, Review } from "../../types/products";
+import type { Product } from "../../types/products";
+import type { Review } from "../../types/reviews";
+import { SPEC_LABELS } from "../../constants/specificationLabels";
+import { formatSpecValue } from "../../utils/SpecValue";
+import { formatPrice } from "../../utils/price";
+import { toFarsiNumber } from "../../utils/numbers";
 
 interface ProductDetailTabsProps {
   product: Product;
@@ -29,7 +34,7 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           >
             <span className="d-none d-sm-inline-flex align-items-center">
               <i className="icon-base ti tabler-file-text icon-sm me-1_5"></i>
-              Description
+              توضیحات
             </span>
             <i className="icon-base ti tabler-file-text icon-sm d-sm-none"></i>
           </button>
@@ -48,7 +53,7 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           >
             <span className="d-none d-sm-inline-flex align-items-center">
               <i className="icon-base ti tabler-list-details icon-sm me-1_5"></i>
-              Specs
+              مشخصات
             </span>
             <i className="icon-base ti tabler-list-details icon-sm d-sm-none"></i>
           </button>
@@ -67,9 +72,9 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           >
             <span className="d-none d-sm-inline-flex align-items-center">
               <i className="icon-base ti tabler-star icon-sm me-1_5"></i>
-              Reviews
+              نظرات
               <span className="badge rounded-pill bg-label-primary ms-1_5">
-                {reviews.length}
+                {toFarsiNumber(reviews.length)}
               </span>
             </span>
             <i className="icon-base ti tabler-star icon-sm d-sm-none"></i>
@@ -89,7 +94,7 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           >
             <span className="d-none d-sm-inline-flex align-items-center">
               <i className="icon-base ti tabler-truck icon-sm me-1_5"></i>
-              Shipping
+              ارسال
             </span>
             <i className="icon-base ti tabler-truck icon-sm d-sm-none"></i>
           </button>
@@ -106,14 +111,17 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           id="product-description"
           role="tabpanel"
         >
-          <h5 className="mb-4">Product Description</h5>
+          <h5 className="mb-4">توضیحات </h5>
 
           <p>{product.longDescription}</p>
 
-          <h6 className="mt-4 mb-3">Key Features:</h6>
+          <h6 className="mt-4 mb-3">ویژگی های محصول:</h6>
           <div className="row">
             {product.features.map((feature, index) => (
-              <div key={index} className="col-md-6 mb-2">
+              <div
+                key={index}
+                className="col-md-6 mb-2 d-flex align-items-center"
+              >
                 <i className="ti tabler-check text-success me-2"></i>
                 {feature}
               </div>
@@ -121,9 +129,9 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
           </div>
 
           <div className="mt-4 p-3 bg-light rounded">
-            <h6 className="mb-2">
+            <h6 className="mb-2 d-flex align-items-center">
               <i className="ti tabler-info-circle me-2"></i>
-              Care Instructions
+              دستورالعمل نگهداری
             </h6>
             <p className="mb-0">{product.specifications.care}</p>
           </div>
@@ -131,16 +139,14 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
 
         {/* Specs */}
         <div className="tab-pane fade" id="product-specs" role="tabpanel">
-          <h5 className="mb-3">Specifications</h5>
+          <h5 className="mb-3"> مشخصات</h5>
 
           <table className="table table-bordered">
             <tbody>
               {Object.entries(product.specifications).map(([key, value]) => (
                 <tr key={key}>
-                  <th className="text-capitalize" style={{ width: "35%" }}>
-                    {key.replace(/([A-Z])/g, " $1")}
-                  </th>
-                  <td>{String(value)}</td>
+                  <th style={{ width: "35%" }}>{SPEC_LABELS[key] ?? key}</th>
+                  <td>{formatSpecValue(value)}</td>
                 </tr>
               ))}
             </tbody>
@@ -150,13 +156,21 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
         {/* Reviews */}
         <div className="tab-pane fade" id="product-reviews" role="tabpanel">
           {reviews.length === 0 && (
-            <p className="text-muted">No reviews yet.</p>
+            <p className="text-muted">هنوز نظری برای این محصول ثبت نشده است.</p>
           )}
 
           {reviews.map((review) => (
             <div key={review.id} className="border rounded p-3 mb-3">
               <div className="d-flex flex-column flex-md-row justify-content-between mb-1">
-                <strong>{review.name}</strong>
+                <div className="d-flex align-items-center gap-2">
+                  <strong>{review.name}</strong>
+
+                  {review.verified && (
+                    <span className="badge bg-success-subtle text-success">
+                      خریدار تأییدشده
+                    </span>
+                  )}
+                </div>
 
                 <div className="text-warning">
                   {"★".repeat(review.rating)}
@@ -173,7 +187,7 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
 
         {/* Shipping */}
         <div className="tab-pane fade" id="product-shipping" role="tabpanel">
-          <h5 className="mb-4">Shipping & Returns Information</h5>
+          <h5 className="mb-4">اطلاعات ارسال و مرجوعی</h5>
 
           <div className="row">
             <div className="col-md-6 mb-4">
@@ -181,26 +195,27 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
                 <div className="card-body">
                   <h6 className="card-title">
                     <i className="ti tabler-truck text-primary me-2"></i>
-                    Shipping Information
+                    اطلاعات ارسال
                   </h6>
 
                   <ul className="list-unstyled">
                     <li className="mb-2">
                       <i className="ti tabler-circle-check text-success me-2"></i>
-                      Free shipping on orders over $
-                      {product.shippingInfo.freeOver}
+                      ارسال رایگان برای سفارش‌های بالای{" "}
+                      {formatPrice(product.shippingInfo.freeOver)}
                     </li>
                     <li className="mb-2">
                       <i className="ti tabler-clock text-info me-2"></i>
-                      Estimated delivery: {product.shippingInfo.delivery}
+                      زمان تقریبی تحویل:{" "}
+                      {toFarsiNumber(product.shippingInfo.delivery)}
                     </li>
                     <li className="mb-2">
                       <i className="ti tabler-map-pin text-warning me-2"></i>
-                      Ships to: Worldwide
+                      ارسال به: سراسر کشور
                     </li>
                     <li>
                       <i className="ti tabler-shield-check text-danger me-2"></i>
-                      Tracking provided for all orders
+                      کد رهگیری برای تمامی سفارش‌ها ارائه می‌شود
                     </li>
                   </ul>
                 </div>
@@ -212,25 +227,25 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
                 <div className="card-body">
                   <h6 className="card-title">
                     <i className="ti tabler-rotate-clockwise text-success me-2"></i>
-                    Return Policy
+                    شرایط بازگشت کالا
                   </h6>
 
                   <ul className="list-unstyled">
                     <li className="mb-2">
                       <i className="ti tabler-calendar text-primary me-2"></i>
-                      {product.shippingInfo.returns}
+                      {toFarsiNumber(product.shippingInfo.returns)}
                     </li>
                     <li className="mb-2">
                       <i className="ti tabler-credit-card text-info me-2"></i>
-                      Full refund on unworn items with tags
+                      بازگشت کامل وجه برای کالاهای استفاده‌نشده و دارای تگ
                     </li>
                     <li className="mb-2">
                       <i className="ti tabler-truck-return text-warning me-2"></i>
-                      Free returns for defective items
+                      بازگشت رایگان برای کالاهای معیوب
                     </li>
                     <li>
                       <i className="ti tabler-credit-card text-danger me-2"></i>
-                      Refund processed within 5–7 business days
+                      واریز وجه بین ۵ تا ۷ روز کاری انجام می‌شود
                     </li>
                   </ul>
                 </div>
@@ -240,8 +255,8 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
 
           <div className="alert alert-info">
             <i className="ti tabler-info-circle me-2"></i>
-            <strong>Note:</strong> Some items may have specific shipping
-            restrictions. Please check the product description for details.
+            <strong>توجه:</strong> برخی کالاها ممکن است محدودیت‌های خاصی در
+            ارسال داشته باشند. لطفاً توضیحات محصول را بررسی کنید.
           </div>
         </div>
       </div>
