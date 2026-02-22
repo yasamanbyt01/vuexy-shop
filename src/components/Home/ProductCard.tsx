@@ -23,12 +23,12 @@ const ProductCard = ({ id, title, image, price }: ProductCardProps) => {
       </div>
 
       <div className="card-body d-flex flex-column">
-        <h6 className="fw-semibold">{title}</h6>
+        <h6 className="fw-semibold text-truncate">{title}</h6>
         <span className="text-primary fw-bold mb-3">{formatPrice(price)}</span>
 
-        <button className="btn btn-sm btn-outline-primary mt-auto">
+        <span className="btn btn-sm btn-outline-primary mt-auto text-center">
           مشاهده محصول
-        </button>
+        </span>
       </div>
     </Link>
   );

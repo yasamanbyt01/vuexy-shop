@@ -1,0 +1,35 @@
+/* ================================
+   Prevent navbar from being overlapped by pagination/content
+================================ */
+
+.layout-navbar {
+  z-index: 1030 !important;
+}
+
+/*  ================================
+Horizontal scroll without visible scrollbar 
+ ================================ */
+
+.horizontal-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar - Chrome, Safari */
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar - Firefox */
+.horizontal-scroll {
+  scrollbar-width: none;
+}
+
+.product-scroll-item {
+  min-width: 220px;
+  scroll-snap-align: start;
+}
