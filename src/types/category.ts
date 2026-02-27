@@ -3,5 +3,5 @@ export interface Category {
   title: string;
   slug: string;
   productCount: number;
-  image?: string;
+  image: string;
 }

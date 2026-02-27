@@ -2,7 +2,7 @@ import HeroCarousel from "../../components/Home/HeroCarousel";
 import CategoryCard from "../../components/Home/CategoryCard";
 import ProductCard from "../../components/Home/ProductCard";
 import { Link } from "react-router-dom";
-import { homeCategories } from "../../mock/homeCategories";
+import { categories } from "../../mock/categories";
 import { products } from "../../mock/products";
 
 const Home = () => {
@@ -15,16 +15,17 @@ const Home = () => {
       {/* Categories preview */}
       <section className="py-8">
         <div className="container">
-          <h4 className="fw-semibold mb-4">Shop by category</h4>
+          <h4 className="fw-semibold mb-4">خرید براساس دسته بندی</h4>
+
           <div className="row g-4">
-            {homeCategories.map((cat) => (
-              <Link
-                to="/category"
-                key={cat.id}
-                className="col-6 col-md-3 text-decoration-none"
-              >
-                <CategoryCard title={cat.title} image={cat.image} />
-              </Link>
+            {categories.map((cat) => (
+              <div key={cat.slug} className="col-6 col-md-4 col-lg-2">
+                <CategoryCard
+                  title={cat.title}
+                  image={cat.image}
+                  slug={cat.slug}
+                />
+              </div>
             ))}
           </div>
         </div>

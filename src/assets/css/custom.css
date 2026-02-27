@@ -33,3 +33,46 @@ Horizontal scroll without visible scrollbar
   min-width: 220px;
   scroll-snap-align: start;
 }
+
+/* category card on home page*/
+.category-card--compact {
+  height: 180px; /* 👈 اینجا بازی کن: 160–200 عالیه */
+}
+
+.category-card--compact img {
+  height: 100%;
+  width: 100%;
+}
+
+.category-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0.55)
+  );
+  z-index: 0;
+}
+
+.category-card .card-img-overlay {
+  z-index: 1;
+}
+
+.category-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 576px) {
+  .category-card--compact {
+    height: 150px;
+  }
+}

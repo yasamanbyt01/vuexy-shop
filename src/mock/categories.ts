@@ -10,6 +10,8 @@ const categoryImages: Record<string, string> = {
   خانه: "/assets/img/categories/home.jpg",
 };
 
+const DEFAULT_CATEGORY_IMAGE = "/assets/img/categories/default.jpg";
+
 export const categories: Category[] = Array.from(
   new Map(
     products.map((product) => [
@@ -20,7 +22,7 @@ export const categories: Category[] = Array.from(
         slug: product.category.replace(/\s+/g, "-").toLowerCase(),
         productCount: products.filter((p) => p.category === product.category)
           .length,
-        image: categoryImages[product.category],
+        image: categoryImages[product.category] ?? DEFAULT_CATEGORY_IMAGE,
       },
     ]),
   ).values(),
