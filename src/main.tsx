@@ -23,6 +23,7 @@ import "./assets/vendor/css/pages/page-auth.css";
 // 5. Your custom CSS (loaded last to override vendor styles)
 import "./assets/css/typography.css";
 import "./assets/css/demo.css";
+import "./assets/css/custom.css";
 import "./assets/css/mega-dropdown.css";
 import "./assets/css/form-validation.css";
 

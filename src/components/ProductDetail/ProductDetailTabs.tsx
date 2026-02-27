@@ -2,7 +2,7 @@ import React from "react";
 import type { Product } from "../../types/products";
 import type { Review } from "../../types/reviews";
 import { SPEC_LABELS } from "../../constants/specificationLabels";
-import { formatSpecValue } from "../../utils/SpecValue";
+import { formatSpecValue } from "../../utils/specValue";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 

@@ -8,7 +8,7 @@ import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs"
 import { SPEC_LABELS } from "../../constants/specificationLabels";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
-import { formatSpecValue } from "../../utils/SpecValue";
+import { formatSpecValue } from "../../utils/specValue";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
