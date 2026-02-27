@@ -8,7 +8,10 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ title, image, slug }: CategoryCardProps) => {
   return (
-    <Link to={`/categories/${slug}`} className="text-decoration-none h-100">
+    <Link
+      to={`/products?category=${slug}`}
+      className="text-decoration-none h-100"
+    >
       <div className="card text-bg-dark border-0 category-card category-card--compact overflow-hidden">
         <img src={image} alt={title} className="card-img object-fit-cover" />
 
