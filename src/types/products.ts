@@ -24,6 +24,8 @@ export interface Product {
   inStock: boolean;
   stockCount: number;
 
+  seller: string;
+
   tags: string[];
   specifications: Record<string, string | number>;
 

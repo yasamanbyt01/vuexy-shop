@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { CartItem } from "../types/Cart";
+import type { CartItem } from "../types/cart";
 
 interface CartContextType {
   items: CartItem[];
@@ -18,30 +18,14 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Google - Google Home - White",
-      price: 299,
-      discountedPrice: 359,
-      quantity: 1,
-      image: "/assets/img/products/1.png",
-      inStock: true,
-      seller: "Google",
-      rating: 4,
-    },
-    {
-      id: 2,
-      name: "Apple iPhone 11 (64GB, Black)",
-      price: 299,
-      discountedPrice: 359,
-      quantity: 1,
-      image: "/assets/img/products/2.png",
-      inStock: true,
-      seller: "Apple",
-      rating: 4,
-    },
-  ]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(items));
+  }, [items]);
 
   const addItem = (item: CartItem) => {
     setItems((prev) => {

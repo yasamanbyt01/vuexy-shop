@@ -1,26 +1,32 @@
 import React from "react";
 import { useCart } from "../../context/CartContext";
-import type { Address } from "../../types/Cart";
+import type { Address } from "../../types/cart";
+import { formatPrice } from "../../utils/price";
 
 interface ConfirmationStepProps {
   selectedAddress?: Address;
+  deliveryPrice: number;
+  finalPrice: number;
+  selectedDeliveryOption?: any;
+  freeShipping: boolean;
   onComplete: () => void;
 }
 
 const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   selectedAddress,
+  deliveryPrice,
+  finalPrice,
+  selectedDeliveryOption,
+  freeShipping,
   onComplete,
 }) => {
   const { items, clearCart, getTotalPrice } = useCart();
   const orderNumber = "1536548131";
-  const orderDate = new Date().toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  const orderDate = new Date().toLocaleString("fa-IR", {
+    dateStyle: "long",
+    timeStyle: "short",
   });
-
+  const totalPrice = getTotalPrice();
   const handleComplete = () => {
     clearCart();
     onComplete();
@@ -30,16 +36,16 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     <div id="checkout-confirmation" className="content">
       <div className="row mb-6">
         <div className="col-12 col-lg-8 mx-auto text-center mb-2">
-          <h4>Thank You! 😇</h4>
+          <h4>متشکریم! 😇</h4>
           <p>
-            Your order{" "}
+            سفارش شما با شماره{" "}
             <a href="#" className="text-heading fw-medium">
               #{orderNumber}
             </a>{" "}
-            has been placed!
+            با موفقیت ثبت شد!
           </p>
           <p>
-            We sent an email to
+            یک ایمیل تأیید سفارش به
             <a
               href="mailto:john.doe@example.com"
               className="text-heading fw-medium"
@@ -47,14 +53,13 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               {" "}
               john.doe@example.com
             </a>{" "}
-            with your order confirmation and receipt. If the email hasn't
-            arrived within two minutes, please check your spam folder to see if
-            the email was routed there.
+            حاوی تأیید سفارش و رسید خرید برای شما ارسال کردیم. اگر ایمیل طی دو
+            دقیقه دریافت نشد، لطفاً پوشه Spam خود را نیز بررسی کنید.
           </p>
           <p>
             <span>
               <i className="icon-base ti tabler-clock me-1 text-heading"></i>{" "}
-              Time placed:&nbsp;
+              زمان ثبت سفارش:&nbsp;
             </span>
             {orderDate}
           </p>
@@ -64,7 +69,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
           <ul className="list-group list-group-horizontal-md">
             <li className="list-group-item flex-fill p-6 text-body">
               <h6 className="d-flex align-items-center gap-2">
-                <i className="icon-base ti tabler-map-pin"></i> Shipping
+                <i className="icon-base ti tabler-map-pin"></i> آدرس ارسال
               </h6>
               <address className="mb-0">
                 {selectedAddress ? (
@@ -93,8 +98,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
               <h6 className="d-flex align-items-center gap-2">
-                <i className="icon-base ti tabler-credit-card"></i> Billing
-                Address
+                <i className="icon-base ti tabler-credit-card"></i> آدرس
+                صورتحساب
               </h6>
               <address className="mb-0">
                 {selectedAddress ? (
@@ -114,21 +119,30 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     {selectedAddress.country}
                   </>
                 ) : (
-                  "No address selected"
+                  "آدرسی انتخاب نشده است"
                 )}
               </address>
               <p className="mb-0 mt-4">
-                {selectedAddress?.phone || "No phone provided"}
+                {selectedAddress?.phone || "شماره تماس وارد نشده است"}
               </p>
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
               <h6 className="d-flex align-items-center gap-2">
-                <i className="icon-base ti tabler-ship"></i> Shipping Method
+                <i className="icon-base ti tabler-ship"></i> روش ارسال
               </h6>
-              <p className="fw-medium mb-4">Preferred Method:</p>
-              Standard Delivery
-              <br />
-              (Normally 3-4 business days)
+              <p className="fw-medium mb-4">روش انتخابی:</p>
+              {freeShipping ? (
+                <>
+                  ارسال رایگان
+                  <br />
+                  (به دلیل عبور از سقف خرید)
+                </>
+              ) : (
+                <>
+                  {selectedDeliveryOption?.title}
+                  <br />({selectedDeliveryOption?.time})
+                </>
+              )}
             </li>
           </ul>
         </div>
@@ -142,7 +156,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <li key={item.id} className="list-group-item p-6">
                 <div className="d-flex gap-4">
                   <div className="flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-px-80" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-px-80 rounded-3 shadow-sm"
+                    />
                   </div>
                   <div className="flex-grow-1">
                     <div className="row">
@@ -151,22 +169,24 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                           <h6 className="mb-2">{item.name}</h6>
                         </a>
                         <div className="text-body mb-2 d-flex flex-wrap">
-                          <span className="me-1">Sold by:</span>
+                          <span className="me-1">فروشنده:</span>
                           <a href="#" className="me-3">
                             {item.seller}
                           </a>
                           <span className="badge bg-label-success">
-                            In Stock
+                            موجود در انبار
                           </span>
                         </div>
                       </div>
                       <div className="col-md-4">
                         <div className="text-md-end">
                           <div className="my-2 my-lg-6">
-                            <span className="text-primary">${item.price}/</span>
+                            <span className="text-primary">
+                              {formatPrice(item.price)}/
+                            </span>
                             {item.discountedPrice && (
                               <s className="text-body-secondary">
-                                ${item.discountedPrice}
+                                {formatPrice(item.discountedPrice)}
                               </s>
                             )}
                           </div>
@@ -183,21 +203,25 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         <div className="col-xl-3">
           <div className="border rounded p-6">
             {/* Price Details */}
-            <h6>Price Details</h6>
+            <h6>جزئیات قیمت</h6>
             <dl className="row mb-0 text-heading">
-              <dt className="col-6 fw-normal">Order Total</dt>
-              <dd className="col-6 text-end">${getTotalPrice().toFixed(2)}</dd>
+              <dt className="col-6 fw-normal">مجموع سفارش</dt>
+              <dd className="col-6 text-end">{formatPrice(totalPrice)}</dd>
 
-              <dt className="col-sm-6 text-heading fw-normal">Charges</dt>
-              <dd className="col-sm-6 text-end text-body-secondary">
-                $5.00<span className="badge bg-label-success ms-2">FREE</span>
+              <dt className="col-sm-6 text-heading fw-normal">هزینه ارسال</dt>
+              <dd className="col-sm-6 text-end">
+                {freeShipping ? (
+                  <span className="badge bg-label-success">رایگان</span>
+                ) : (
+                  formatPrice(deliveryPrice)
+                )}
               </dd>
             </dl>
             <hr className="mx-n6 mb-6" />
             <dl className="row mb-0">
-              <dt className="col-6 text-heading">Total</dt>
+              <dt className="col-6 text-heading">مبلغ نهایی</dt>
               <dd className="col-6 fw-medium text-end text-heading mb-0">
-                ${getTotalPrice().toFixed(2)}
+                {formatPrice(finalPrice)}
               </dd>
             </dl>
           </div>
@@ -207,7 +231,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               className="btn btn-primary"
               onClick={handleComplete}
             >
-              Continue Shopping
+              ادامه خرید
             </button>
           </div>
         </div>

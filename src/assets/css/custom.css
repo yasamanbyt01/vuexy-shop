@@ -76,3 +76,13 @@ Horizontal scroll without visible scrollbar
     height: 150px;
   }
 }
+
+.shipping-disabled .custom-option {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.shipping-disabled .custom-option.checked {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+}

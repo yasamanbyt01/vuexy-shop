@@ -1,24 +1,32 @@
 import React, { useState } from "react";
-import type { Address } from "../../types/Cart";
+import type { Address } from "../../types/cart";
+import { useCart } from "../../context/CartContext";
+import { formatPrice } from "../../utils/price";
 
 interface PaymentStepProps {
   selectedAddress?: Address;
+  deliveryPrice: number;
+  finalPrice: number;
   onNext: () => void;
   onPrev: () => void;
 }
 
 const PaymentStep: React.FC<PaymentStepProps> = ({
   selectedAddress,
+  deliveryPrice,
+  finalPrice,
   onNext,
   onPrev,
 }) => {
   const [activePaymentTab, setActivePaymentTab] = useState<string>("cc");
   const [saveCard, setSaveCard] = useState<boolean>(false);
+  const { getTotalPrice } = useCart();
+  const totalPrice = getTotalPrice();
 
   const paymentTabs = [
-    { id: "cc", label: "Card" },
-    { id: "cod", label: "Cash On Delivery" },
-    { id: "gift-card", label: "Gift Card" },
+    { id: "cc", label: "کارت بانکی" },
+    { id: "cod", label: "پرداخت در محل" },
+    { id: "gift-card", label: "کارت هدیه" },
   ];
 
   return (
@@ -36,15 +44,15 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 <i className="icon-base ti tabler-percentage"></i>
               </div>
               <div className="flex-grow-1">
-                <h5 className="alert-heading mb-1">Available Offers</h5>
+                <h5 className="alert-heading mb-1">پیشنهادهای موجود</h5>
                 <ul className="list-unstyled mb-0">
                   <li>
-                    - 10% Instant Discount on Bank of America Corp Bank Debit
-                    and Credit cards
+                    - ۱۰٪ تخفیف فوری برای کارت‌های بانکی دبیت و کردیت Bank of
+                    America
                   </li>
                   <li>
-                    - 25% Cashback Voucher of up to $60 on first ever PayPal
-                    transaction. TCA
+                    - ۲۵٪ کش‌بک تا سقف ۶۰ دلار برای اولین تراکنش PayPal (طبق
+                    شرایط و ضوابط)
                   </li>
                 </ul>
               </div>
@@ -91,7 +99,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 <div className="row g-6">
                   <div className="col-12">
                     <label className="form-label w-100" htmlFor="paymentCard">
-                      Card Number
+                      شماره کارت
                     </label>
                     <div className="input-group input-group-merge">
                       <input
@@ -112,7 +120,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                   </div>
                   <div className="col-12 col-md-4">
                     <label className="form-label" htmlFor="paymentCardName">
-                      Name
+                      نام صاحب کارت
                     </label>
                     <input
                       type="text"
@@ -126,7 +134,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                       className="form-label"
                       htmlFor="paymentCardExpiryDate"
                     >
-                      Exp. Date
+                      تاریخ انقضا
                     </label>
                     <input
                       type="text"
@@ -137,7 +145,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                   </div>
                   <div className="col-6 col-md-4">
                     <label className="form-label" htmlFor="paymentCardCvv">
-                      CVV Code
+                      کد CVV
                     </label>
                     <div className="input-group input-group-merge">
                       <input
@@ -173,7 +181,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                         htmlFor="cardFutureBilling"
                         className="form-check-label"
                       >
-                        Save card for future billing?
+                        ذخیره کارت برای پرداخت‌های بعدی؟
                       </label>
                     </div>
                   </div>
@@ -187,9 +195,8 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 }`}
               >
                 <p>
-                  Cash on Delivery is a type of payment method where the
-                  recipient make payment for the order at the time of delivery
-                  rather than in advance.
+                  پرداخت در محل روشی است که در آن مشتری مبلغ سفارش را هنگام
+                  تحویل کالا پرداخت می‌کند، نه قبل از ارسال.
                 </p>
               </div>
 
@@ -199,28 +206,28 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                   activePaymentTab === "gift-card" ? "show active" : ""
                 }`}
               >
-                <h6>Enter Gift Card Details</h6>
+                <h6>اطلاعات کارت هدیه را وارد کنید</h6>
                 <div className="row g-5">
                   <div className="col-12">
                     <label htmlFor="giftCardNumber" className="form-label">
-                      Gift card number
+                      شماره کارت هدیه
                     </label>
                     <input
                       type="number"
                       className="form-control"
                       id="giftCardNumber"
-                      placeholder="Gift card number"
+                      placeholder=" شماره کارت هدیه"
                     />
                   </div>
                   <div className="col-12">
                     <label htmlFor="giftCardPin" className="form-label">
-                      Gift card pin
+                      پین کارت هدیه
                     </label>
                     <input
                       type="number"
                       className="form-control"
                       id="giftCardPin"
-                      placeholder="Gift card pin"
+                      placeholder="پین کارت هدیه"
                     />
                   </div>
                 </div>
@@ -233,25 +240,28 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
         <div className="col-xl-4">
           <div className="border rounded p-6">
             {/* Price Details */}
-            <h6>Price Details</h6>
+            <h6>جزئیات قیمت</h6>
             <dl className="row text-heading">
-              <dt className="col-6 fw-normal">Order Total</dt>
-              <dd className="col-6 text-end">$1198.00</dd>
+              <dt className="col-6 fw-normal">مجموع سفارش</dt>
+              <dd className="col-6 text-end">{formatPrice(totalPrice)}</dd>
 
-              <dt className="col-6 fw-normal">Delivery Charges</dt>
+              <dt className="col-6 fw-normal">هزینه ارسال</dt>
               <dd className="col-6 text-end">
-                <s className="text-body-secondary">$5.00</s>{" "}
-                <span className="badge bg-label-success ms-1">FREE</span>
+                {deliveryPrice === 0 ? (
+                  <span className="badge bg-label-success">رایگان</span>
+                ) : (
+                  formatPrice(deliveryPrice)
+                )}
               </dd>
             </dl>
             <hr className="mx-n6 my-6" />
             <dl className="row">
-              <dt className="col-6 text-heading mb-3">Total</dt>
+              <dt className="col-6 text-heading mb-3">مبلغ نهایی</dt>
               <dd className="col-6 fw-medium text-end text-heading mb-0">
-                $1198.00
+                {formatPrice(finalPrice)}
               </dd>
 
-              <dt className="col-6 fw-medium text-heading">Deliver to:</dt>
+              <dt className="col-6 fw-medium text-heading">ارسال به:</dt>
               <dd className="col-6 fw-medium text-end mb-0">
                 <span
                   className={`badge ${
@@ -260,7 +270,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                       : "bg-label-success"
                   }`}
                 >
-                  {selectedAddress?.type === "home" ? "Home" : "Office"}
+                  {selectedAddress?.type === "home" ? "خانه" : "محل کار"}
                 </span>
               </dd>
             </dl>
@@ -269,7 +279,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               <address>
                 <span className="text-heading fw-medium">
                   {selectedAddress.name}
-                  {selectedAddress.isDefault && " (Default)"},
+                  {selectedAddress.isDefault && " (پیش‌فرض)"},
                 </span>
                 <br />
                 {selectedAddress.addressLine1}
@@ -283,7 +293,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 {selectedAddress.city}, {selectedAddress.state},{" "}
                 {selectedAddress.zipCode}
                 <br />
-                Mobile : {selectedAddress.phone}
+                موبایل : {selectedAddress.phone}
               </address>
             )}
           </div>
@@ -293,14 +303,14 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               className="btn btn-label-secondary flex-fill"
               onClick={onPrev}
             >
-              Back to Address
+              بازگشت به آدرس
             </button>
             <button
               type="button"
               className="btn btn-primary flex-fill"
               onClick={onNext}
             >
-              Review Order
+              پرداخت
             </button>
           </div>
         </div>

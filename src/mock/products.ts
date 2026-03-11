@@ -23,6 +23,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/cotton-tshirt.jpg"],
     inStock: true,
     stockCount: 40,
+    seller: "پوشاک آریا",
     tags: ["تی‌شرت", "نخی", "روزمره"],
     specifications: { material: "پنبه", fit: "اسلیم" },
     shippingInfo: {
@@ -49,6 +50,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/running-sneakers.jpg"],
     inStock: true,
     stockCount: 28,
+    seller: "فیت‌گیر",
     tags: ["دویدن", "ورزشی"],
     specifications: { sole: "لاستیکی", weight: "280g" },
     shippingInfo: {
@@ -74,6 +76,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/leather-bag.jpg"],
     inStock: true,
     stockCount: 18,
+    seller: "سفرکالا",
     tags: ["کوله‌پشتی", "چرمی"],
     specifications: { material: "چرم", capacity: "20L" },
     shippingInfo: {
@@ -99,6 +102,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/denim-jacket.jpg"],
     inStock: true,
     stockCount: 22,
+    seller: "پوشاک آریا",
     tags: ["کاپشن", "جین"],
     specifications: { material: "جین", fit: "معمولی" },
     shippingInfo: {
@@ -123,6 +127,7 @@ export const products: Product[] = [
     sizes: [],
     images: ["/assets/img/products/wireless-headphones.jpg"],
     inStock: true,
+    seller: "تک‌زون",
     stockCount: 35,
     tags: ["صوتی", "بی‌سیم"],
     specifications: { battery: "30h", range: "10m" },
@@ -149,6 +154,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/smart-watch.jpg"],
     inStock: true,
     stockCount: 20,
+    seller: "تک‌زون",
     tags: ["ساعت", "هوشمند"],
     specifications: { display: "AMOLED", battery: "48h" },
     shippingInfo: {
@@ -174,6 +180,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/leather-wallet.jpg"],
     inStock: true,
     stockCount: 50,
+    seller: "استایل‌پلاس",
     tags: ["کیف پول", "چرمی"],
     specifications: { slots: 6 },
     shippingInfo: {
@@ -199,6 +206,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/gym-bag.jpg"],
     inStock: true,
     stockCount: 33,
+    seller: "سفرکالا",
     tags: ["باشگاه", "ورزشی"],
     specifications: { capacity: "35L" },
     shippingInfo: {
@@ -224,6 +232,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/polo-shirt.jpg"],
     inStock: true,
     stockCount: 45,
+    seller: "پوشاک آریا",
     tags: ["پولوشرت", "مردانه"],
     specifications: { material: "ترکیب پنبه" },
     shippingInfo: {
@@ -249,6 +258,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/sunglasses.jpg"],
     inStock: true,
     stockCount: 60,
+    seller: "استایل‌پلاس",
     tags: ["عینک آفتابی"],
     specifications: { lens: "پلاریزه" },
     shippingInfo: {
@@ -274,6 +284,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/office-chair.jpg"],
     inStock: true,
     stockCount: 15,
+    seller: "خانه‌مدرن",
     tags: ["اداری", "صندلی"],
     specifications: { maxWeight: "120kg" },
     shippingInfo: {
@@ -299,6 +310,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/wooden-lamp.jpg"],
     inStock: true,
     stockCount: 27,
+    seller: "خانه‌مدرن",
     tags: ["چراغ", "میز"],
     specifications: { power: "8W" },
     shippingInfo: {
@@ -324,6 +336,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/gaming-mouse.jpg"],
     inStock: true,
     stockCount: 70,
+    seller: "تک‌زون",
     tags: ["گیمینگ", "ماوس"],
     specifications: { dpi: 16000 },
     shippingInfo: {
@@ -349,6 +362,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/mechanical-keyboard.jpg"],
     inStock: true,
     stockCount: 32,
+    seller: "تک‌زون",
     tags: ["کیبورد", "گیمینگ"],
     specifications: { switch: "آبی" },
     shippingInfo: {
@@ -374,6 +388,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/suitcase.jpg"],
     inStock: true,
     stockCount: 12,
+    seller: "سفرکالا",
     tags: ["سفر", "چمدان"],
     specifications: { weight: "4.5kg" },
     shippingInfo: {
@@ -399,6 +414,7 @@ export const products: Product[] = [
     images: ["/assets/img/products/water-bottle.jpg"],
     inStock: true,
     stockCount: 90,
+    seller: "استایل‌پلاس",
     tags: ["ورزشی", "قمقمه"],
     specifications: { capacity: "750ml" },
     shippingInfo: {

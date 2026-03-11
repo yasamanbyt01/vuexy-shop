@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import type { Address } from "../../types/Cart";
+import React, { useState, useEffect } from "react";
+import type { Address } from "../../types/cart";
+import { useCart } from "../../context/CartContext";
+import { formatPrice } from "../../utils/price";
+import { toFarsiNumber } from "../../utils/numbers";
 
 interface AddressStepProps {
   addresses: Address[];
@@ -11,6 +14,10 @@ interface AddressStepProps {
   onNext: () => void;
   onPrev: () => void;
   onShowAddressModal: () => void;
+  setDeliveryPrice: (price: number) => void;
+  setFinalPrice: (price: number) => void;
+  setSelectedDeliveryOption: (option: any) => void;
+  setFreeShipping: (isFree: boolean) => void;
 }
 
 const AddressStep: React.FC<AddressStepProps> = ({
@@ -23,32 +30,48 @@ const AddressStep: React.FC<AddressStepProps> = ({
   onNext,
   onPrev,
   onShowAddressModal,
+  setDeliveryPrice,
+  setFinalPrice,
+  setSelectedDeliveryOption,
+  setFreeShipping,
 }) => {
   const [deliverySpeed, setDeliverySpeed] = useState<string>("standard");
+  const { items, getTotalPrice } = useCart();
+  const totalPrice = getTotalPrice();
+
+  const FREE_SHIPPING_THRESHOLD = 4000000 / 60000;
+
+  const freeShipping = totalPrice >= FREE_SHIPPING_THRESHOLD;
 
   const deliveryOptions = [
     {
       id: "standard",
-      title: "Standard",
-      price: "FREE",
-      time: "Get your product in 1 Week.",
+      title: "استاندارد",
+      price: 2,
+      time: "تحویل محصول طی ۱ هفته",
       icon: "user",
     },
     {
       id: "express",
-      title: "Express",
-      price: "$10",
-      time: "Get your product in 3-4 days.",
+      title: "سریع",
+      price: 3,
+      time: "تحویل محصول طی ۳ تا ۴ روز",
       icon: "star",
     },
-    {
-      id: "overnight",
-      title: "Overnight",
-      price: "$15",
-      time: "Get your product in 0-1 days.",
-      icon: "crown",
-    },
   ];
+
+  const selectedDelivery = deliveryOptions.find((o) => o.id === deliverySpeed);
+
+  const deliveryPrice = freeShipping ? 0 : selectedDelivery?.price || 0;
+
+  const finalPrice = totalPrice + deliveryPrice;
+
+  useEffect(() => {
+    setDeliveryPrice(deliveryPrice);
+    setFinalPrice(finalPrice);
+    setSelectedDeliveryOption(selectedDelivery);
+    setFreeShipping(freeShipping);
+  }, [deliveryPrice, finalPrice, selectedDelivery, freeShipping]);
 
   const getAddressDisplay = (address: Address) => {
     return `${address.addressLine1}${
@@ -63,7 +86,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
         <div className="col-xl-8 mb-6 mb-xl-0">
           {/* Select address */}
           <p className="fw-medium text-heading">
-            Select your preferable address
+            آدرس مورد نظر خود را انتخاب کنید
           </p>
           <div className="row mb-6 g-6">
             {addresses.map((address) => (
@@ -84,7 +107,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
                     <span className="custom-option-header mb-2">
                       <span className="fw-medium text-heading mb-0">
                         {address.name}
-                        {address.isDefault && " (Default)"}
+                        {address.isDefault && " (پیش‌فرض)"}
                       </span>
                       <span
                         className={`badge ${
@@ -93,15 +116,15 @@ const AddressStep: React.FC<AddressStepProps> = ({
                             : "bg-label-success"
                         }`}
                       >
-                        {address.type === "home" ? "Home" : "Office"}
+                        {address.type === "home" ? "خانه" : "محل کار"}
                       </span>
                     </span>
                     <span className="custom-option-body">
                       <small>
                         {getAddressDisplay(address)}
                         <br />
-                        Mobile : {address.phone} Card / Cash on delivery
-                        available
+                        موبایل : {address.phone} پرداخت با کارت یا پرداخت در محل
+                        امکان‌پذیر است
                       </small>
                       <span className="my-3 border-bottom d-block"></span>
                       <span className="d-flex">
@@ -113,7 +136,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
                             onEditAddress(address.id);
                           }}
                         >
-                          Edit
+                          ویرایش
                         </button>
                         <button
                           type="button"
@@ -126,7 +149,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
                           }}
                           disabled={address.isDefault}
                         >
-                          {address.isDefault ? "Default" : "Set as Default"}
+                          {address.isDefault ? "پیش‌فرض" : "انتخاب"}
                         </button>
                         <button
                           type="button"
@@ -136,11 +159,11 @@ const AddressStep: React.FC<AddressStepProps> = ({
                             if (addresses.length > 1) {
                               onRemoveAddress(address.id);
                             } else {
-                              alert("You must have at least one address");
+                              alert("باید حداقل یک آدرس داشته باشید");
                             }
                           }}
                         >
-                          Remove
+                          حذف
                         </button>
                       </span>
                     </span>
@@ -155,17 +178,27 @@ const AddressStep: React.FC<AddressStepProps> = ({
             className="btn btn-label-primary mb-6"
             onClick={onShowAddressModal}
           >
-            Add new address
+            افزودن آدرس جدید
           </button>
 
           {/* Choose Delivery */}
-          <p className="fw-medium text-heading">Choose Delivery Speed</p>
-          <div className="row mt-2">
+          <p className="fw-medium text-heading">انتخاب روش ارسال</p>
+          {freeShipping && (
+            <div className="alert alert-success">
+              هزینه ی ارسال برای خرید های بالای ۴,۰۰۰,۰۰۰ تومان رایگان است
+            </div>
+          )}
+
+          <div
+            className={`row mt-2 ${freeShipping ? "shipping-disabled" : ""}`}
+          >
             {deliveryOptions.map((option) => (
               <div key={option.id} className="col-md mb-md-0 mb-2">
                 <div
                   className={`form-check custom-option custom-option-icon position-relative ${
-                    deliverySpeed === option.id ? "checked" : ""
+                    !freeShipping && deliverySpeed === option.id
+                      ? "checked"
+                      : ""
                   }`}
                 >
                   <label className="form-check-label custom-option-content">
@@ -176,14 +209,8 @@ const AddressStep: React.FC<AddressStepProps> = ({
                       <span className="custom-option-title mb-2">
                         {option.title}
                       </span>
-                      <span
-                        className={`badge ${
-                          option.price === "FREE"
-                            ? "bg-label-success"
-                            : "bg-label-secondary"
-                        } btn-pinned`}
-                      >
-                        {option.price}
+                      <span className=" d-block my-2">
+                        {formatPrice(option.price)}
                       </span>
                       <small>{option.time}</small>
                     </span>
@@ -191,7 +218,8 @@ const AddressStep: React.FC<AddressStepProps> = ({
                       type="radio"
                       name="deliverySpeed"
                       className="form-check-input"
-                      checked={deliverySpeed === option.id}
+                      disabled={freeShipping}
+                      checked={!freeShipping && deliverySpeed === option.id}
                       onChange={() => setDeliverySpeed(option.id)}
                     />
                   </label>
@@ -205,63 +233,57 @@ const AddressStep: React.FC<AddressStepProps> = ({
         <div className="col-xl-4">
           <div className="border rounded p-6 mb-4">
             {/* Estimated Delivery */}
-            <h6>Estimated Delivery Date</h6>
+            <h6>خلاصه سفارش</h6>
+
             <ul className="list-unstyled">
-              <li className="d-flex gap-4 align-items-center py-2 mb-4">
-                <div className="flex-shrink-0">
-                  <img
-                    src="/assets/img/products/1.png"
-                    alt="google home"
-                    className="w-px-50"
-                  />
-                </div>
-                <div className="flex-grow-1">
-                  <p className="mb-0">
-                    <a className="text-body" href="#">
-                      Google - Google Home - White
-                    </a>
-                  </p>
-                  <p className="fw-medium mb-0">18th Nov 2021</p>
-                </div>
-              </li>
-              <li className="d-flex gap-4 align-items-center py-2">
-                <div className="flex-shrink-0">
-                  <img
-                    src="/assets/img/products/2.png"
-                    alt="google home"
-                    className="w-px-50"
-                  />
-                </div>
-                <div className="flex-grow-1">
-                  <p className="mb-0">
-                    <a className="text-body" href="#">
-                      Apple iPhone 11 (64GB, Black)
-                    </a>
-                  </p>
-                  <p className="fw-medium mb-0">20th Nov 2021</p>
-                </div>
-              </li>
+              {items.map((item) => (
+                <li
+                  key={item.id}
+                  className="d-flex gap-4 align-items-center py-2 mb-3"
+                >
+                  <div className="flex-shrink-0">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-px-50 rounded-2"
+                    />
+                  </div>
+
+                  <div className="flex-grow-1">
+                    <p className="mb-0 fw-medium">{item.name}</p>
+
+                    <small className="text-muted d-block mt-2">
+                      تعداد: {toFarsiNumber(item.quantity)}
+                    </small>
+                  </div>
+
+                  <div className="text-end">
+                    <small className="fw-medium">
+                      {formatPrice(item.price * item.quantity)}
+                    </small>
+                  </div>
+                </li>
+              ))}
             </ul>
 
             <hr className="mx-n6 my-6" />
 
             {/* Price Details */}
-            <h6>Price Details</h6>
+            <h6>جزئیات قیمت</h6>
             <dl className="row mb-0 text-heading">
-              <dt className="col-6 fw-normal">Order Total</dt>
-              <dd className="col-6 text-end">$1198.00</dd>
+              <dt className="col-6 fw-normal">مجموع سفارش</dt>
+              <dd className="col-6 text-end">{formatPrice(totalPrice)}</dd>
 
-              <dt className="col-6 fw-normal">Delivery Charges</dt>
+              <dt className="col-6 fw-normal">هزینه ارسال</dt>
               <dd className="col-6 text-end">
-                <s className="text-body-secondary">$5.00</s>{" "}
-                <span className="badge bg-label-success ms-2">FREE</span>
+                {freeShipping ? "رایگان" : formatPrice(deliveryPrice)}
               </dd>
             </dl>
             <hr className="mx-n6 my-6" />
             <dl className="row mb-0">
-              <dt className="col-6 text-heading">Total</dt>
+              <dt className="col-6 text-heading">مبلغ نهایی</dt>
               <dd className="col-6 fw-medium text-end text-heading mb-0">
-                $1198.00
+                {formatPrice(finalPrice)}
               </dd>
             </dl>
           </div>
@@ -271,14 +293,14 @@ const AddressStep: React.FC<AddressStepProps> = ({
               className="btn btn-label-secondary flex-fill"
               onClick={onPrev}
             >
-              Back to Cart
+              بازگشت به سبد خرید
             </button>
             <button
               type="button"
               className="btn btn-primary flex-fill"
               onClick={onNext}
             >
-              Continue to Payment
+              ادامه به پرداخت
             </button>
           </div>
         </div>

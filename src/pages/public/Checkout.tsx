@@ -5,40 +5,47 @@ import AddressStep from "../../components/Checkout/AddressStep";
 import PaymentStep from "../../components/Checkout/PaymentStep";
 import ConfirmationStep from "../../components/Checkout/ConfirmationStep";
 import AddAddressModal from "../../components/Checkout/AddAddressModal";
-import type { Address } from "../../types/Cart";
+import type { Address } from "../../types/cart";
+import { mockAddresses } from "../../mock/addresses";
+import { useCart } from "../../context/CartContext";
+import { scrollTop } from "../../utils/scroll";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
-  const [addresses, setAddresses] = useState<Address[]>([
-    {
-      id: 1,
-      name: "John Doe (Default)",
-      type: "home",
-      addressLine1: "4135 Parkway Street",
-      city: "Los Angeles",
-      state: "CA",
-      zipCode: "90017",
-      country: "United States",
-      phone: "+1 234 567 8900",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      name: "ACME Inc.",
-      type: "office",
-      addressLine1: "87 Hoffman Avenue",
-      city: "New York",
-      state: "NY",
-      zipCode: "10016",
-      country: "United States",
-      phone: "+1 234 567 8901",
-      isDefault: false,
-    },
-  ]);
+  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
   const [selectedAddressId, setSelectedAddressId] = useState<
     number | undefined
   >(1);
+  const { items } = useCart();
+  const [deliveryPrice, setDeliveryPrice] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
+  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState<any>();
+  const [freeShipping, setFreeShipping] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 50);
+    }
+  }, [items.length]);
+
+  const goNext = () => {
+    stepperRef.current?.next();
+    scrollTop();
+  };
+
+  const goPrev = () => {
+    stepperRef.current?.previous();
+    scrollTop();
+  };
 
   useEffect(() => {
     const element = document.querySelector("#wizard-checkout");
@@ -96,6 +103,19 @@ const Checkout = () => {
     setSelectedAddressId(id);
   };
 
+  if (items.length === 0) {
+    return (
+      <section className="section-py bg-body">
+        <div className="container">
+          <div className="d-flex flex-column justify-content-center align-items-center text-center py-5">
+            <i className="ti tabler-shopping-cart-off fs-1 mb-3"></i>
+            <h4 className="mb-2">سبد خرید شما خالی است</h4>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       <section className="section-py bg-body">
@@ -114,7 +134,7 @@ const Checkout = () => {
                       <use xlinkHref="/assets/svg/icons/wizard-checkout-cart.svg#wizardCart" />
                     </svg>
                   </span>
-                  <span className="bs-stepper-label">Cart</span>
+                  <span className="bs-stepper-label">سبد خرید</span>
                 </button>
               </div>
 
@@ -129,7 +149,7 @@ const Checkout = () => {
                       <use xlinkHref="/assets/svg/icons/wizard-checkout-address.svg#wizardCheckoutAddress" />
                     </svg>
                   </span>
-                  <span className="bs-stepper-label">Address</span>
+                  <span className="bs-stepper-label">آدرس</span>
                 </button>
               </div>
 
@@ -144,7 +164,7 @@ const Checkout = () => {
                       <use xlinkHref="/assets/svg/icons/wizard-checkout-payment.svg#wizardPayment" />
                     </svg>
                   </span>
-                  <span className="bs-stepper-label">Payment</span>
+                  <span className="bs-stepper-label">پرداخت</span>
                 </button>
               </div>
 
@@ -159,7 +179,7 @@ const Checkout = () => {
                       <use xlinkHref="/assets/svg/icons/wizard-checkout-confirmation.svg#wizardConfirm" />
                     </svg>
                   </span>
-                  <span className="bs-stepper-label">Confirmation</span>
+                  <span className="bs-stepper-label">تأیید نهایی</span>
                 </button>
               </div>
             </div>
@@ -168,7 +188,7 @@ const Checkout = () => {
             <div className="bs-stepper-content border-top">
               <form>
                 {/* Cart */}
-                <CartStep onNext={() => stepperRef.current?.next()} />
+                <CartStep onNext={goNext} />
 
                 {/* Address */}
                 <AddressStep
@@ -178,8 +198,12 @@ const Checkout = () => {
                   onRemoveAddress={handleRemoveAddress}
                   onEditAddress={handleEditAddress}
                   onSetDefaultAddress={handleSetDefaultAddress}
-                  onPrev={() => stepperRef.current?.previous()}
-                  onNext={() => stepperRef.current?.next()}
+                  setDeliveryPrice={setDeliveryPrice}
+                  setFinalPrice={setFinalPrice}
+                  setSelectedDeliveryOption={setSelectedDeliveryOption}
+                  setFreeShipping={setFreeShipping}
+                  onPrev={goPrev}
+                  onNext={goNext}
                   onShowAddressModal={() => setShowAddressModal(true)}
                 />
 
@@ -188,8 +212,10 @@ const Checkout = () => {
                   selectedAddress={addresses.find(
                     (a) => a.id === selectedAddressId,
                   )}
-                  onPrev={() => stepperRef.current?.previous()}
-                  onNext={() => stepperRef.current?.next()}
+                  deliveryPrice={deliveryPrice}
+                  finalPrice={finalPrice}
+                  onPrev={goPrev}
+                  onNext={goNext}
                 />
 
                 {/* Confirmation */}
@@ -197,8 +223,12 @@ const Checkout = () => {
                   selectedAddress={addresses.find(
                     (a) => a.id === selectedAddressId,
                   )}
+                  deliveryPrice={deliveryPrice}
+                  finalPrice={finalPrice}
+                  selectedDeliveryOption={selectedDeliveryOption}
+                  freeShipping={freeShipping}
                   onComplete={() => {
-                    console.log("Order completed!");
+                    navigate("/");
                   }}
                 />
               </form>

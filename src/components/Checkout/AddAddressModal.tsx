@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Address } from "../../types/Cart";
+import type { Address } from "../../types/cart";
 
 interface AddAddressModalProps {
   show: boolean;
@@ -99,9 +99,9 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               aria-label="Close"
             ></button>
             <div className="text-center mb-6">
-              <h4 className="address-title mb-2">Add New Address</h4>
+              <h4 className="address-title mb-2">افزودن آدرس جدید</h4>
               <p className="address-subtitle">
-                Add new address for express delivery
+                برای ارسال سریع، یک آدرس جدید اضافه کنید
               </p>
             </div>
             <form
@@ -137,8 +137,8 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                               strokeLinejoin="round"
                             />
                           </svg>
-                          <span className="custom-option-title">Home</span>
-                          <small> Delivery time (9am – 9pm) </small>
+                          <span className="custom-option-title">خانه</span>
+                          <small> زمان تحویل (۹ صبح تا ۹ شب) </small>
                         </span>
                         <input
                           name="addressType"
@@ -179,8 +179,8 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                               strokeLinejoin="round"
                             />
                           </svg>
-                          <span className="custom-option-title"> Office </span>
-                          <small> Delivery time (9am – 5pm) </small>
+                          <span className="custom-option-title"> محل کار </span>
+                          <small> زمان تحویل (۹ صبح تا ۵ عصر) </small>
                         </span>
                         <input
                           name="addressType"
@@ -198,14 +198,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 form-control-validation col-md-6">
                 <label className="form-label" htmlFor="modalAddressFirstName">
-                  First Name
+                  نام
                 </label>
                 <input
                   type="text"
                   id="modalAddressFirstName"
                   name="firstName"
                   className="form-control"
-                  placeholder="John"
                   value={formData.firstName}
                   onChange={handleInputChange}
                   required
@@ -213,14 +212,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 form-control-validation col-md-6">
                 <label className="form-label" htmlFor="modalAddressLastName">
-                  Last Name
+                  نام خانوادگی
                 </label>
                 <input
                   type="text"
                   id="modalAddressLastName"
                   name="lastName"
                   className="form-control"
-                  placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleInputChange}
                   required
@@ -228,14 +226,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 form-control-validation col-md-6">
                 <label className="form-label" htmlFor="modalAddressPhone">
-                  Phone Number
+                  شماره تماس
                 </label>
                 <input
                   type="tel"
                   id="modalAddressPhone"
                   name="phone"
                   className="form-control"
-                  placeholder="+1 234 567 8900"
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
@@ -243,7 +240,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 form-control-validation col-md-6">
                 <label className="form-label" htmlFor="modalAddressCountry">
-                  Country
+                  کشور
                 </label>
                 <select
                   id="modalAddressCountry"
@@ -253,7 +250,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="">Select</option>
+                  <option value="">انتخاب کنید</option>
                   <option value="United States">United States</option>
                   <option value="United Kingdom">United Kingdom</option>
                   <option value="Canada">Canada</option>
@@ -264,14 +261,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12">
                 <label className="form-label" htmlFor="modalAddressAddress1">
-                  Address Line 1
+                  آدرس (خط اول)
                 </label>
                 <input
                   type="text"
                   id="modalAddressAddress1"
                   name="addressLine1"
                   className="form-control"
-                  placeholder="4135 Parkway Street"
                   value={formData.addressLine1}
                   onChange={handleInputChange}
                   required
@@ -279,42 +275,39 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12">
                 <label className="form-label" htmlFor="modalAddressAddress2">
-                  Address Line 2
+                  آدرس (خط دوم)
                 </label>
                 <input
                   type="text"
                   id="modalAddressAddress2"
                   name="addressLine2"
                   className="form-control"
-                  placeholder="Suite 100"
                   value={formData.addressLine2}
                   onChange={handleInputChange}
                 />
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label" htmlFor="modalAddressLandmark">
-                  Landmark
+                  نشانی نزدیک / راهنما
                 </label>
                 <input
                   type="text"
                   id="modalAddressLandmark"
                   name="landmark"
                   className="form-control"
-                  placeholder="Near Central Park"
                   value={formData.landmark}
                   onChange={handleInputChange}
                 />
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label" htmlFor="modalAddressCity">
-                  City
+                  شهر
                 </label>
                 <input
                   type="text"
                   id="modalAddressCity"
                   name="city"
                   className="form-control"
-                  placeholder="Los Angeles"
                   value={formData.city}
                   onChange={handleInputChange}
                   required
@@ -322,14 +315,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label" htmlFor="modalAddressState">
-                  State
+                  استان
                 </label>
                 <input
                   type="text"
                   id="modalAddressState"
                   name="state"
                   className="form-control"
-                  placeholder="California"
                   value={formData.state}
                   onChange={handleInputChange}
                   required
@@ -337,14 +329,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label" htmlFor="modalAddressZipCode">
-                  Zip Code
+                  کد پستی
                 </label>
                 <input
                   type="text"
                   id="modalAddressZipCode"
                   name="zipCode"
                   className="form-control"
-                  placeholder="90017"
                   value={formData.zipCode}
                   onChange={handleInputChange}
                   required
@@ -361,13 +352,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                     onChange={handleInputChange}
                   />
                   <label htmlFor="billingAddress" className="form-check-label">
-                    Use as a billing address?
+                    استفاده به عنوان آدرس صورتحساب؟
                   </label>
                 </div>
               </div>
               <div className="col-12 text-center">
                 <button type="submit" className="btn btn-primary me-3">
-                  Submit
+                  ثبت آدرس
                 </button>
                 <button
                   type="button"
@@ -377,7 +368,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                     resetForm();
                   }}
                 >
-                  Cancel
+                  انصراف
                 </button>
               </div>
             </form>

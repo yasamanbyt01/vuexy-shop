@@ -9,11 +9,13 @@ import { SPEC_LABELS } from "../../constants/specificationLabels";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 import { formatSpecValue } from "../../utils/specValue";
+import { useCart } from "../../context/CartContext";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const { addItem } = useCart();
 
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
@@ -22,11 +24,31 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="container py-6">
-        <h4>محصول مورد نظر یافت نشد</h4>
-      </div>
+      <section className="section-py bg-body">
+        <div className="container">
+          <div className="d-flex flex-column justify-content-center align-items-center text-center py-5">
+            <h4 className="mb-2">محصول مورد نظر یافت نشد</h4>
+          </div>
+        </div>
+      </section>
     );
   }
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      discountedPrice: product.originalPrice || product.price,
+      image: product.images?.[0],
+      quantity: quantity,
+      inStock: product.inStock,
+      seller: product.seller,
+      rating: product.rating,
+    };
+
+    addItem(cartItem);
+  };
 
   useEffect(() => {
     if (product?.colors && product.colors.length > 0) {
@@ -294,7 +316,10 @@ const ProductDetails = () => {
 
               {/* Action Buttons */}
               <div className="d-grid gap-3 mb-4">
-                <button className="btn btn-primary btn-lg py-3">
+                <button
+                  className="btn btn-primary btn-lg py-3"
+                  onClick={handleAddToCart}
+                >
                   <i className="ti tabler-shopping-cart me-2"></i>
                   افزودن به سبد خرید – {formatPrice(price * quantity)}
                 </button>
