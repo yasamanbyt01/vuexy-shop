@@ -78,29 +78,29 @@ const ForgotPassword = () => {
                     </span>
                   </span>
                   <span className="app-brand-text demo text-heading fw-bold">
-                    Vuexy Shop
+                    فروشگاه
                   </span>
                 </Link>
               </div>
               {/* /Logo */}
 
-              <h4 className="mb-1">Forgot Password? 🔒</h4>
+              <h4 className="mb-1">رمز عبور را فراموش کرده‌اید؟ 🔒</h4>
               <p className="mb-6">
-                Enter your email and we'll send you instructions to reset your
-                password
+                ایمیل خود را وارد کنید تا لینک بازیابی رمز عبور برای شما ارسال
+                شود
               </p>
 
               <form className="mb-6" onSubmit={handleSubmit} noValidate>
                 <div className="mb-6 form-control-validation">
                   <label htmlFor="email" className="form-label">
-                    Email
+                    ایمیل
                   </label>
                   <input
                     type="email"
                     className={`form-control ${error ? "is-invalid" : ""}`}
                     id="email"
                     name="email"
-                    placeholder="Enter your email"
+                    placeholder="ایمیل خود را وارد کنید"
                     value={email}
                     onChange={handleEmailChange}
                     autoFocus
@@ -117,7 +117,7 @@ const ForgotPassword = () => {
                     className="btn btn-primary d-grid w-100"
                     type="submit"
                   >
-                    Send Reset Link
+                    ارسال لینک بازیابی
                   </button>
                 </div>
               </form>
@@ -127,8 +127,8 @@ const ForgotPassword = () => {
                   to="/login"
                   className="d-flex align-items-center justify-content-center"
                 >
-                  <i className="icon-base ti tabler-chevron-left me-1"></i>
-                  Back to login
+                  بازگشت به صفحه ورود
+                  <i className="icon-base ti tabler-chevron-left ms-1"></i>
                 </Link>
               </div>
             </div>

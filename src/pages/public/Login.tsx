@@ -95,15 +95,13 @@ const Login = () => {
                     </span>
                   </span>
                   <span className="app-brand-text demo text-heading fw-bold">
-                    Vuexy Shop
+                    فروشگاه
                   </span>
                 </Link>
               </div>
               {/* /Logo */}
-              <h4 className="mb-1">Welcome to Vuexy Shop! 👋</h4>
-              <p className="mb-6">
-                Please sign-in to your account and start the adventure
-              </p>
+              <h4 className="mb-1">به فروشگاه خوش آمدید 👋</h4>
+              <p className="mb-6">برای ادامه لطفاً وارد حساب کاربری خود شوید</p>
 
               <form
                 id="formAuthentication"
@@ -113,14 +111,14 @@ const Login = () => {
               >
                 <div className="mb-6 form-control-validation">
                   <label htmlFor="email" className="form-label">
-                    Email or Username
+                    ایمیل یا نام کاربری
                   </label>
                   <input
                     type="text"
                     className={`form-control ${errors.email ? "is-invalid" : ""}`}
                     id="email"
                     name="email"
-                    placeholder="Enter your email or username"
+                    placeholder="ایمیل یا نام کاربری خود را وارد کنید"
                     value={formData.email}
                     onChange={handleChange}
                     autoFocus
@@ -134,7 +132,7 @@ const Login = () => {
 
                 <div className="mb-6 form-password-toggle form-control-validation">
                   <label className="form-label" htmlFor="password">
-                    Password
+                    رمز عبور
                   </label>
                   <div
                     className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
@@ -176,11 +174,11 @@ const Login = () => {
                         onChange={(e) => setRememberMe(e.target.checked)}
                       />
                       <label className="form-check-label" htmlFor="remember-me">
-                        Remember Me
+                        مرا به خاطر بسپار
                       </label>
                     </div>
                     <Link to="/forgot-password">
-                      <p className="mb-0">Forgot Password?</p>
+                      <p className="mb-0">رمز عبور را فراموش کرده‌اید؟</p>
                     </Link>
                   </div>
                 </div>
@@ -190,20 +188,20 @@ const Login = () => {
                     className="btn btn-primary d-grid w-100"
                     type="submit"
                   >
-                    Login
+                    ورود
                   </button>
                 </div>
               </form>
 
               <p className="text-center">
-                <span>New on our platform?</span>
+                <span>حساب کاربری ندارید؟</span>
                 <Link to="/register">
-                  <span> Create an account</span>
+                  <span> ثبت‌نام کنید</span>
                 </Link>
               </p>
 
               <div className="divider my-6">
-                <div className="divider-text">or</div>
+                <div className="divider-text">یا</div>
               </div>
 
               <div className="d-flex justify-content-center">

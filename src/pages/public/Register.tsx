@@ -59,24 +59,24 @@ const Register = () => {
               {/* Logo */}
               <div className="app-brand justify-content-center mb-6">
                 <span className="app-brand-text demo text-heading fw-bold">
-                  Vuexy Shop
+                  فروشگاه
                 </span>
               </div>
 
-              <h4 className="mb-1">Adventure starts here 🚀</h4>
-              <p className="mb-6">Create your account</p>
+              <h4 className="mb-1">همین‌جا شروع کن 🚀</h4>
+              <p className="mb-6">ساخت حساب کاربری جدید</p>
 
               <form className="mb-6" onSubmit={handleSubmit} noValidate>
                 <div className="mb-6">
                   <label htmlFor="username" className="form-label">
-                    Username
+                    نام کاربری
                   </label>
                   <input
                     type="text"
                     id="username"
                     name="username"
                     className={`form-control ${errors.username ? "is-invalid" : ""}`}
-                    placeholder="Enter your username"
+                    placeholder="نام کاربری خود را وارد کنید"
                     value={formData.username}
                     onChange={handleChange}
                   />
@@ -89,14 +89,14 @@ const Register = () => {
 
                 <div className="mb-6">
                   <label htmlFor="email" className="form-label">
-                    Email
+                    ایمیل
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                    placeholder="Enter your email"
+                    placeholder="ایمیل خود را وارد کنید"
                     value={formData.email}
                     onChange={handleChange}
                   />
@@ -109,7 +109,7 @@ const Register = () => {
 
                 <div className="mb-6 form-password-toggle">
                   <label htmlFor="password" className="form-label">
-                    Password
+                    رمز عبور
                   </label>
                   <div
                     className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
@@ -151,7 +151,7 @@ const Register = () => {
                       onChange={handleChange}
                     />
                     <label className="form-check-label" htmlFor="terms">
-                      I agree to <a href="#">privacy policy & terms</a>
+                      <a href="#">با قوانین و سیاست حفظ حریم خصوصی</a> موافقم
                     </label>
                     {errors.terms && (
                       <div className="fv-plugins-message-container invalid-feedback d-block">
@@ -162,17 +162,17 @@ const Register = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary d-grid w-100">
-                  Sign up
+                  ثبت‌نام
                 </button>
               </form>
 
               <p className="text-center">
-                <span>Already have an account?</span>{" "}
-                <Link to="/login">Sign in instead</Link>
+                <span>قبلاً ثبت‌نام کرده‌اید؟</span>{" "}
+                <Link to="/login">ورود به حساب</Link>
               </p>
 
               <div className="divider my-6">
-                <div className="divider-text">or</div>
+                <div className="divider-text">یا</div>
               </div>
 
               <div className="d-flex justify-content-center">

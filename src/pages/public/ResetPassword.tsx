@@ -57,7 +57,7 @@ const ResetPassword = () => {
 
     // In a real app, you would make an API call here
     // Then redirect to login page
-    alert("Password reset successfully!");
+    alert("رمز عبور با موفقیت تغییر کرد.");
     navigate("/login");
   };
 
@@ -84,23 +84,22 @@ const ResetPassword = () => {
                     </span>
                   </span>
                   <span className="app-brand-text demo text-heading fw-bold">
-                    Vuexy Shop
+                    فروشگاه
                   </span>
                 </Link>
               </div>
 
-              <h4 className="mb-1">Reset Password 🔒</h4>
+              <h4 className="mb-1">تنظیم رمز عبور جدید 🔒</h4>
               <p className="mb-6">
                 <span className="fw-medium">
-                  Your new password must be different from previously used
-                  passwords
+                  رمز عبور جدید باید با رمزهای قبلی شما متفاوت باشد
                 </span>
               </p>
 
               <form id="formAuthentication" onSubmit={handleSubmit} noValidate>
                 <div className="mb-6 form-password-toggle form-control-validation">
                   <label className="form-label" htmlFor="password">
-                    New Password
+                    رمز عبور جدید
                   </label>
                   <div
                     className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
@@ -133,7 +132,7 @@ const ResetPassword = () => {
 
                 <div className="mb-6 form-password-toggle form-control-validation">
                   <label className="form-label" htmlFor="confirm-password">
-                    Confirm Password
+                    تکرار رمز عبور
                   </label>
                   <div
                     className={`input-group input-group-merge ${errors.confirmPassword ? "is-invalid" : ""}`}
@@ -170,13 +169,13 @@ const ResetPassword = () => {
                   className="btn btn-primary d-grid w-100 mb-6"
                   type="submit"
                 >
-                  Set new password
+                  ثبت رمز عبور جدید
                 </button>
 
                 <div className="text-center">
                   <Link to="/login" className="d-flex justify-content-center">
-                    <i className="icon-base ti tabler-chevron-left scaleX-n1-rtl me-1_5"></i>
-                    Back to login
+                    بازگشت به صفحه ورود
+                    <i className="icon-base ti tabler-chevron-right scaleX-n1-rtl ms-1_5"></i>
                   </Link>
                 </div>
               </form>
