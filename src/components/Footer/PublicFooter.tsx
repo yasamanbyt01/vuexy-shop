@@ -51,35 +51,35 @@ const PublicFooter = () => {
                   </span>
                 </span>
                 <span className="app-brand-text demo footer-link fw-bold ms-2 ps-1">
-                  Vuexy
+                  فروشگاه
                 </span>
               </a>
               <p className="footer-text footer-logo-description mb-6">
-                Most developer friendly & highly customisable Admin Dashboard
-                Template.
+                فروشگاه آنلاین ما مجموعه‌ای از بهترین محصولات را با قیمت مناسب و
+                ارسال سریع در اختیار شما قرار می‌دهد.
               </p>
               <form className="footer-form">
                 <label htmlFor="footer-email" className="small">
-                  Subscribe to newsletter
+                  عضویت در خبرنامه
                 </label>
                 <div className="d-flex mt-1">
                   <input
                     type="email"
                     className="form-control rounded-0 rounded-start-bottom rounded-start-top"
                     id="footer-email"
-                    placeholder="Your email"
+                    placeholder="ایمیل شما"
                   />
                   <button
                     type="submit"
                     className="btn btn-primary shadow-none rounded-0 rounded-end-bottom rounded-end-top"
                   >
-                    Subscribe
+                    عضویت
                   </button>
                 </div>
               </form>
             </div>
             <div className="col-lg-2 col-md-4 col-sm-6">
-              <h6 className="footer-title mb-6">Demos</h6>
+              <h6 className="footer-title mb-6">دسترسی سریع</h6>
               <ul className="list-unstyled">
                 <li className="mb-4">
                   <a
@@ -87,7 +87,7 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Vertical Layout
+                    صفحه اصلی
                   </a>
                 </li>
                 <li className="mb-4">
@@ -96,7 +96,7 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Horizontal Layout
+                    محصولات
                   </a>
                 </li>
                 <li className="mb-4">
@@ -105,7 +105,7 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Bordered Layout
+                    دسته‌بندی‌ها
                   </a>
                 </li>
                 <li className="mb-4">
@@ -114,7 +114,7 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Semi Dark Layout
+                    پیشنهادهای ویژه
                   </a>
                 </li>
                 <li className="mb-4">
@@ -123,32 +123,32 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Dark Layout
+                    تماس با ما
                   </a>
                 </li>
               </ul>
             </div>
             <div className="col-lg-2 col-md-4 col-sm-6">
-              <h6 className="footer-title mb-6">Pages</h6>
+              <h6 className="footer-title mb-6">راهنما</h6>
               <ul className="list-unstyled">
                 <li className="mb-4">
                   <a href="pricing-page.html" className="footer-link">
-                    Pricing
+                    قوانین و مقررات
                   </a>
                 </li>
                 <li className="mb-4">
                   <a href="payment-page.html" className="footer-link">
-                    Payment<span className="badge bg-primary ms-2">New</span>
+                    روش‌های پرداخت
                   </a>
                 </li>
                 <li className="mb-4">
                   <a href="checkout-page.html" className="footer-link">
-                    Checkout
+                    پیگیری سفارش
                   </a>
                 </li>
                 <li className="mb-4">
                   <a href="help-center-landing.html" className="footer-link">
-                    Help Center
+                    مرکز پشتیبانی
                   </a>
                 </li>
                 <li className="mb-4">
@@ -157,13 +157,13 @@ const PublicFooter = () => {
                     target="_blank"
                     className="footer-link"
                   >
-                    Login/Register
+                    ورود / ثبت نام
                   </a>
                 </li>
               </ul>
             </div>
             <div className="col-lg-3 col-md-4">
-              <h6 className="footer-title mb-6">Download our app</h6>
+              <h6 className="footer-title mb-6">دانلود اپلیکیشن فروشگاه</h6>
               <a href="#" className="d-block mb-4">
                 <img
                   src="/assets/img/front-pages/landing-page/apple-icon.png"
@@ -183,18 +183,16 @@ const PublicFooter = () => {
       <div className="footer-bottom py-3 py-md-5">
         <div className="container d-flex flex-wrap justify-content-between flex-md-row flex-column text-center text-md-start">
           <div className="mb-2 mb-md-0">
-            <span className="footer-bottom-text">© {currentYear}</span>
+            <span className="footer-bottom-text">© {currentYear} -</span>
             <a
               href="https://pixinvent.com"
               target="_blank"
               rel="noopener noreferrer"
               className="fw-medium text-white"
-            >
-              Pixinvent,
-            </a>
+            ></a>
             <span className="footer-bottom-text">
               {" "}
-              Made with ❤️ for a better web.
+              تمامی حقوق این وب‌سایت محفوظ است.
             </span>
           </div>
           <div>
