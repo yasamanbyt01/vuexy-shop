@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { products } from "../../mock/products";
 import ProductCard from "../../components/Home/ProductCard";
