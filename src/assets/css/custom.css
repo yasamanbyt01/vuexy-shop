@@ -86,3 +86,12 @@ Horizontal scroll without visible scrollbar
   border-color: #dee2e6 !important;
   box-shadow: none !important;
 }
+
+/* ================================
+   Carousel CTA buttons 
+================================ */
+
+#swiper-home-hero .btn-outline-light:hover {
+  color: #212529;
+  background-color: #f8f9fa;
+}

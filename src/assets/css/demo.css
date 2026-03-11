@@ -105,20 +105,3 @@
   text-align: center;
   margin-top: 1rem;
 }
-
-/* ================================
-   Carousel CTA buttons 
-
-   #swiper-home-hero .btn-outline-light:hover {
-  color: #212529; 
-  background-color: #f8f9fa;
-}
-================================ */
-
-/* ================================
-   Prevent navbar from being overlapped by pagination/content
-================================ */
-
-.layout-navbar {
-  z-index: 1030 !important;
-}
