@@ -95,3 +95,46 @@ Horizontal scroll without visible scrollbar
   color: #212529;
   background-color: #f8f9fa;
 }
+
+/* ================================
+   Crrt Badge Style 
+================================ */
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  pointer-events: none;
+
+  width: 18px;
+  height: 18px;
+
+  background: #ff3e1d;
+  color: white;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+
+  animation: cartBounce 0.35s ease;
+}
+
+@keyframes cartBounce {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

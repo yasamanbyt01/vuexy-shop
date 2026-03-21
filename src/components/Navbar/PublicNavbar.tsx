@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
+import { useCart } from "../../context/CartContext";
 
 const PublicNavbar = () => {
+  const { items } = useCart();
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   return (
     <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky">
       <div className="container">
@@ -115,8 +118,14 @@ const PublicNavbar = () => {
           {/* Right toolbar */}
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="me-2">
-              <Link to="/checkout" className="btn btn-outline-primary px-3">
+              <Link
+                to="/checkout"
+                className="btn btn-outline-primary px-3 position-relative"
+              >
                 <i className="icon-base ti tabler-shopping-cart"></i>
+                {itemCount > 0 && (
+                  <span className="cart-badge">{itemCount}</span>
+                )}
               </Link>
             </li>
 

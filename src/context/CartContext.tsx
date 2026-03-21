@@ -30,12 +30,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const addItem = (item: CartItem) => {
     setItems((prev) => {
       const existingItem = prev.find((i) => i.id === item.id);
+
       if (existingItem) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
+          i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i,
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+
+      return [...prev, item];
     });
   };
 
