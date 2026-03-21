@@ -6,6 +6,7 @@ import BreadCrumbs from "../../components/ui/BreadCrumbs";
 import ProductDetailCarousel from "../../components/ProductDetail/ProductDetailCarousel";
 import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs";
 import { SPEC_LABELS } from "../../constants/specificationLabels";
+import { CATEGORY_LABELS } from "../../constants/catergoryLabels";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 import { formatSpecValue } from "../../utils/specValue";
@@ -71,8 +72,8 @@ const ProductDetails = () => {
     { label: "خانه", path: "/" },
     { label: "محصولات", path: "/products" },
     {
-      label: product.category,
-      path: `/category/${product.category}`,
+      label: CATEGORY_LABELS[product.category] ?? product.category,
+      path: `/products?category=${product.category}`,
     },
     { label: product.name },
   ];
@@ -113,7 +114,7 @@ const ProductDetails = () => {
               <div className="mb-3 d-flex justify-content-between align-items-center">
                 <div>
                   <span className="badge bg-light text-dark me-2">
-                    {product.category}
+                    {CATEGORY_LABELS[product.category] ?? product.category}
                   </span>
                   <span className="text-muted small">
                     {" "}
@@ -404,7 +405,7 @@ const ProductDetails = () => {
                   {product.specifications &&
                     Object.entries(product.specifications).map(
                       ([key, value]) => (
-                        <>
+                        <div key={key}>
                           <dt className="col-6 small text-muted">
                             {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ??
                               key}
@@ -412,7 +413,7 @@ const ProductDetails = () => {
                           <dd className="col-6 small">
                             {formatSpecValue(value)}
                           </dd>
-                        </>
+                        </div>
                       ),
                     )}
                 </dl>
