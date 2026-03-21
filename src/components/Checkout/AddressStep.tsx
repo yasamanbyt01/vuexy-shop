@@ -71,7 +71,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
     setFinalPrice(finalPrice);
     setSelectedDeliveryOption(selectedDelivery);
     setFreeShipping(freeShipping);
-  }, [deliveryPrice, finalPrice, selectedDelivery, freeShipping]);
+  }, [deliverySpeed, totalPrice]);
 
   const getAddressDisplay = (address: Address) => {
     return `${address.addressLine1}${
