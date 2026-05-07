@@ -1,13 +1,126 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
 import { useCart } from "../../context/CartContext";
+import { products } from "../../mock/products";
+import type { Product } from "../../types/products";
+import { toFarsiNumber } from "../../utils/numbers";
 
 const PublicNavbar = () => {
   const { items } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [usingKeyboard, setUsingKeyboard] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const navbar = document.getElementById("navbarSupportedContent");
+
+    const handleMenuOpen = () => {
+      document.body.style.overflow = "hidden";
+    };
+    const handleMenuClose = () => {
+      document.body.style.overflow = "";
+    };
+
+    navbar?.addEventListener("show.bs.collapse", handleMenuOpen);
+    navbar?.addEventListener("hide.bs.collapse", handleMenuClose);
+
+    return () => {
+      navbar?.removeEventListener("show.bs.collapse", handleMenuOpen);
+      navbar?.removeEventListener("hide.bs.collapse", handleMenuClose);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!query.trim()) return;
+
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    setQuery("");
+    setShowSuggestions(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    setSelectedIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setUsingKeyboard(true);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!showSuggestions) return;
+
+      setSelectedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : 0,
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!showSuggestions) return;
+
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : suggestions.length - 1,
+      );
+    } else if (e.key === "Enter") {
+      if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+        e.preventDefault();
+        const selected = suggestions[selectedIndex];
+        navigate(`/products/${selected.id}`);
+        setShowSuggestions(false);
+        setQuery("");
+      }
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const q = debouncedQuery.toLowerCase();
+
+    const matches = products
+      .filter(
+        (p: Product) =>
+          p.name.toLowerCase().includes(q) ||
+          p.tags.some((t: string) => t.toLowerCase().includes(q)),
+      )
+      .slice(0, 6);
+
+    setSuggestions(matches);
+    setShowSuggestions(true);
+    setSelectedIndex(-1);
+  }, [debouncedQuery]);
+
+  useEffect(() => {
+    const close = () => setShowSuggestions(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, []);
+
   return (
-    <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky">
+    <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky navbar-mobile-fix">
       <div className="container">
         <div className="navbar navbar-expand-lg landing-navbar px-3 px-md-8">
           {/* Logo + mobile toggle */}
@@ -86,7 +199,7 @@ const PublicNavbar = () => {
               <i className="icon-base ti tabler-x icon-lg"></i>
             </button>
 
-            <ul className="navbar-nav align-items-center">
+            <ul className="navbar-nav align-items-center p-0 m-0 w-100">
               {/* DESKTOP ONLY */}
               <MegaDropdown />
 
@@ -95,19 +208,56 @@ const PublicNavbar = () => {
 
               {/* Search box (desktop only) */}
               <form
-                className="d-none d-lg-flex align-items-center ms-3"
+                onSubmit={handleSearch}
+                className="d-none d-lg-flex align-items-center ms-3 position-relative"
                 role="search"
               >
-                <div className="input-group" style={{ width: "390px" }}>
+                <div
+                  className="input-group"
+                  style={{ width: "390px" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <input
                     type="search"
                     className="form-control border-end-0"
                     placeholder="جستجو در محصولات..."
-                    aria-label="Search"
+                    value={query}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
                   />
-                  <span className="input-group-text bg-transparent">
+                  <button
+                    className="input-group-text bg-transparent"
+                    type="submit"
+                  >
                     <i className="icon-base ti tabler-search"></i>
-                  </span>
+                  </button>
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div
+                      className={`position-absolute bg-white shadow rounded w-100 mt-1 ${usingKeyboard ? "keyboard-nav" : ""}`}
+                      style={{ top: "100%", zIndex: 1050 }}
+                    >
+                      {suggestions.map((product, i) => (
+                        <Link
+                          key={product.id}
+                          to={`/products/${product.id}`}
+                          className={
+                            `d-flex align-items-center gap-2 p-2 text-decoration-none border-bottom suggestion-item ` +
+                            (selectedIndex === i ? "bg-light" : "text-dark")
+                          }
+                          onMouseEnter={() => {
+                            setUsingKeyboard(false);
+                            setSelectedIndex(i);
+                          }}
+                          onClick={() => {
+                            setShowSuggestions(false);
+                            setQuery("");
+                          }}
+                        >
+                          <span className="small">{product.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </form>
             </ul>
@@ -119,20 +269,31 @@ const PublicNavbar = () => {
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="me-2">
               <Link
+                to="/mobile-search"
+                className="d-lg-none btn btn-outline-primary px-3 position-relative navbar-mobile-btn"
+              >
+                <i className="icon-base ti tabler-search"></i>
+              </Link>
+            </li>
+            <li className="me-2">
+              <Link
                 to="/checkout"
-                className="btn btn-outline-primary px-3 position-relative"
+                className="btn btn-outline-primary px-3 position-relative navbar-mobile-btn"
               >
                 <i className="icon-base ti tabler-shopping-cart"></i>
                 {itemCount > 0 && (
-                  <span className="cart-badge">{itemCount}</span>
+                  <span className="cart-badge">{toFarsiNumber(itemCount)}</span>
                 )}
               </Link>
             </li>
 
             <li>
-              <Link to="/register" className="btn btn-primary">
+              <Link
+                to="/register"
+                className="btn btn-primary navbar-mobile-btn"
+              >
                 <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
-                <span className="d-none d-md-block">ورود/ثبت نام</span>
+                <span className="navbar-login-text ms-1">ورود/ثبت نام</span>
               </Link>
             </li>
           </ul>
