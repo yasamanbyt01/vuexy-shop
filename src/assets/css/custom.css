@@ -138,3 +138,343 @@ Horizontal scroll without visible scrollbar
     transform: scale(1);
   }
 }
+
+.active-cat {
+  background: #f5f5f5;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item.bg-light {
+  background-color: #f8f9fa;
+}
+
+/* disable hover highlight when navigating with keyboard */
+.keyboard-nav .suggestion-item:hover {
+  background: transparent !important;
+}
+
+/* FINAL FIX - Vuexy Mobile Navbar Alignment */
+@media (max-width: 991.98px) {
+  /* 1. خود navigation bar */
+  .navbar-mobile-fix {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* 2. container داخلی باید فلکس شود */
+  .navbar-mobile-fix > .container {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* 3. این لایه (از Vuexy) باعث تمام مشکلات بود */
+  .navbar-mobile-fix .landing-navbar {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  /* 4. لوگو و منو */
+  .navbar-mobile-fix .navbar-brand {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+  }
+
+  /* 5. دکمه منوی موبایل */
+  .navbar-mobile-fix .navbar-toggler {
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 6px !important;
+    margin: 0 !important;
+  }
+
+  /* 6. Toolbar سمت راست */
+  .navbar-mobile-fix ul.navbar-nav.flex-row {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  /* 7. تک‌تک دکمه‌های سمت راست */
+  .navbar-mobile-btn {
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .navbar-mobile-btn i {
+    line-height: 1 !important;
+  }
+
+  /* 8. رفع اختلاف ارتفاع با گزینه ثبت‌نام */
+  .navbar-mobile-btn.btn-primary {
+    height: 38px !important;
+    padding: 0 12px !important;
+  }
+}
+/* Prevent right toolbar from leaving navbar */
+@media (max-width: 991.98px) {
+  /* کل ردیف navbar */
+  .navbar-mobile-fix .landing-navbar {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* بخش لوگو */
+  .navbar-mobile-fix .navbar-brand {
+    flex: 0 0 auto !important;
+  }
+
+  /* بخش وسط باید اجازه کوچک شدن داشته باشد */
+  .navbar-mobile-fix .landing-nav-menu {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  /* toolbar راست نباید shrink شود */
+  .navbar-mobile-fix ul.navbar-nav.flex-row {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .navbar-mobile-fix {
+    height: 48px !important;
+  }
+
+  .navbar-mobile-fix .landing-navbar {
+    height: 48px !important;
+  }
+
+  .layout-navbar {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 64px !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  /* smaller icons */
+  .navbar-mobile-fix .nav-link i,
+  .navbar-mobile-fix .nav-link svg,
+  .navbar-mobile-btn i,
+  .navbar-mobile-btn svg {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .navbar-mobile-fix .navbar-mobile-btn.btn-primary {
+    height: 32px !important; /* slightly smaller than 38px */
+    padding: 4px 10px !important; /* less horizontal padding */
+    font-size: 14px !important; /* optional: smaller text if any */
+    line-height: 1 !important;
+  }
+
+  /* smaller button padding */
+  .navbar-mobile-fix .nav-link,
+  .navbar-mobile-btn {
+    padding: 4px 8px !important;
+    line-height: 1 !important;
+  }
+
+  /* keep button height consistent */
+  .navbar-mobile-btn {
+    height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .navbar-mobile-fix ul.navbar-nav.flex-row {
+    margin-right: 8px !important;
+  }
+}
+
+/* Ultra small phones */
+@media (max-width: 400px) {
+  /* smaller navbar height */
+  .navbar-mobile-fix {
+    height: 48px !important;
+  }
+
+  .navbar-mobile-fix .landing-navbar {
+    height: 48px !important;
+  }
+
+  /* all icon buttons */
+  .navbar-nav .nav-link {
+    padding: 4px 6px !important;
+    font-size: 14px !important;
+  }
+
+  /* icons themselves */
+  .navbar-nav .nav-link i,
+  .navbar-nav .nav-link svg {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* login button */
+  .navbar-nav .btn {
+    padding: 4px 8px !important;
+    font-size: 13px !important;
+  }
+
+  /* brand text slightly smaller */
+  .app-brand-text {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .navbar-login-text {
+    display: none;
+  }
+
+  .navbar-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px !important;
+  }
+
+  .navbar-mobile-btn .tf-icons {
+    margin: 0 !important;
+  }
+}
+
+/*mobile search page css*/
+
+.search-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* search input */
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-input {
+  padding-inline-start: 36px !important;
+  border-radius: 12px !important;
+}
+
+.search-icon {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #999;
+}
+
+/* suggestions */
+
+.search-suggestions {
+  margin-top: 8px;
+}
+
+.suggestion-title {
+  font-size: 13px;
+  color: #777;
+  margin: 12px 0 6px;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background: #f5f5f5;
+}
+
+/* disable hover highlight while keyboard navigating */
+.keyboard-nav .suggestion-item:hover {
+  background: transparent;
+}
+
+.suggestion-item i {
+  font-size: 16px;
+  color: #888;
+}
+
+.suggestion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 6px;
+}
+
+.clear-searches-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+}
+
+.clear-searches-btn i {
+  font-size: 16px;
+}
+
+.clear-searches-btn:hover {
+  color: #e53935;
+}
+
+/* desktop improvements */
+
+@media (min-width: 992px) {
+  .search-page-container {
+    max-width: 720px;
+    margin: 40px auto;
+  }
+
+  .search-suggestions {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (max-width: 991.98px) {
+  /* قابلیت اسکرول داخلی برای منوی موبایل */
+  #navbarSupportedContent.show {
+    max-height: calc(100vh); /* ارتفاع کل صفحه منهای ارتفاع تقریبی نوبار */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* برای اسکرول نرم در گوشی‌های iOS */
+  }
+}

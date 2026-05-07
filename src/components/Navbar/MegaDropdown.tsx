@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { categories } from "../../mock/categories";
 
 const MegaDropdown = () => {
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
+
   return (
     <li className="nav-item mega-dropdown d-none d-lg-block">
       <a
@@ -12,98 +16,59 @@ const MegaDropdown = () => {
         دسته‌بندی‌ها
       </a>
 
-      <div className="dropdown-menu mega-menu p-4 p-xl-8">
-        <div className="row gy-4">
-          {/* Column 1 */}
-          <div className="col-12 col-lg-3">
-            <div className="h6 d-flex align-items-center mb-3 mb-lg-5">
-              <div className="avatar flex-shrink-0 me-3">
-                <span className="avatar-initial rounded bg-label-primary">
-                  <i className="icon-base ti tabler-device-mobile icon-lg"></i>
-                </span>
-              </div>
-              <span className="ps-1">دیجیتال</span>
-            </div>
-
+      <div className="dropdown-menu mega-menu p-3">
+        <div className="row g-2">
+          {/* Categories */}
+          <div className="col-3 border-end pe-2">
             <ul className="nav flex-column">
-              {["موبایل", "لپ‌تاپ", "تبلت"].map((item) => (
-                <li className="nav-item" key={item}>
-                  <Link className="nav-link mega-dropdown-link" to="/products">
-                    <i className="icon-base ti tabler-circle me-1 icon-12px"></i>
-                    {item}
-                  </Link>
+              {categories.map((category) => (
+                <li key={category.id} className="nav-item">
+                  <button
+                    className={`nav-link d-flex align-items-center w-100 text-start py-2 px-3 rounded ${
+                      activeCategory.slug === category.slug ? "active-cat" : ""
+                    }`}
+                    onMouseEnter={() => setActiveCategory(category)}
+                  >
+                    <i className={`ti ${category.icon} me-2`}></i>
+                    <span>{category.title}</span>
+                  </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 2 */}
-          <div className="col-12 col-lg-3">
-            <div className="h6 d-flex align-items-center mb-3 mb-lg-5">
-              <div className="avatar flex-shrink-0 me-3">
-                <span className="avatar-initial rounded bg-label-primary">
-                  <i className="icon-base ti tabler-shirt icon-lg"></i>
-                </span>
+          {/* Preview */}
+          {/* Subcategories */}
+          <div className="col-9 ps-3">
+            <div className="mb-3">
+              <Link
+                to={`/products?category=${activeCategory.slug}`}
+                className="fw-semibold text-decoration-none"
+              >
+                مشاهده همه محصولات {activeCategory.title}
+                <i className="icon-base ti tabler-chevron-left ms-1"></i>
+              </Link>
+
+              <div className="text-muted small mt-1">
+                {activeCategory.productCount} محصول
               </div>
-              <span className="ps-1">پوشاک</span>
             </div>
 
-            <ul className="nav flex-column">
-              {["مردانه", "زنانه", "بچگانه"].map((item) => (
-                <li className="nav-item" key={item}>
-                  <Link className="nav-link mega-dropdown-link" to="/products">
-                    <i className="icon-base ti tabler-circle me-1 icon-12px"></i>
-                    {item}
+            <div className="row">
+              {activeCategory.subcategories.map((sub) => (
+                <div key={sub.slug} className="col-6 mb-3">
+                  <Link
+                    to={`/products?category=${activeCategory.slug}&tag=${sub.slug}`}
+                    className="text-muted text-decoration-none"
+                  >
+                    {sub.title}
+                    <span className="text-secondary small ms-1">
+                      ({sub.productCount})
+                    </span>
                   </Link>
-                </li>
+                </div>
               ))}
-            </ul>
-          </div>
-
-          {/* Column 3 */}
-          <div className="col-12 col-lg-3">
-            <div className="h6 d-flex align-items-center mb-3 mb-lg-5">
-              <div className="avatar flex-shrink-0 me-3">
-                <span className="avatar-initial rounded bg-label-primary">
-                  <i className="icon-base ti tabler-shoe icon-lg"></i>
-                </span>
-              </div>
-              <span className="ps-1">کفش</span>
             </div>
-
-            <ul className="nav flex-column">
-              {["ورزشی", "رسمی", "روزمره"].map((item) => (
-                <li className="nav-item" key={item}>
-                  <Link className="nav-link mega-dropdown-link" to="/products">
-                    <i className="icon-base ti tabler-circle me-1 icon-12px"></i>
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4 */}
-          <div className="col-12 col-lg-3">
-            <div className="h6 d-flex align-items-center mb-3 mb-lg-5">
-              <div className="avatar flex-shrink-0 me-3">
-                <span className="avatar-initial rounded bg-label-primary">
-                  <i className="icon-base ti tabler-diamond icon-lg"></i>
-                </span>
-              </div>
-              <span className="ps-1">اکسسوری</span>
-            </div>
-
-            <ul className="nav flex-column">
-              {["ساعت", "عینک", "زیورآلات"].map((item) => (
-                <li className="nav-item" key={item}>
-                  <Link className="nav-link mega-dropdown-link" to="/products">
-                    <i className="icon-base ti tabler-circle me-1 icon-12px"></i>
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>
