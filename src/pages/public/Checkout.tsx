@@ -49,11 +49,38 @@ const Checkout = () => {
 
   useEffect(() => {
     const element = document.querySelector("#wizard-checkout");
-    if (element) {
-      stepperRef.current = new Stepper(element, {
-        linear: false,
-      });
+    if (!element) return;
+
+    const stepper = new Stepper(element as HTMLElement, {
+      linear: false,
+    });
+
+    stepperRef.current = stepper;
+
+    const STORAGE_KEY = "checkoutStep";
+
+    // ✅ Restore saved step AFTER init
+    const savedStep = Number(localStorage.getItem(STORAGE_KEY)) || 0;
+
+    if (savedStep > 0) {
+      // move forward step by step
+      for (let i = 0; i < savedStep; i++) {
+        stepper.next();
+      }
     }
+
+    // ✅ Listen to official event (no private API)
+    const handleStepChange = (event: Event) => {
+      const e = event as CustomEvent<{ indexStep: number }>;
+      const index = e.detail?.indexStep ?? 0;
+      localStorage.setItem(STORAGE_KEY, index.toString());
+    };
+
+    element.addEventListener("shown.bs-stepper", handleStepChange);
+
+    return () => {
+      element.removeEventListener("shown.bs-stepper", handleStepChange);
+    };
   }, []);
 
   const handleAddAddress = (
@@ -228,6 +255,7 @@ const Checkout = () => {
                   selectedDeliveryOption={selectedDeliveryOption}
                   freeShipping={freeShipping}
                   onComplete={() => {
+                    localStorage.removeItem("checkoutStep");
                     navigate("/");
                   }}
                 />
