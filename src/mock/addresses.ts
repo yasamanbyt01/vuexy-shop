@@ -1,4 +1,4 @@
-import type { Address } from "../types/cart";
+import type { Address } from "../types/address";
 
 export const mockAddresses: Address[] = [
   {
@@ -10,7 +10,6 @@ export const mockAddresses: Address[] = [
     city: "تهران",
     state: "تهران",
     zipCode: "1598745632",
-    country: "ایران",
     phone: "09123456789",
     isDefault: true,
   },

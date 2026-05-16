@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./context/CartContext.tsx";
+import { CheckoutProvider } from "./context/CheckoutContext.tsx";
 import App from "./App.tsx";
 
 // 1. Core vendor CSS (MUST be loaded first)
@@ -39,7 +40,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <CartProvider>
-        <App />
+        <CheckoutProvider>
+          <App />
+        </CheckoutProvider>
       </CartProvider>
     </BrowserRouter>
   </StrictMode>,

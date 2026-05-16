@@ -5,24 +5,34 @@ import AddressStep from "../../components/Checkout/AddressStep";
 import PaymentStep from "../../components/Checkout/PaymentStep";
 import ConfirmationStep from "../../components/Checkout/ConfirmationStep";
 import AddAddressModal from "../../components/Checkout/AddAddressModal";
-import type { Address } from "../../types/cart";
-import { mockAddresses } from "../../mock/addresses";
+import type { Address } from "../../types/address";
+import {
+  getAddresses,
+  addAddress,
+  removeAddress,
+  setDefaultAddress,
+} from "../../lib/userStorage";
+
 import { useCart } from "../../context/CartContext";
+import { useCheckout } from "../../context/CheckoutContext";
 import { scrollTop } from "../../utils/scroll";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
-  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
-  const [selectedAddressId, setSelectedAddressId] = useState<
-    number | undefined
-  >(1);
+
+  const { state, dispatch } = useCheckout();
+  const {
+    selectedAddressId,
+    deliveryOption,
+    deliveryPrice,
+    finalPrice,
+    freeShipping,
+  } = state;
+
   const { items } = useCart();
-  const [deliveryPrice, setDeliveryPrice] = useState(0);
-  const [finalPrice, setFinalPrice] = useState(0);
-  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState<any>();
-  const [freeShipping, setFreeShipping] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,6 +56,11 @@ const Checkout = () => {
     stepperRef.current?.previous();
     scrollTop();
   };
+
+  useEffect(() => {
+    const storedAddresses = getAddresses();
+    setAddresses(storedAddresses);
+  }, []);
 
   useEffect(() => {
     const element = document.querySelector("#wizard-checkout");
@@ -88,32 +103,31 @@ const Checkout = () => {
   ) => {
     const newAddress: Address = {
       ...newAddressData,
-      id:
-        addresses.length > 0 ? Math.max(...addresses.map((a) => a.id)) + 1 : 1,
-      isDefault: addresses.length === 0, // First address becomes default
+      id: addresses.length ? Math.max(...addresses.map((a) => a.id)) + 1 : 1,
+      isDefault: addresses.length === 0,
     };
 
-    setAddresses([...addresses, newAddress]);
-    setSelectedAddressId(newAddress.id);
+    addAddress(newAddress);
+    setAddresses(getAddresses());
+
+    dispatch({ type: "SET_SELECTED_ADDRESS", payload: newAddress.id });
+
     setShowAddressModal(false);
   };
 
   const handleRemoveAddress = (id: number) => {
-    const updatedAddresses = addresses.filter((address) => address.id !== id);
+    removeAddress(id);
 
-    // If we're removing the selected address, select another one
+    const updated = getAddresses();
+    setAddresses(updated);
+
     if (selectedAddressId === id) {
-      const remainingDefault = updatedAddresses.find((a) => a.isDefault);
-      setSelectedAddressId(
-        remainingDefault
-          ? remainingDefault.id
-          : updatedAddresses.length > 0
-            ? updatedAddresses[0].id
-            : undefined,
-      );
-    }
+      const nextId =
+        updated.find((a) => a.isDefault)?.id ??
+        (updated.length ? updated[0].id : undefined);
 
-    setAddresses(updatedAddresses);
+      dispatch({ type: "SET_SELECTED_ADDRESS", payload: nextId });
+    }
   };
 
   const handleEditAddress = (id: number) => {
@@ -122,12 +136,12 @@ const Checkout = () => {
   };
 
   const handleSetDefaultAddress = (id: number) => {
-    const updatedAddresses = addresses.map((address) => ({
-      ...address,
-      isDefault: address.id === id,
-    }));
-    setAddresses(updatedAddresses);
-    setSelectedAddressId(id);
+    setDefaultAddress(id);
+
+    const updated = getAddresses();
+    setAddresses(updated);
+
+    dispatch({ type: "SET_SELECTED_ADDRESS", payload: id });
   };
 
   if (items.length === 0) {
@@ -221,14 +235,24 @@ const Checkout = () => {
                 <AddressStep
                   addresses={addresses}
                   selectedAddressId={selectedAddressId}
-                  onSelectAddress={setSelectedAddressId}
+                  onSelectAddress={(id) =>
+                    dispatch({ type: "SET_SELECTED_ADDRESS", payload: id })
+                  }
                   onRemoveAddress={handleRemoveAddress}
                   onEditAddress={handleEditAddress}
                   onSetDefaultAddress={handleSetDefaultAddress}
-                  setDeliveryPrice={setDeliveryPrice}
-                  setFinalPrice={setFinalPrice}
-                  setSelectedDeliveryOption={setSelectedDeliveryOption}
-                  setFreeShipping={setFreeShipping}
+                  setDeliveryPrice={(price) =>
+                    dispatch({ type: "SET_DELIVERY_PRICE", payload: price })
+                  }
+                  setFinalPrice={(price) =>
+                    dispatch({ type: "SET_FINAL_PRICE", payload: price })
+                  }
+                  setSelectedDeliveryOption={(option) =>
+                    dispatch({ type: "SET_DELIVERY_OPTION", payload: option })
+                  }
+                  setFreeShipping={(value) =>
+                    dispatch({ type: "SET_FREE_SHIPPING", payload: value })
+                  }
                   onPrev={goPrev}
                   onNext={goNext}
                   onShowAddressModal={() => setShowAddressModal(true)}
@@ -252,10 +276,11 @@ const Checkout = () => {
                   )}
                   deliveryPrice={deliveryPrice}
                   finalPrice={finalPrice}
-                  selectedDeliveryOption={selectedDeliveryOption}
+                  selectedDeliveryOption={deliveryOption}
                   freeShipping={freeShipping}
                   onComplete={() => {
                     localStorage.removeItem("checkoutStep");
+                    dispatch({ type: "RESET_CHECKOUT" });
                     navigate("/");
                   }}
                 />

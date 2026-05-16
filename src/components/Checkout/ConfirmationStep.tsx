@@ -1,6 +1,6 @@
 import React from "react";
 import { useCart } from "../../context/CartContext";
-import type { Address } from "../../types/cart";
+import type { Address } from "../../types/address";
 import { formatPrice } from "../../utils/price";
 
 interface ConfirmationStepProps {
@@ -86,7 +86,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     {selectedAddress.city}, {selectedAddress.state}{" "}
                     {selectedAddress.zipCode}
                     <br />
-                    {selectedAddress.country}
                   </>
                 ) : (
                   "No address selected"
@@ -116,7 +115,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     {selectedAddress.city}, {selectedAddress.state}{" "}
                     {selectedAddress.zipCode}
                     <br />
-                    {selectedAddress.country}
                   </>
                 ) : (
                   "آدرسی انتخاب نشده است"

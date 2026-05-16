@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import type { Address } from "../../types/cart";
+import type { Address } from "../../types/address";
+import type { PaymentMethod } from "../../types/payment";
 import { useCart } from "../../context/CartContext";
+import { useCheckout } from "../../context/CheckoutContext";
 import { formatPrice } from "../../utils/price";
 
 interface PaymentStepProps {
@@ -18,7 +20,14 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   onNext,
   onPrev,
 }) => {
-  const [activePaymentTab, setActivePaymentTab] = useState<string>("cc");
+  const { state, dispatch } = useCheckout();
+  const activePaymentTab =
+    state.paymentMethod === "cod"
+      ? "cod"
+      : state.paymentMethod === "giftCard"
+        ? "gift-card"
+        : "cc";
+
   const [saveCard, setSaveCard] = useState<boolean>(false);
   const { getTotalPrice } = useCart();
   const totalPrice = getTotalPrice();
@@ -27,7 +36,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
     { id: "cc", label: "کارت بانکی" },
     { id: "cod", label: "پرداخت در محل" },
     { id: "gift-card", label: "کارت هدیه" },
-  ];
+  ] as const;
+
+  const paymentMethodMap: Record<"cc" | "cod" | "gift-card", PaymentMethod> = {
+    cc: "card",
+    cod: "cod",
+    "gift-card": "giftCard",
+  };
 
   return (
     <div id="checkout-payment" className="content">
@@ -79,7 +94,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                       className={`nav-link ${
                         activePaymentTab === tab.id ? "active" : ""
                       }`}
-                      onClick={() => setActivePaymentTab(tab.id)}
+                      onClick={() => {
+                        dispatch({
+                          type: "SET_PAYMENT_METHOD",
+                          payload: paymentMethodMap[tab.id],
+                        });
+                      }}
                       type="button"
                       role="tab"
                     >

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import type { Address } from "../../types/cart";
+import type { Address } from "../../types/address";
 import { useCart } from "../../context/CartContext";
+import { useCheckout } from "../../context/CheckoutContext";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 
@@ -35,7 +36,12 @@ const AddressStep: React.FC<AddressStepProps> = ({
   setSelectedDeliveryOption,
   setFreeShipping,
 }) => {
-  const [deliverySpeed, setDeliverySpeed] = useState<string>("standard");
+  const { state } = useCheckout();
+
+  const [deliverySpeed, setDeliverySpeed] = useState<string>(
+    state.deliveryOption?.id ?? "standard",
+  );
+
   const { items, getTotalPrice } = useCart();
   const totalPrice = getTotalPrice();
 
@@ -67,6 +73,12 @@ const AddressStep: React.FC<AddressStepProps> = ({
   const finalPrice = totalPrice + deliveryPrice;
 
   useEffect(() => {
+    if (state.deliveryOption?.id) {
+      setDeliverySpeed(state.deliveryOption.id);
+    }
+  }, [state.deliveryOption]);
+
+  useEffect(() => {
     setDeliveryPrice(deliveryPrice);
     setFinalPrice(finalPrice);
     setSelectedDeliveryOption(selectedDelivery);
@@ -76,7 +88,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
   const getAddressDisplay = (address: Address) => {
     return `${address.addressLine1}${
       address.addressLine2 ? `, ${address.addressLine2}` : ""
-    }, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`;
+    }, ${address.city}, ${address.state}, ${address.zipCode}`;
   };
 
   return (
