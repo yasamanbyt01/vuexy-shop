@@ -180,13 +180,15 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                         <div className="text-md-end">
                           <div className="my-2 my-lg-6">
                             <span className="text-primary">
-                              {formatPrice(item.price)}/
+                              {formatPrice(item.price)}
                             </span>
-                            {item.discountedPrice && (
-                              <s className="text-body-secondary">
-                                {formatPrice(item.discountedPrice)}
-                              </s>
-                            )}
+
+                            {item.discountedPrice &&
+                              item.discountedPrice !== item.price && (
+                                <s className="text-body-secondary ms-2">
+                                  {formatPrice(item.discountedPrice)}
+                                </s>
+                              )}
                           </div>
                         </div>
                       </div>
