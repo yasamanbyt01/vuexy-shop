@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Address } from "../../types/cart";
+import type { Address } from "../../types/address";
 
 interface AddAddressModalProps {
   show: boolean;
@@ -18,7 +18,6 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    country: "",
     addressLine1: "",
     addressLine2: "",
     landmark: "",
@@ -39,7 +38,6 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
       city: formData.city,
       state: formData.state,
       zipCode: formData.zipCode,
-      country: formData.country,
       phone: formData.phone,
       // id and isDefault will be set by the parent component
     };
@@ -51,7 +49,6 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
     setFormData({
       firstName: "",
       lastName: "",
-      country: "",
       addressLine1: "",
       addressLine2: "",
       landmark: "",
@@ -238,27 +235,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                   required
                 />
               </div>
-              <div className="col-12 form-control-validation col-md-6">
-                <label className="form-label" htmlFor="modalAddressCountry">
-                  کشور
-                </label>
-                <select
-                  id="modalAddressCountry"
-                  name="country"
-                  className="form-select"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">انتخاب کنید</option>
-                  <option value="United States">United States</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Canada">Canada</option>
-                  <option value="Australia">Australia</option>
-                  <option value="Germany">Germany</option>
-                  <option value="France">France</option>
-                </select>
-              </div>
+
               <div className="col-12">
                 <label className="form-label" htmlFor="modalAddressAddress1">
                   آدرس (خط اول)
