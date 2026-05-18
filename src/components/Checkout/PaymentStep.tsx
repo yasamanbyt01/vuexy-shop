@@ -84,14 +84,18 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           <div className="col-xxl-6 col-lg-8">
             <div className="nav-align-top">
               <ul
-                className="nav nav-pills card-header-pills row-gap-2 flex-wrap"
+                className="nav nav-pills card-header-pills row gx-2 gx-md-0"
                 id="paymentTabs"
                 role="tablist"
               >
                 {paymentTabs.map((tab) => (
-                  <li key={tab.id} className="nav-item" role="presentation">
+                  <li
+                    key={tab.id}
+                    className="nav-item col-4 col-md-auto"
+                    role="presentation"
+                  >
                     <button
-                      className={`nav-link ${
+                      className={`nav-link w-100 w-md-auto px-2 px-md-3 small small-md-normal payment-tab-btn ${
                         activePaymentTab === tab.id ? "active" : ""
                       }`}
                       onClick={() => {
@@ -109,6 +113,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 ))}
               </ul>
             </div>
+
             <div className="tab-content px-0 pb-0" id="paymentTabsContent">
               {/* Credit card */}
               <div

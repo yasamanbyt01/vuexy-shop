@@ -51,7 +51,7 @@ const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
             {items.map((item) => (
               <li key={item.id} className="list-group-item p-6">
                 <div className="d-flex gap-4">
-                  <div className="flex-shrink-0 d-flex align-items-center">
+                  <div className="flex-shrink-0 d-flex align-items-start align-items-md-center">
                     <img
                       src={item.image}
                       alt={item.name}

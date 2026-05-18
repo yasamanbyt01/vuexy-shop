@@ -478,3 +478,9 @@ Horizontal scroll without visible scrollbar
     -webkit-overflow-scrolling: touch; /* برای اسکرول نرم در گوشی‌های iOS */
   }
 }
+
+@media (max-width: 767.98px) {
+  .payment-tab-btn {
+    font-size: 0.8rem !important;
+  }
+}

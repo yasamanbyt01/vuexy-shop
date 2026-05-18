@@ -171,24 +171,20 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                           <a href="#" className="me-3">
                             {item.seller}
                           </a>
-                          <span className="badge bg-label-success">
-                            موجود در انبار
-                          </span>
                         </div>
                       </div>
                       <div className="col-md-4">
                         <div className="text-md-end">
                           <div className="my-2 my-lg-6">
-                            <span className="text-primary">
-                              {formatPrice(item.price)}
-                            </span>
-
                             {item.discountedPrice &&
                               item.discountedPrice !== item.price && (
-                                <s className="text-body-secondary ms-2">
+                                <s className="text-body-secondary d-block">
                                   {formatPrice(item.discountedPrice)}
                                 </s>
                               )}
+                            <span className="text-primary d-block">
+                              {formatPrice(item.price)}
+                            </span>
                           </div>
                         </div>
                       </div>
