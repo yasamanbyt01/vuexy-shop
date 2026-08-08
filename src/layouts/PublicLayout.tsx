@@ -4,9 +4,11 @@ import PublicFooter from "../components/Footer/PublicFooter";
 
 const PublicLayout = () => {
   return (
-    <div dir="rtl">
+    <div dir="rtl" className="d-flex flex-column min-vh-100">
       <PublicNavbar />
+
       <Outlet />
+
       <PublicFooter />
     </div>
   );

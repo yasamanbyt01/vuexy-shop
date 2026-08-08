@@ -162,9 +162,9 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <section className="section-py bg-body">
+      <section className="flex-grow-1 d-flex align-items-center justify-content-center bg-body py-5">
         <div className="container">
-          <div className="d-flex flex-column justify-content-center align-items-center text-center py-5">
+          <div className="d-flex flex-column align-items-center text-center">
             <i className="ti tabler-shopping-cart-off fs-1 mb-3"></i>
             <h4 className="mb-2">سبد خرید شما خالی است</h4>
           </div>
