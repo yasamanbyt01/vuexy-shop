@@ -74,21 +74,37 @@ const Checkout = () => {
 
     const STORAGE_KEY = "checkoutStep";
 
-    // ✅ Restore saved step AFTER init
+    // Restore saved step
     const savedStep = Number(localStorage.getItem(STORAGE_KEY)) || 0;
 
     if (savedStep > 0) {
-      // move forward step by step
+      // Move forward step by step
       for (let i = 0; i < savedStep; i++) {
         stepper.next();
       }
     }
 
-    // ✅ Listen to official event (no private API)
+    // Add/remove Vuexy's "crossed" class
+    // so previous steps keep their purple styling.
+    const updateCrossedSteps = (currentIndex: number) => {
+      const steps = element.querySelectorAll(".step");
+
+      steps.forEach((step, stepIndex) => {
+        step.classList.toggle("crossed", stepIndex < currentIndex);
+      });
+    };
+
+    // Apply crossed state immediately after restoring
+    updateCrossedSteps(savedStep);
+
+    // Listen to step changes
     const handleStepChange = (event: Event) => {
       const e = event as CustomEvent<{ indexStep: number }>;
       const index = e.detail?.indexStep ?? 0;
+
       localStorage.setItem(STORAGE_KEY, index.toString());
+
+      updateCrossedSteps(index);
     };
 
     element.addEventListener("shown.bs-stepper", handleStepChange);
