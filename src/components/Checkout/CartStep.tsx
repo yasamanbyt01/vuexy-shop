@@ -72,7 +72,7 @@ const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
                             {item.seller}
                           </a>
                           <span
-                            className={`badge ${item.inStock ? "bg-label-success" : "bg-label-danger"}`}
+                            className={`badge cart-stock-badge ${item.inStock ? "bg-label-success" : "bg-label-danger"}`}
                           >
                             {item.inStock ? "موجود" : "ناموجود"}
                           </span>

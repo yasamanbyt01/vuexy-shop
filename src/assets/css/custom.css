@@ -485,7 +485,9 @@ Horizontal scroll without visible scrollbar
   }
 }
 
-/* Mobile specifically (< 767.98px) */
+/* checkout wizard on mobile screens */
+
+/* Mobile */
 @media (max-width: 767.98px) {
   #wizard-checkout .bs-stepper-header {
     max-inline-size: 100%;
@@ -535,6 +537,7 @@ Horizontal scroll without visible scrollbar
   }
 }
 
+/* Tablet */
 @media (max-width: 991.98px) {
   #wizard-checkout .bs-stepper-header {
     flex-direction: row !important;
@@ -566,5 +569,12 @@ Horizontal scroll without visible scrollbar
 
   #wizard-checkout .bs-stepper-header .line .icon-base {
     display: block !important;
+  }
+}
+
+/* */
+@media (max-width: 767.98px) {
+  .cart-stock-badge {
+    margin-top: 0.25rem;
   }
 }

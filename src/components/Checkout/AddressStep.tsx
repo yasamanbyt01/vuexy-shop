@@ -288,7 +288,11 @@ const AddressStep: React.FC<AddressStepProps> = ({
 
               <dt className="col-6 fw-normal">هزینه ارسال</dt>
               <dd className="col-6 text-end">
-                {freeShipping ? "رایگان" : formatPrice(deliveryPrice)}
+                {freeShipping ? (
+                  <span className="badge bg-label-success">رایگان</span>
+                ) : (
+                  formatPrice(deliveryPrice)
+                )}
               </dd>
             </dl>
             <hr className="mx-n6 my-6" />

@@ -88,11 +88,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     <br />
                   </>
                 ) : (
-                  "No address selected"
+                  "آدرسی انتخاب نشده است."
                 )}
               </address>
               <p className="mb-0 mt-4">
-                {selectedAddress?.phone || "No phone provided"}
+                {selectedAddress?.phone || "شماره تماس وارد نشده است."}
               </p>
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
@@ -117,11 +117,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     <br />
                   </>
                 ) : (
-                  "آدرسی انتخاب نشده است"
+                  "آدرسی انتخاب نشده است."
                 )}
               </address>
               <p className="mb-0 mt-4">
-                {selectedAddress?.phone || "شماره تماس وارد نشده است"}
+                {selectedAddress?.phone || "شماره تماس وارد نشده است."}
               </p>
             </li>
             <li className="list-group-item flex-fill p-6 text-body">
@@ -204,8 +204,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <dt className="col-6 fw-normal">مجموع سفارش</dt>
               <dd className="col-6 text-end">{formatPrice(totalPrice)}</dd>
 
-              <dt className="col-sm-6 text-heading fw-normal">هزینه ارسال</dt>
-              <dd className="col-sm-6 text-end">
+              <dt className="col-6 text-heading fw-normal">هزینه ارسال</dt>
+              <dd className="col-6 text-end">
                 {freeShipping ? (
                   <span className="badge bg-label-success">رایگان</span>
                 ) : (

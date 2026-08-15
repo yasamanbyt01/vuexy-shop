@@ -59,8 +59,18 @@ const Checkout = () => {
 
   useEffect(() => {
     const storedAddresses = getAddresses();
+
     setAddresses(storedAddresses);
-  }, []);
+
+    const defaultAddress = storedAddresses.find((address) => address.isDefault);
+
+    if (defaultAddress) {
+      dispatch({
+        type: "SET_SELECTED_ADDRESS",
+        payload: defaultAddress.id,
+      });
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     const element = document.querySelector("#wizard-checkout");
