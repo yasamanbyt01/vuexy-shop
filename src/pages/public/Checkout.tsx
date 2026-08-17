@@ -22,6 +22,7 @@ const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [addressValidationTrigger, setAddressValidationTrigger] = useState(0);
 
   const { state, dispatch } = useCheckout();
   const {
@@ -57,6 +58,10 @@ const Checkout = () => {
     scrollTop();
   };
 
+  const isAddressValid = () => {
+    return addresses.some((address) => address.id === selectedAddressId);
+  };
+
   useEffect(() => {
     const storedAddresses = getAddresses();
 
@@ -86,6 +91,33 @@ const Checkout = () => {
     });
 
     stepperRef.current = stepper;
+
+    const handleStepClick = (event: Event) => {
+      const target = event.target as HTMLElement;
+
+      const stepTrigger = target.closest(".step-trigger");
+
+      if (!stepTrigger) return;
+
+      const step = stepTrigger.closest(".step") as HTMLElement | null;
+
+      if (!step) return;
+
+      const targetStep = step.dataset.target;
+
+      const requiresAddress =
+        targetStep === "#checkout-payment" ||
+        targetStep === "#checkout-confirmation";
+
+      if (requiresAddress && !isAddressValid()) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        setAddressValidationTrigger((prev) => prev + 1);
+      }
+    };
+
+    element.addEventListener("click", handleStepClick, true);
 
     const STORAGE_KEY = "checkoutStep";
 
@@ -125,9 +157,10 @@ const Checkout = () => {
     element.addEventListener("shown.bs-stepper", handleStepChange);
 
     return () => {
+      element.removeEventListener("click", handleStepClick, true);
       element.removeEventListener("shown.bs-stepper", handleStepChange);
     };
-  }, []);
+  }, [addresses, selectedAddressId]);
 
   const handleAddAddress = (
     newAddressData: Omit<Address, "id" | "isDefault">,
@@ -269,6 +302,7 @@ const Checkout = () => {
                   onSelectAddress={(id) =>
                     dispatch({ type: "SET_SELECTED_ADDRESS", payload: id })
                   }
+                  addressValidationTrigger={addressValidationTrigger}
                   onRemoveAddress={handleRemoveAddress}
                   onEditAddress={handleEditAddress}
                   onSetDefaultAddress={handleSetDefaultAddress}

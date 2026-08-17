@@ -15,6 +15,7 @@ interface AddressStepProps {
   onNext: () => void;
   onPrev: () => void;
   onShowAddressModal: () => void;
+  addressValidationTrigger: number;
   setDeliveryPrice: (price: number) => void;
   setFinalPrice: (price: number) => void;
   setSelectedDeliveryOption: (option: any) => void;
@@ -31,6 +32,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
   onNext,
   onPrev,
   onShowAddressModal,
+  addressValidationTrigger,
   setDeliveryPrice,
   setFinalPrice,
   setSelectedDeliveryOption,
@@ -106,6 +108,18 @@ const AddressStep: React.FC<AddressStepProps> = ({
     setAddressError(false);
     onNext();
   };
+
+  useEffect(() => {
+    if (addressValidationTrigger === 0) return;
+
+    const selectedAddress = addresses.find(
+      (address) => address.id === selectedAddressId,
+    );
+
+    if (!selectedAddress) {
+      setAddressError(true);
+    }
+  }, [addressValidationTrigger, addresses, selectedAddressId]);
 
   return (
     <div id="checkout-address" className="content">
