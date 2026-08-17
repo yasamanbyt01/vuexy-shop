@@ -578,3 +578,13 @@ Horizontal scroll without visible scrollbar
     margin-top: 0.25rem;
   }
 }
+
+/* =========================================
+   Empty cart - mobile spacing
+   ========================================= */
+
+@media (max-width: 767.98px) {
+  .checkout-empty-cart {
+    min-height: 350px !important;
+  }
+}

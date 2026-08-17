@@ -210,7 +210,7 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <section className="flex-grow-1 d-flex align-items-center justify-content-center bg-body py-5">
+      <section className="checkout-empty-cart flex-grow-1 d-flex align-items-center justify-content-center bg-body py-5">
         <div className="container">
           <div className="d-flex flex-column align-items-center text-center">
             <i className="ti tabler-shopping-cart-off fs-1 mb-3"></i>
