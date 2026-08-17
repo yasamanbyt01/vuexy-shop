@@ -78,7 +78,7 @@ const PublicFooter = () => {
                 </div>
               </form>
             </div>
-            <div className="col-lg-2 col-md-4 col-sm-6">
+            <div className="col-lg-2 col-md-4 col-6">
               <h6 className="footer-title mb-6">دسترسی سریع</h6>
               <ul className="list-unstyled">
                 <li className="mb-4">
@@ -128,7 +128,7 @@ const PublicFooter = () => {
                 </li>
               </ul>
             </div>
-            <div className="col-lg-2 col-md-4 col-sm-6">
+            <div className="col-lg-2 col-md-4 col-6">
               <h6 className="footer-title mb-6">راهنما</h6>
               <ul className="list-unstyled">
                 <li className="mb-4">

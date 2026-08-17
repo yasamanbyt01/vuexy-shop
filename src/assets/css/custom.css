@@ -580,6 +580,58 @@ Horizontal scroll without visible scrollbar
 }
 
 /* =========================================
+   Compact mobile footer
+   ========================================= */
+
+@media (max-width: 767.98px) {
+  /* Overall footer spacing */
+  .landing-footer .footer-top {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  /* Reduce spacing between footer sections */
+  .landing-footer .row {
+    row-gap: 2rem !important;
+  }
+
+  /* Brand section */
+  .landing-footer .app-brand-link {
+    margin-bottom: 1rem !important;
+  }
+
+  .landing-footer .footer-logo-description {
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Footer headings */
+  .landing-footer .footer-title {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Footer links */
+  .landing-footer ul li {
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* App download section */
+  .landing-footer .col-lg-3.col-md-4 a {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .landing-footer .col-lg-3.col-md-4 a img {
+    max-width: 180px;
+    height: auto;
+  }
+
+  /* Footer bottom */
+  .landing-footer .footer-bottom {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+/* =========================================
    Empty cart - mobile spacing
    ========================================= */
 
