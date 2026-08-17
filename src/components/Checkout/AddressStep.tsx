@@ -42,6 +42,8 @@ const AddressStep: React.FC<AddressStepProps> = ({
     state.deliveryOption?.id ?? "standard",
   );
 
+  const [addressError, setAddressError] = useState(false);
+
   const { items, getTotalPrice } = useCart();
   const totalPrice = getTotalPrice();
 
@@ -91,6 +93,20 @@ const AddressStep: React.FC<AddressStepProps> = ({
     }, ${address.city}, ${address.state}, ${address.zipCode}`;
   };
 
+  const handleNext = () => {
+    const selectedAddress = addresses.find(
+      (address) => address.id === selectedAddressId,
+    );
+
+    if (!selectedAddress) {
+      setAddressError(true);
+      return;
+    }
+
+    setAddressError(false);
+    onNext();
+  };
+
   return (
     <div id="checkout-address" className="content">
       <div className="row">
@@ -114,7 +130,10 @@ const AddressStep: React.FC<AddressStepProps> = ({
                       name="address"
                       className="form-check-input"
                       checked={selectedAddressId === address.id}
-                      onChange={() => onSelectAddress(address.id)}
+                      onChange={() => {
+                        onSelectAddress(address.id);
+                        setAddressError(false);
+                      }}
                     />
                     <span className="custom-option-header mb-2">
                       <span className="fw-medium text-heading mb-0">
@@ -192,6 +211,11 @@ const AddressStep: React.FC<AddressStepProps> = ({
           >
             افزودن آدرس جدید
           </button>
+          {addressError && (
+            <div className="text-danger mb-4">
+              لطفاً ابتدا یک آدرس را انتخاب کنید.
+            </div>
+          )}
 
           {/* Choose Delivery */}
           <p className="fw-medium text-heading">انتخاب روش ارسال</p>
@@ -314,7 +338,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
             <button
               type="button"
               className="btn btn-primary flex-fill"
-              onClick={onNext}
+              onClick={handleNext}
             >
               ادامه به پرداخت
             </button>

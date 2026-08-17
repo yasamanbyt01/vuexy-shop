@@ -69,6 +69,11 @@ const Checkout = () => {
         type: "SET_SELECTED_ADDRESS",
         payload: defaultAddress.id,
       });
+    } else {
+      dispatch({
+        type: "SET_SELECTED_ADDRESS",
+        payload: undefined,
+      });
     }
   }, [dispatch]);
 
