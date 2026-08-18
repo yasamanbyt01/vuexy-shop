@@ -572,10 +572,19 @@ Horizontal scroll without visible scrollbar
   }
 }
 
-/* */
-@media (max-width: 767.98px) {
-  .cart-stock-badge {
-    margin-top: 0.25rem;
+/* =========================================
+   Checkout wizard - tablet icon alignment
+   ========================================= */
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Move Cart icon + label together */
+  #wizard-checkout .step[data-target="#checkout-cart"] .step-trigger {
+    transform: translateY(8px);
+  }
+
+  /* Move Confirmation icon + label together */
+  #wizard-checkout .step[data-target="#checkout-confirmation"] .step-trigger {
+    transform: translateY(-8px);
   }
 }
 
