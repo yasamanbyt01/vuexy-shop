@@ -1,93 +1,229 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { categories } from "../../mock/categories";
 
 const MegaDropdownMobile = () => {
-  // تابعی برای بستن منوی موبایل
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+
+  // Close the Bootstrap mobile navbar after navigating.
   const closeMobileMenu = () => {
     const navbar = document.getElementById("navbarSupportedContent");
-    const toggler = document.querySelector(".navbar-toggler") as HTMLElement;
+    const toggler = document.querySelector(
+      '#navbarSupportedContent .navbar-toggler[data-bs-toggle="collapse"]',
+    ) as HTMLElement | null;
 
-    // اگر منو باز است، روی دکمه تغییر وضعیت (toggler) کلیک کن تا بسته شود
     if (navbar?.classList.contains("show") && toggler) {
       toggler.click();
     }
   };
 
+  const toggleCategories = () => {
+    setCategoriesOpen((prev) => !prev);
+
+    if (categoriesOpen) {
+      setOpenCategory(null);
+    }
+  };
+
+  const toggleCategory = (slug: string) => {
+    setOpenCategory((prev) => (prev === slug ? null : slug));
+  };
+
   return (
     <>
-      {/* لینک‌های ثابت */}
-      <li className="nav-item d-lg-none mt-2">
-        <Link className="nav-link fw-medium" to="/" onClick={closeMobileMenu}>
-          خانه
-        </Link>
-      </li>
+      {/* ================================
+          Main navigation links
+      ================================= */}
+
       <li className="nav-item d-lg-none">
         <Link
-          className="nav-link fw-medium"
+          className="nav-link mobile-menu-link"
+          to="/"
+          onClick={closeMobileMenu}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-home mobile-menu-icon"></i>
+            <span>خانه</span>
+          </span>
+        </Link>
+      </li>
+
+      <li className="nav-item d-lg-none">
+        <Link
+          className="nav-link mobile-menu-link"
           to="/products"
           onClick={closeMobileMenu}
         >
-          محصولات
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-shopping-bag mobile-menu-icon"></i>
+            <span>محصولات</span>
+          </span>
         </Link>
       </li>
 
-      {/* منوی دراپ‌داون دسته‌بندی‌ها */}
+      {/* ================================
+          Shopping highlights
+      ================================= */}
+
       <li className="nav-item d-lg-none">
-        <a
-          className="nav-link fw-medium d-flex align-items-center justify-content-between"
-          data-bs-toggle="collapse"
-          href="#mobileMegaMenu"
-          role="button"
-          aria-expanded="false"
-          aria-controls="mobileMegaMenu"
+        <Link
+          className="nav-link mobile-menu-link mobile-menu-highlight"
+          to="/products?specialOffers=true"
+          onClick={closeMobileMenu}
         >
-          دسته‌بندی‌ها
-          <i className="icon-base ti tabler-chevron-down chevron-icon"></i>
-        </a>
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-tag mobile-menu-icon"></i>
+            <span>پیشنهادهای ویژه</span>
+          </span>
 
-        <div className="collapse" id="mobileMegaMenu">
-          <ul className="nav flex-column pt-2">
-            {categories.map((cat) => (
-              <li className="nav-item mobile-category-item" key={cat.id}>
-                <a
-                  className="nav-link mobile-category-header d-flex align-items-center justify-content-between px-2 py-2 rounded text-heading"
-                  data-bs-toggle="collapse"
-                  href={`#mobileCategory-${cat.slug}`}
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls={`mobileCategory-${cat.slug}`}
-                >
-                  <span className="d-flex align-items-center gap-2">
-                    <span className="avatar avatar-sm flex-shrink-0">
-                      <span className="avatar-initial rounded bg-label-primary">
-                        <i className={`icon-base ti ${cat.icon}`}></i>
+          <i className="icon-base ti tabler-chevron-left mobile-menu-arrow"></i>
+        </Link>
+      </li>
+
+      <li className="nav-item d-lg-none">
+        <Link
+          className="nav-link mobile-menu-link"
+          to="/products?sort=popular"
+          onClick={closeMobileMenu}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-star mobile-menu-icon"></i>
+            <span>پرفروش‌ترین‌ها</span>
+          </span>
+
+          <i className="icon-base ti tabler-chevron-left mobile-menu-arrow"></i>
+        </Link>
+      </li>
+
+      <li className="nav-item d-lg-none">
+        <Link
+          className="nav-link mobile-menu-link"
+          to="/products?sort=newest"
+          onClick={closeMobileMenu}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-sparkles mobile-menu-icon"></i>
+            <span>جدیدترین محصولات</span>
+          </span>
+
+          <i className="icon-base ti tabler-chevron-left mobile-menu-arrow"></i>
+        </Link>
+      </li>
+
+      {/* ================================
+          Categories
+      ================================= */}
+
+      <li className="nav-item d-lg-none mobile-categories-section">
+        <button
+          type="button"
+          className="nav-link mobile-menu-link mobile-categories-toggle d-flex align-items-center justify-content-between w-100 border-0 bg-transparent text-start"
+          onClick={toggleCategories}
+          aria-expanded={categoriesOpen}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-category mobile-menu-icon"></i>
+            <span>دسته‌بندی‌ها</span>
+          </span>
+
+          <i
+            className={`icon-base ti tabler-chevron-down chevron-icon ${
+              categoriesOpen ? "rotate-180" : ""
+            }`}
+          ></i>
+        </button>
+
+        {categoriesOpen && (
+          <div id="mobileMegaMenu">
+            <ul className="nav flex-column mobile-category-list">
+              {categories.map((cat) => {
+                const isOpen = openCategory === cat.slug;
+
+                return (
+                  <li className="nav-item mobile-category-item" key={cat.id}>
+                    <button
+                      type="button"
+                      className="nav-link mobile-category-header d-flex align-items-center justify-content-between w-100 border-0 bg-transparent text-start"
+                      onClick={() => toggleCategory(cat.slug)}
+                      aria-expanded={isOpen}
+                    >
+                      <span className="d-flex align-items-center gap-3">
+                        <span className="mobile-category-icon">
+                          <i className={`icon-base ti ${cat.icon}`}></i>
+                        </span>
+
+                        <span className="fw-medium">{cat.title}</span>
                       </span>
-                    </span>
-                    <span className="fw-medium">{cat.title}</span>
-                  </span>
 
-                  <i className="icon-base ti tabler-chevron-down chevron-icon"></i>
-                </a>
+                      <i
+                        className={`icon-base ti tabler-chevron-down chevron-icon ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      ></i>
+                    </button>
 
-                <div className="collapse" id={`mobileCategory-${cat.slug}`}>
-                  <ul className="nav flex-column mb-2 ps-4">
-                    {cat.subcategories.map((sub) => (
-                      <li className="nav-item" key={sub.slug}>
-                        <Link
-                          className="nav-link mega-dropdown-link"
-                          to={`/products?category=${cat.slug}&subcategory=${sub.slug}`}
-                          onClick={closeMobileMenu} // اضافه کردن رویداد کلیک به لینک‌های زیرمجموعه
-                        >
-                          {sub.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+                    {isOpen && (
+                      <ul className="nav flex-column mobile-subcategory-list">
+                        {cat.subcategories.map((sub) => (
+                          <li className="nav-item" key={sub.slug}>
+                            <Link
+                              className="nav-link mobile-subcategory-link"
+                              to={`/products?category=${cat.slug}&subcategory=${sub.slug}`}
+                              onClick={closeMobileMenu}
+                            >
+                              <span>{sub.title}</span>
+
+                              <span className="mobile-subcategory-count">
+                                {sub.productCount}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </li>
+
+      {/* ================================
+          Information / support
+      ================================= */}
+
+      <li className="nav-item d-lg-none mobile-menu-divider"></li>
+
+      <li className="nav-item d-lg-none">
+        <Link
+          className="nav-link mobile-menu-link"
+          to="/contact"
+          onClick={closeMobileMenu}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-phone mobile-menu-icon"></i>
+            <span>تماس با ما</span>
+          </span>
+
+          <i className="icon-base ti tabler-chevron-left mobile-menu-arrow"></i>
+        </Link>
+      </li>
+
+      <li className="nav-item d-lg-none">
+        <Link
+          className="nav-link mobile-menu-link"
+          to="/about"
+          onClick={closeMobileMenu}
+        >
+          <span className="d-flex align-items-center gap-3">
+            <i className="icon-base ti tabler-info-circle mobile-menu-icon"></i>
+            <span>درباره ما</span>
+          </span>
+
+          <i className="icon-base ti tabler-chevron-left mobile-menu-arrow"></i>
+        </Link>
       </li>
     </>
   );

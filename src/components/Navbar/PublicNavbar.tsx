@@ -23,9 +23,12 @@ const PublicNavbar = () => {
     const navbar = document.getElementById("navbarSupportedContent");
 
     const handleMenuOpen = () => {
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     };
+
     const handleMenuClose = () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
 
@@ -35,10 +38,11 @@ const PublicNavbar = () => {
     return () => {
       navbar?.removeEventListener("show.bs.collapse", handleMenuOpen);
       navbar?.removeEventListener("hide.bs.collapse", handleMenuClose);
+
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
   }, []);
-
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

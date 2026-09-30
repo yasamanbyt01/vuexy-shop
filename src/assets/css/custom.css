@@ -649,3 +649,253 @@ Horizontal scroll without visible scrollbar
     min-height: 350px !important;
   }
 }
+
+/* =========================================
+   Mobile Mega Menu
+   ========================================= */
+
+@media (max-width: 991.98px) {
+  /* -----------------------------------------
+     Main mobile menu links
+     ----------------------------------------- */
+
+  #navbarSupportedContent .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 48px;
+
+    padding: 10px 4px !important;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    border-radius: 8px;
+
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  #navbarSupportedContent .mobile-menu-link:hover,
+  #navbarSupportedContent .mobile-menu-link:focus {
+    background-color: var(--bs-tertiary-bg);
+  }
+
+  /* Main link icons */
+
+  #navbarSupportedContent .mobile-menu-icon {
+    width: 20px;
+    min-width: 20px;
+
+    font-size: 20px;
+
+    color: var(--bs-primary);
+
+    text-align: center;
+  }
+
+  /* Right-side arrows */
+
+  #navbarSupportedContent .mobile-menu-arrow {
+    font-size: 18px;
+
+    color: var(--bs-secondary-color);
+
+    transition: transform 0.2s ease;
+  }
+
+  /* -----------------------------------------
+     Special offers
+     ----------------------------------------- */
+
+  #navbarSupportedContent .mobile-menu-highlight {
+    font-weight: 600;
+  }
+
+  /* -----------------------------------------
+     Categories section
+     ----------------------------------------- */
+
+  #navbarSupportedContent .mobile-categories-section {
+    margin-top: 4px;
+  }
+
+  #navbarSupportedContent .mobile-categories-toggle {
+    margin-top: 4px;
+  }
+
+  /* Category list */
+
+  #navbarSupportedContent .mobile-category-list {
+    margin-top: 6px;
+    padding: 4px 0 4px 0;
+
+    border-radius: 10px;
+
+    background-color: var(--bs-tertiary-bg);
+  }
+
+  /* Individual category */
+
+  #navbarSupportedContent .mobile-category-item {
+    padding: 2px 6px;
+  }
+
+  #navbarSupportedContent .mobile-category-header {
+    min-height: 48px;
+
+    padding: 8px 10px !important;
+
+    border-radius: 8px;
+
+    color: var(--bs-heading-color);
+
+    font-size: 14px;
+
+    transition: background-color 0.2s ease;
+  }
+
+  #navbarSupportedContent .mobile-category-header:hover,
+  #navbarSupportedContent .mobile-category-header:focus {
+    background-color: var(--bs-body-bg);
+  }
+
+  /* Category icon container */
+
+  #navbarSupportedContent .mobile-category-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background-color: var(--bs-body-bg);
+
+    color: var(--bs-primary);
+
+    font-size: 18px;
+  }
+
+  /* -----------------------------------------
+     Subcategories
+     ----------------------------------------- */
+
+  #navbarSupportedContent .mobile-subcategory-list {
+    margin: 2px 10px 8px 10px;
+
+    padding: 4px 0;
+
+    border-inline-start: 2px solid var(--bs-border-color);
+  }
+
+  #navbarSupportedContent .mobile-subcategory-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 40px;
+
+    padding: 7px 12px !important;
+
+    color: var(--bs-secondary-color);
+
+    font-size: 13px;
+
+    border-radius: 6px;
+
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  #navbarSupportedContent .mobile-subcategory-link:hover,
+  #navbarSupportedContent .mobile-subcategory-link:focus {
+    color: var(--bs-primary);
+
+    background-color: var(--bs-body-bg);
+  }
+
+  /* Product count beside subcategory */
+
+  #navbarSupportedContent .mobile-subcategory-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 24px;
+    height: 22px;
+
+    padding: 0 6px;
+
+    border-radius: 999px;
+
+    background-color: var(--bs-secondary-bg);
+
+    color: var(--bs-secondary-color);
+
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  /* -----------------------------------------
+     Divider
+     ----------------------------------------- */
+
+  #navbarSupportedContent .mobile-menu-divider {
+    height: 1px;
+
+    margin: 10px 4px;
+
+    background-color: var(--bs-border-color);
+  }
+
+  /* -----------------------------------------
+     Internal scrolling
+     ----------------------------------------- */
+
+  #navbarSupportedContent.show {
+    height: calc(100dvh - 48px) !important;
+    max-height: calc(100dvh - 48px) !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior: contain;
+  }
+
+  /* Avoid an extra scrollbar inside nested
+     category collapse elements */
+
+  #navbarSupportedContent #mobileMegaMenu,
+  #navbarSupportedContent [id^="mobileCategory-"] {
+    overflow: visible;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #navbarSupportedContent.show {
+    height: 600px !important;
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  #navbarSupportedContent .chevron-icon {
+    transition: transform 0.2s ease;
+  }
+
+  #navbarSupportedContent .chevron-icon.rotate-180 {
+    transform: rotate(180deg);
+  }
+}
