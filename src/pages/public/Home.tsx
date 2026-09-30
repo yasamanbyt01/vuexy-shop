@@ -1,12 +1,43 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import HeroCarousel from "../../components/Home/HeroCarousel";
 import CategoryCard from "../../components/Home/CategoryCard";
 import ProductCard from "../../components/Home/ProductCard";
-import { Link } from "react-router-dom";
-import { categories } from "../../mock/categories";
+
 import { products } from "../../mock/products";
+
+import {
+  getCategories,
+  getCategoryImageUrl,
+  type ApiCategory,
+} from "../../services/categories";
 
 const Home = () => {
   const FEATURED_COUNT = 8;
+
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [categoryError, setCategoryError] = useState("");
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        setCategoryError("");
+
+        const data = await getCategories();
+
+        setCategories(data);
+      } catch {
+        setCategoryError("دریافت دسته‌بندی‌ها با خطا مواجه شد.");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   return (
     <main className="bg-body">
@@ -17,17 +48,29 @@ const Home = () => {
         <div className="container">
           <h4 className="fw-semibold mb-4">خرید براساس دسته بندی</h4>
 
-          <div className="row g-4">
-            {categories.map((cat) => (
-              <div key={cat.slug} className="col-6 col-md-4 col-lg-2">
-                <CategoryCard
-                  title={cat.title}
-                  image={cat.image}
-                  slug={cat.slug}
-                />
-              </div>
-            ))}
-          </div>
+          {loadingCategories && (
+            <div className="text-center py-4">
+              <p>در حال دریافت دسته‌بندی‌ها...</p>
+            </div>
+          )}
+
+          {categoryError && !loadingCategories && (
+            <div className="alert alert-danger">{categoryError}</div>
+          )}
+
+          {!loadingCategories && !categoryError && (
+            <div className="row g-4">
+              {categories.map((category) => (
+                <div key={category.id} className="col-6 col-md-4 col-lg-2">
+                  <CategoryCard
+                    title={category.name}
+                    image={getCategoryImageUrl(category.image)}
+                    slug={category.slug}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -37,7 +80,6 @@ const Home = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h4 className="fw-semibold mb-0">محصولات پیشنهادی</h4>
 
-            {/* Desktop CTA */}
             <Link
               to="/products"
               className="btn btn-sm btn-primary d-none d-md-inline-flex"
@@ -60,7 +102,7 @@ const Home = () => {
             ))}
           </div>
 
-          {/* Mobile horizontal scroll (no visible scrollbar) */}
+          {/* Mobile horizontal scroll */}
           <div className="d-md-none">
             <div className="horizontal-scroll pb-2">
               {products.slice(0, 8).map((product) => (
