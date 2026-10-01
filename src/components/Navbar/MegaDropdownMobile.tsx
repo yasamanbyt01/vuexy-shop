@@ -1,10 +1,41 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { categories } from "../../mock/categories";
+import { useEffect, useState } from "react";
+import {
+  getMegaMenuCategories,
+  type MegaMenuCategory,
+} from "../../services/megaMenu";
 
 const MegaDropdownMobile = () => {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<MegaMenuCategory[]>([]);
+
+  // Load mega menu data from backend.
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCategories = async () => {
+      try {
+        const data = await getMegaMenuCategories();
+
+        if (!cancelled) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error("Failed to load mobile mega menu categories:", error);
+
+        if (!cancelled) {
+          setCategories([]);
+        }
+      }
+    };
+
+    loadCategories();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Close the Bootstrap mobile navbar after navigating.
   const closeMobileMenu = () => {
@@ -153,7 +184,7 @@ const MegaDropdownMobile = () => {
                           <i className={`icon-base ti ${cat.icon}`}></i>
                         </span>
 
-                        <span className="fw-medium">{cat.title}</span>
+                        <span className="fw-medium">{cat.name}</span>
                       </span>
 
                       <i
@@ -169,7 +200,9 @@ const MegaDropdownMobile = () => {
                           <li className="nav-item" key={sub.slug}>
                             <Link
                               className="nav-link mobile-subcategory-link"
-                              to={`/products?category=${cat.slug}&subcategory=${sub.slug}`}
+                              to={`/products?category=${cat.slug}&tag=${encodeURIComponent(
+                                sub.slug,
+                              )}`}
                               onClick={closeMobileMenu}
                             >
                               <span>{sub.title}</span>
