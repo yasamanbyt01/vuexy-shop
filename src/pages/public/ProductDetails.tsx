@@ -1,29 +1,116 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { products } from "../../mock/products";
-import { mockReviews } from "../../mock/reviews";
+
 import BreadCrumbs from "../../components/ui/BreadCrumbs";
 import ProductDetailCarousel from "../../components/ProductDetail/ProductDetailCarousel";
 import ProductDetailTabs from "../../components/ProductDetail/ProductDetailTabs";
+
 import { SPEC_LABELS } from "../../constants/specificationLabels";
 import { CATEGORY_LABELS } from "../../constants/catergoryLabels";
+
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 import { formatSpecValue } from "../../utils/specValue";
+
 import { useCart } from "../../context/CartContext";
 
+import { getProductById, type ApiProduct } from "../../services/products";
+
+import type { Product } from "../../types/products";
+import { mockReviews } from "../../mock/reviews";
+
+const mapApiProductToProduct = (product: ApiProduct): Product => ({
+  ...product,
+  category: product.category.slug,
+  originalPrice: product.originalPrice ?? undefined,
+});
+
 const ProductDetails = () => {
+  const { id } = useParams<{ id: string }>();
+
+  const productId = Number(id);
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
   const { addItem } = useCart();
 
-  const { id } = useParams<{ id: string }>();
-  const productId = Number(id);
+  useEffect(() => {
+    if (!id || Number.isNaN(productId)) {
+      setError("محصول مورد نظر یافت نشد");
+      setLoading(false);
+      return;
+    }
 
-  const product = products.find((p) => p.id === productId);
+    let cancelled = false;
 
-  if (!product) {
+    const loadProduct = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getProductById(productId);
+
+        if (!cancelled) {
+          const mappedProduct = mapApiProductToProduct(data);
+
+          setProduct(mappedProduct);
+        }
+      } catch {
+        if (!cancelled) {
+          setProduct(null);
+          setError("محصول مورد نظر یافت نشد");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProduct();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, productId]);
+
+  useEffect(() => {
+    if (product?.colors && product.colors.length > 0) {
+      setSelectedColor(product.colors[0].value);
+    } else {
+      setSelectedColor(null);
+    }
+  }, [product]);
+
+  useEffect(() => {
+    if (product?.sizes && product.sizes.length > 0) {
+      setSelectedSize(product.sizes[0]);
+    } else {
+      setSelectedSize(null);
+    }
+  }, [product]);
+
+  if (loading) {
+    return (
+      <section className="section-py bg-body">
+        <div className="container">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">در حال بارگذاری...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !product) {
     return (
       <section className="section-py bg-body">
         <div className="container">
@@ -42,7 +129,7 @@ const ProductDetails = () => {
       price: product.price,
       discountedPrice: product.originalPrice || product.price,
       image: product.images?.[0],
-      quantity: quantity,
+      quantity,
       inStock: product.inStock,
       seller: product.seller,
       rating: product.rating,
@@ -51,23 +138,10 @@ const ProductDetails = () => {
     addItem(cartItem);
   };
 
-  useEffect(() => {
-    if (product?.colors && product.colors.length > 0) {
-      setSelectedColor(product.colors[0].value);
-    }
-  }, [product]);
+  const reviews = mockReviews.filter(
+    (review) => review.productId === productId,
+  );
 
-  useEffect(() => {
-    if (product?.sizes && product.sizes.length > 0) {
-      setSelectedSize(product.sizes[0]);
-    } else {
-      setSelectedSize(null);
-    }
-  }, [product]);
-
-  const reviews = mockReviews.filter((r) => r.productId === productId);
-
-  // Breadcrumb items
   const breadcrumbItems = [
     { label: "خانه", path: "/" },
     { label: "محصولات", path: "/products" },
@@ -78,7 +152,6 @@ const ProductDetails = () => {
     { label: product.name },
   ];
 
-  // Price & discount logic (single source of truth)
   const price = product.price;
 
   const hasDiscount =
@@ -116,11 +189,13 @@ const ProductDetails = () => {
                   <span className="badge bg-light text-dark me-2">
                     {CATEGORY_LABELS[product.category] ?? product.category}
                   </span>
+
                   <span className="text-muted small">
                     {" "}
                     کد محصول: {toFarsiNumber(product.sku)}
                   </span>
                 </div>
+
                 {product.inStock ? (
                   <span className="badge bg-success d-flex align-items-center">
                     <i className="ti tabler-check me-1"></i>
@@ -134,23 +209,23 @@ const ProductDetails = () => {
               {/* Product Name */}
               <h1 className="h2 fw-bold mb-3">{product.name}</h1>
 
-              {/* Rating & Reviews */}
+              {/* Rating */}
               <div className="d-flex align-items-center mb-3">
                 <div className="text-warning me-2">
                   {"★".repeat(Math.floor(product.rating))}
                   <span className="text-warning">★</span>
                   {"☆".repeat(5 - Math.ceil(product.rating))}
                 </div>
+
                 <span className="text-muted small mx-2">
                   {toFarsiNumber(product.rating)}/۵
                 </span>
               </div>
 
-              {/* Price & Savings */}
+              {/* Price */}
               <div className="mb-4 p-3 bg-light rounded">
                 <div className="mb-4 p-3 bg-light rounded">
                   <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
-                    {/* Main price – always visible */}
                     <span className="h2 text-primary fw-bold">
                       {formatPrice(price)}
                     </span>
@@ -194,11 +269,13 @@ const ProductDetails = () => {
                     رنگ:{" "}
                     <strong>
                       {
-                        product.colors.find((c) => c.value === selectedColor)
-                          ?.name
+                        product.colors.find(
+                          (color) => color.value === selectedColor,
+                        )?.name
                       }
                     </strong>
                   </span>
+
                   <span className="text-primary small">انتخاب الزامی</span>
                 </h6>
 
@@ -218,11 +295,11 @@ const ProductDetails = () => {
                           backgroundColor: color.hex,
                           border: isSelected
                             ? "2px solid #0d6efd"
-                            : color.hex === "#FFFFFF"
+                            : color.hex.toUpperCase() === "#FFFFFF"
                               ? "2px solid #ced4da"
                               : "2px solid transparent",
                           boxShadow:
-                            color.hex === "#FFFFFF"
+                            color.hex.toUpperCase() === "#FFFFFF"
                               ? "inset 0 0 0 1px #dee2e6"
                               : "none",
                         }}
@@ -231,7 +308,10 @@ const ProductDetails = () => {
                           <i
                             className="ti tabler-check text-primary position-absolute top-50 start-50 translate-middle"
                             style={{
-                              color: color.hex === "#FFFFFF" ? "#000" : "#fff",
+                              color:
+                                color.hex.toUpperCase() === "#FFFFFF"
+                                  ? "#000"
+                                  : "#fff",
                               fontSize: "1rem",
                             }}
                           ></i>
@@ -243,16 +323,16 @@ const ProductDetails = () => {
               </div>
 
               {/* Size Selection */}
-              {product.sizes && product.sizes.length > 0 && (
+              {product.sizes.length > 0 && (
                 <div className="mb-4">
                   <h6 className="mb-2 d-flex justify-content-between">
                     <span>
                       سایز:{" "}
                       <strong>
-                        {" "}
                         {selectedSize ? toFarsiNumber(selectedSize) : "—"}
                       </strong>
                     </span>
+
                     <Link to="#" className="text-primary small">
                       راهنمای سایز
                     </Link>
@@ -279,6 +359,7 @@ const ProductDetails = () => {
               {/* Quantity */}
               <div className="mb-4">
                 <h6 className="mb-2">تعداد:</h6>
+
                 <div
                   className="d-flex align-items-center"
                   style={{ maxWidth: "150px" }}
@@ -290,6 +371,7 @@ const ProductDetails = () => {
                   >
                     <i className="ti tabler-minus"></i>
                   </button>
+
                   <input
                     type="text"
                     className="form-control text-center border-0"
@@ -300,6 +382,7 @@ const ProductDetails = () => {
                       fontWeight: "600",
                     }}
                   />
+
                   <button
                     className="btn btn-outline-secondary"
                     onClick={() =>
@@ -310,6 +393,7 @@ const ProductDetails = () => {
                     <i className="ti tabler-plus"></i>
                   </button>
                 </div>
+
                 <small className="text-muted mt-1 d-block">
                   فقط {toFarsiNumber(product.stockCount)} عدد باقی مانده
                 </small>
@@ -320,18 +404,22 @@ const ProductDetails = () => {
                 <button
                   className="btn btn-primary btn-lg py-3"
                   onClick={handleAddToCart}
+                  disabled={!product.inStock}
                 >
                   <i className="ti tabler-shopping-cart me-2"></i>
                   افزودن به سبد خرید – {formatPrice(price * quantity)}
                 </button>
+
                 <div className="d-flex gap-2">
                   <button className="btn btn-outline-primary flex-grow-1">
                     <i className="ti tabler-heart me-2"></i>
                     افزودن به علاقه مندی ها
                   </button>
+
                   <button className="btn btn-outline-secondary">
                     <i className="ti tabler-repeat"></i>
                   </button>
+
                   <button className="btn btn-outline-secondary">
                     <i className="ti tabler-share"></i>
                   </button>
@@ -347,18 +435,21 @@ const ProductDetails = () => {
                       <span className="small">پرداخت امن</span>
                     </div>
                   </div>
+
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-truck text-primary me-2"></i>
                       <span className="small">ارسال رایگان</span>
                     </div>
                   </div>
+
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-rotate-clockwise text-info me-2"></i>
                       <span className="small">بازگشت ۳۰ روزه</span>
                     </div>
                   </div>
+
                   <div className="col-6">
                     <div className="d-flex align-items-center">
                       <i className="ti tabler-headset text-warning me-2"></i>
@@ -380,6 +471,7 @@ const ProductDetails = () => {
                   مزایای محصول
                 </h6>
               </div>
+
               <div className="card-body p-3">
                 <ul className="list-unstyled mb-0">
                   {product.features.slice(0, 4).map((feature, index) => (
@@ -400,22 +492,22 @@ const ProductDetails = () => {
                   مشخصات
                 </h6>
               </div>
+
               <div className="card-body p-3">
                 <dl className="row mb-0">
-                  {product.specifications &&
-                    Object.entries(product.specifications).map(
-                      ([key, value]) => (
-                        <div key={key}>
-                          <dt className="col-6 small text-muted">
-                            {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ??
-                              key}
-                          </dt>
-                          <dd className="col-6 small">
-                            {formatSpecValue(value)}
-                          </dd>
-                        </div>
-                      ),
-                    )}
+                  {Object.entries(product.specifications).map(
+                    ([key, value]) => (
+                      <div key={key}>
+                        <dt className="col-6 small text-muted">
+                          {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ?? key}
+                        </dt>
+
+                        <dd className="col-6 small">
+                          {formatSpecValue(value)}
+                        </dd>
+                      </div>
+                    ),
+                  )}
                 </dl>
               </div>
             </div>
@@ -428,6 +520,7 @@ const ProductDetails = () => {
                   برچسب ها
                 </h6>
               </div>
+
               <div className="card-body p-3">
                 <div className="d-flex flex-wrap gap-1">
                   {product.tags.map((tag, index) => (
@@ -447,16 +540,20 @@ const ProductDetails = () => {
             <div className="card">
               <div className="card-body p-3 text-center">
                 <h6 className="mb-3">اشتراک‌گذاری محصول</h6>
+
                 <div className="d-flex justify-content-center gap-2">
                   <button className="btn btn-outline-primary btn-sm">
                     <i className="ti tabler-brand-facebook"></i>
                   </button>
+
                   <button className="btn btn-outline-info btn-sm">
                     <i className="ti tabler-brand-twitter"></i>
                   </button>
+
                   <button className="btn btn-outline-danger btn-sm">
                     <i className="ti tabler-brand-pinterest"></i>
                   </button>
+
                   <button className="btn btn-outline-success btn-sm">
                     <i className="ti tabler-brand-whatsapp"></i>
                   </button>
@@ -466,7 +563,7 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        {/* Product Tabs Section */}
+        {/* Product Tabs */}
         <div className="row mt-6">
           <div className="col-12">
             <ProductDetailTabs product={product} reviews={reviews} />

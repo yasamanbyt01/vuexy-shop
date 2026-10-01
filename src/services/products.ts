@@ -111,3 +111,18 @@ export function getProductImageUrl(imagePath: string): string {
 
   return `${API_URL}${imagePath}`;
 }
+
+export async function getProductById(id: number): Promise<ApiProduct> {
+  const response = await fetch(`${API_URL}/products/${id}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch product");
+  }
+
+  const product: ApiProduct = await response.json();
+
+  return {
+    ...product,
+    images: product.images.map(getProductImageUrl),
+  };
+}
