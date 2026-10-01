@@ -3,10 +3,44 @@ const API_URL = import.meta.env.VITE_API_URL;
 export interface ApiProduct {
   id: number;
   name: string;
+  sku: string;
+
   price: number;
+  originalPrice: number | null;
+  rating: number;
+
+  description: string;
+  longDescription: string;
+
+  stockCount: number;
+  inStock: boolean;
+
+  seller: string;
+
+  features: string[];
+
+  colors: {
+    name: string;
+    value: string;
+    hex: string;
+  }[];
+
+  sizes: string[];
+  images: string[];
+  tags: string[];
+
+  specifications: Record<string, string | number>;
+
+  shippingInfo: {
+    freeOver: number;
+    delivery: string;
+    returns: string;
+  };
+
   category: {
     id: number;
     name: string;
+    slug: string;
   };
 }
 
@@ -59,5 +93,21 @@ export async function getProducts(
     throw new Error("Failed to fetch products");
   }
 
-  return response.json();
+  const result: ProductsResponse = await response.json();
+
+  return {
+    ...result,
+    data: result.data.map((product) => ({
+      ...product,
+      images: product.images.map(getProductImageUrl),
+    })),
+  };
+}
+
+export function getProductImageUrl(imagePath: string): string {
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
+
+  return `${API_URL}${imagePath}`;
 }
