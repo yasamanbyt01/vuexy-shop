@@ -3,15 +3,14 @@ import { useState, useEffect } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
 import { useCart } from "../../context/CartContext";
-import { products } from "../../mock/products";
-import type { Product } from "../../types/products";
+import { getProducts, type ApiProduct } from "../../services/products";
 import { toFarsiNumber } from "../../utils/numbers";
 
 const PublicNavbar = () => {
   const { items } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [suggestions, setSuggestions] = useState<ApiProduct[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [usingKeyboard, setUsingKeyboard] = useState(false);
@@ -96,25 +95,42 @@ const PublicNavbar = () => {
   }, [query]);
 
   useEffect(() => {
-    if (!debouncedQuery.trim()) {
+    const trimmedQuery = debouncedQuery.trim();
+
+    if (!trimmedQuery) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
 
-    const q = debouncedQuery.toLowerCase();
+    let cancelled = false;
 
-    const matches = products
-      .filter(
-        (p: Product) =>
-          p.name.toLowerCase().includes(q) ||
-          p.tags.some((t: string) => t.toLowerCase().includes(q)),
-      )
-      .slice(0, 6);
+    const fetchSuggestions = async () => {
+      try {
+        const response = await getProducts({
+          search: trimmedQuery,
+          page: 1,
+          limit: 6,
+        });
 
-    setSuggestions(matches);
-    setShowSuggestions(true);
-    setSelectedIndex(-1);
+        if (!cancelled) {
+          setSuggestions(response.data);
+          setShowSuggestions(response.data.length > 0);
+          setSelectedIndex(-1);
+        }
+      } catch {
+        if (!cancelled) {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      }
+    };
+
+    fetchSuggestions();
+
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedQuery]);
 
   useEffect(() => {

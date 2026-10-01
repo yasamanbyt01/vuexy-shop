@@ -1,24 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { products } from "../../mock/products";
-import type { Product } from "../../types/products";
+import { getProducts, type ApiProduct } from "../../services/products";
 
 const SearchPage = () => {
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const [results, setResults] = useState<ApiProduct[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [usingKeyboard, setUsingKeyboard] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submitSearch = () => {
-    if (!query.trim()) return;
-    saveSearch(query);
-    navigate(`/search?q=${encodeURIComponent(query)}`);
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) return;
+
+    saveSearch(trimmedQuery);
+    navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
   };
 
-  // debounce
+  // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
@@ -27,15 +31,60 @@ const SearchPage = () => {
     return () => clearTimeout(timer);
   }, [query]);
 
-  // load recent searches
+  // Load recent searches
   useEffect(() => {
     const saved = localStorage.getItem("recentSearches");
+
     if (saved) {
       setRecentSearches(JSON.parse(saved));
     }
   }, []);
 
-  // save search
+  // Fetch search results from backend
+  useEffect(() => {
+    const trimmedQuery = debouncedQuery.trim();
+
+    if (!trimmedQuery) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const fetchResults = async () => {
+      try {
+        setLoading(true);
+
+        const response = await getProducts({
+          search: trimmedQuery,
+          page: 1,
+          limit: 10,
+        });
+
+        if (!cancelled) {
+          setResults(response.data);
+          setSelectedIndex(-1);
+        }
+      } catch {
+        if (!cancelled) {
+          setResults([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchResults();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedQuery]);
+
+  // Save search
   const saveSearch = (term: string) => {
     if (!term.trim()) return;
 
@@ -48,13 +97,9 @@ const SearchPage = () => {
     localStorage.setItem("recentSearches", JSON.stringify(updated));
   };
 
-  const results = products.filter((p: Product) =>
-    p.name.toLowerCase().includes(debouncedQuery.toLowerCase()),
-  );
-
-  const handleProductClick = (p: Product) => {
-    saveSearch(p.name);
-    navigate(`/products/${p.id}`);
+  const handleProductClick = (product: ApiProduct) => {
+    saveSearch(product.name);
+    navigate(`/products/${product.id}`);
   };
 
   const handleSuggestionClick = (text: string) => {
@@ -91,7 +136,6 @@ const SearchPage = () => {
 
   return (
     <div className="container py-4 search-page-container">
-      {/* header */}
       <div className="search-header mb-3">
         <button className="btn btn-icon" onClick={() => navigate(-1)}>
           <i className="ti tabler-arrow-left"></i>
@@ -115,7 +159,6 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {/* suggestions */}
       <div
         className={`search-suggestions ${usingKeyboard ? "keyboard-nav" : ""}`}
       >
@@ -145,10 +188,15 @@ const SearchPage = () => {
           </>
         )}
 
-        {debouncedQuery &&
-          results.slice(0, 10).map((p, i) => (
+        {loading && debouncedQuery && (
+          <div className="text-muted p-2">در حال جستجو...</div>
+        )}
+
+        {!loading &&
+          debouncedQuery &&
+          results.slice(0, 10).map((product, i) => (
             <div
-              key={p.id}
+              key={product.id}
               className={
                 "suggestion-item " +
                 (selectedIndex === i ? "bg-light text-primary " : "")
@@ -157,14 +205,14 @@ const SearchPage = () => {
                 setUsingKeyboard(false);
                 setSelectedIndex(i);
               }}
-              onClick={() => handleProductClick(p)}
+              onClick={() => handleProductClick(product)}
             >
               <i className="ti tabler-search"></i>
-              <span>{p.name}</span>
+              <span>{product.name}</span>
             </div>
           ))}
 
-        {debouncedQuery && results.length === 0 && (
+        {!loading && debouncedQuery && results.length === 0 && (
           <div className="text-muted p-2">محصولی پیدا نشد</div>
         )}
       </div>
