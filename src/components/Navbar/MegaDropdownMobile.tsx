@@ -7,7 +7,7 @@ import {
 
 const MegaDropdownMobile = () => {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
   const [categories, setCategories] = useState<MegaMenuCategory[]>([]);
 
   // Load mega menu data from backend.
@@ -53,12 +53,16 @@ const MegaDropdownMobile = () => {
     setCategoriesOpen((prev) => !prev);
 
     if (categoriesOpen) {
-      setOpenCategory(null);
+      setOpenCategories([]);
     }
   };
 
   const toggleCategory = (slug: string) => {
-    setOpenCategory((prev) => (prev === slug ? null : slug));
+    setOpenCategories((prev) =>
+      prev.includes(slug)
+        ? prev.filter((item) => item !== slug)
+        : [...prev, slug],
+    );
   };
 
   return (
@@ -169,7 +173,7 @@ const MegaDropdownMobile = () => {
           <div id="mobileMegaMenu">
             <ul className="nav flex-column mobile-category-list">
               {categories.map((cat) => {
-                const isOpen = openCategory === cat.slug;
+                const isOpen = openCategories.includes(cat.slug);
 
                 return (
                   <li className="nav-item mobile-category-item" key={cat.id}>
