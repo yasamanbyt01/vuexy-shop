@@ -57,6 +57,7 @@ export interface ProductsResponse {
 export interface GetProductsParams {
   search?: string;
   categoryId?: number;
+  tag?: string;
   minPrice?: number;
   maxPrice?: number;
   page?: number;
@@ -74,6 +75,10 @@ export async function getProducts(
 
   if (params.categoryId !== undefined) {
     query.set("categoryId", String(params.categoryId));
+  }
+
+  if (params.tag) {
+    query.set("tag", params.tag);
   }
 
   if (params.minPrice !== undefined) {

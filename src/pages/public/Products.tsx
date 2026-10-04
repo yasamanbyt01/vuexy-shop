@@ -17,6 +17,7 @@ const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedCategory = searchParams.get("category");
+  const selectedTag = searchParams.get("tag");
 
   const pageParam = searchParams.get("page");
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
@@ -115,6 +116,7 @@ const Products = () => {
 
         const result = await getProducts({
           categoryId,
+          tag: selectedTag || undefined,
           page: currentPage,
           limit: ITEMS_PER_PAGE,
         });
@@ -143,7 +145,13 @@ const Products = () => {
     return () => {
       cancelled = true;
     };
-  }, [selectedCategory, categoryId, categoriesLoaded, currentPage]);
+  }, [
+    selectedCategory,
+    selectedTag,
+    categoryId,
+    categoriesLoaded,
+    currentPage,
+  ]);
 
   /*
    * Reset page to 1 when category changes.
