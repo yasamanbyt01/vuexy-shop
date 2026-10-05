@@ -6,6 +6,17 @@ export interface GetReviewsParams {
   productId?: number;
 }
 
+interface ApiReview {
+  _id: string;
+  productId: number;
+  userId: number;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+  userName: string;
+}
+
 export const getReviews = async (
   params: GetReviewsParams = {},
 ): Promise<Review[]> => {
@@ -25,5 +36,16 @@ export const getReviews = async (
     throw new Error("Failed to fetch reviews");
   }
 
-  return response.json();
+  const data: ApiReview[] = await response.json();
+
+  return data.map((review) => ({
+    id: review._id,
+    productId: review.productId,
+    userId: review.userId,
+    userName: review.userName,
+    rating: review.rating,
+    comment: review.comment,
+    createdAt: review.createdAt,
+    updatedAt: review.updatedAt,
+  }));
 };

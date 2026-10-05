@@ -5,6 +5,7 @@ import { SPEC_LABELS } from "../../constants/specificationLabels";
 import { formatSpecValue } from "../../utils/specValue";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
+import { formatReviewDate } from "../../utils/date";
 
 interface ProductDetailTabsProps {
   product: Product;
@@ -163,13 +164,7 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
             <div key={review.id} className="border rounded p-3 mb-3">
               <div className="d-flex flex-column flex-md-row justify-content-between mb-1">
                 <div className="d-flex align-items-center gap-2">
-                  <strong>{review.name}</strong>
-
-                  {review.verified && (
-                    <span className="badge bg-success-subtle text-success">
-                      خریدار تأییدشده
-                    </span>
-                  )}
+                  <strong>{review.userName}</strong>
                 </div>
 
                 <div className="text-warning">
@@ -180,7 +175,9 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
 
               <p className="mb-1">{review.comment}</p>
 
-              <small className="text-muted">{review.date}</small>
+              <small className="text-muted">
+                {formatReviewDate(review.createdAt)}
+              </small>
             </div>
           ))}
         </div>
