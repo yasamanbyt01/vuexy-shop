@@ -15,9 +15,10 @@ import { formatSpecValue } from "../../utils/specValue";
 import { useCart } from "../../context/CartContext";
 
 import { getProductById, type ApiProduct } from "../../services/products";
+import { getReviews } from "../../services/reviews";
 
 import type { Product } from "../../types/products";
-import { mockReviews } from "../../mock/reviews";
+import type { Review } from "../../types/reviews";
 
 const mapApiProductToProduct = (product: ApiProduct): Product => ({
   ...product,
@@ -33,6 +34,8 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -74,6 +77,39 @@ const ProductDetails = () => {
     };
 
     loadProduct();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, productId]);
+
+  useEffect(() => {
+    if (!id || Number.isNaN(productId)) {
+      setReviews([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadReviews = async () => {
+      try {
+        const data = await getReviews({
+          productId,
+        });
+
+        if (!cancelled) {
+          setReviews(data);
+        }
+      } catch (error) {
+        console.error("Failed to load reviews:", error);
+
+        if (!cancelled) {
+          setReviews([]);
+        }
+      }
+    };
+
+    loadReviews();
 
     return () => {
       cancelled = true;
@@ -137,10 +173,6 @@ const ProductDetails = () => {
 
     addItem(cartItem);
   };
-
-  const reviews = mockReviews.filter(
-    (review) => review.productId === productId,
-  );
 
   const breadcrumbItems = [
     { label: "خانه", path: "/" },
