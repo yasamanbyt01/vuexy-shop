@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./context/CartContext.tsx";
 import { CheckoutProvider } from "./context/CheckoutContext.tsx";
+import { AuthProvider } from "./context/AuthContext.tsx";
 import App from "./App.tsx";
 
 // 1. Core vendor CSS (MUST be loaded first)
@@ -39,11 +40,13 @@ import "./assets/vendor/libs/swiper/swiper.js";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <CartProvider>
-        <CheckoutProvider>
-          <App />
-        </CheckoutProvider>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <CheckoutProvider>
+            <App />
+          </CheckoutProvider>
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 );
