@@ -1,19 +1,28 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { validateLoginForm } from "../../utils/validation";
+import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
   }>({});
+
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -21,29 +30,53 @@ const Login = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
     }
+
+    setSubmitError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validation = validateLoginForm(formData);
+
     setErrors(validation.errors);
 
-    if (!validation.isValid) return;
+    if (!validation.isValid) {
+      return;
+    }
 
-    console.log("✅ Login successful");
-    // In a real app, you would make an API call here
-    // Then redirect to home or dashboard
-    navigate("/");
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+
+      await login(
+        {
+          email: formData.email.trim(),
+          password: formData.password,
+        },
+        rememberMe,
+      );
+
+      navigate("/");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "ورود انجام نشد";
+
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -94,14 +127,22 @@ const Login = () => {
                       </svg>
                     </span>
                   </span>
+
                   <span className="app-brand-text demo text-heading fw-bold">
                     فروشگاه
                   </span>
                 </Link>
               </div>
               {/* /Logo */}
+
               <h4 className="mb-1">به فروشگاه خوش آمدید 👋</h4>
               <p className="mb-6">برای ادامه لطفاً وارد حساب کاربری خود شوید</p>
+
+              {submitError && (
+                <div className="alert alert-danger" role="alert">
+                  {submitError}
+                </div>
+              )}
 
               <form
                 id="formAuthentication"
@@ -111,18 +152,22 @@ const Login = () => {
               >
                 <div className="mb-6 form-control-validation">
                   <label htmlFor="email" className="form-label">
-                    ایمیل یا نام کاربری
+                    ایمیل
                   </label>
+
                   <input
-                    type="text"
-                    className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                    type="email"
+                    className={`form-control ${
+                      errors.email ? "is-invalid" : ""
+                    }`}
                     id="email"
                     name="email"
-                    placeholder="ایمیل یا نام کاربری خود را وارد کنید"
+                    placeholder="ایمیل خود را وارد کنید"
                     value={formData.email}
                     onChange={handleChange}
                     autoFocus
                   />
+
                   {errors.email && (
                     <div className="fv-plugins-message-container invalid-feedback d-block">
                       <div className="fv-help-block">{errors.email}</div>
@@ -134,28 +179,37 @@ const Login = () => {
                   <label className="form-label" htmlFor="password">
                     رمز عبور
                   </label>
+
                   <div
-                    className={`input-group input-group-merge ${errors.password ? "is-invalid" : ""}`}
+                    className={`input-group input-group-merge ${
+                      errors.password ? "is-invalid" : ""
+                    }`}
                   >
                     <input
                       type={showPassword ? "text" : "password"}
-                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.password ? "is-invalid" : ""
+                      }`}
                       id="password"
                       name="password"
                       placeholder="••••••••"
                       value={formData.password}
                       onChange={handleChange}
                     />
+
                     <span
                       className="input-group-text cursor-pointer"
                       onClick={togglePasswordVisibility}
                       style={{ cursor: "pointer" }}
                     >
                       <i
-                        className={`icon-base ti ${showPassword ? "tabler-eye" : "tabler-eye-off"}`}
+                        className={`icon-base ti ${
+                          showPassword ? "tabler-eye" : "tabler-eye-off"
+                        }`}
                       ></i>
                     </span>
                   </div>
+
                   {errors.password && (
                     <div className="fv-plugins-message-container invalid-feedback d-block">
                       <div className="fv-help-block">{errors.password}</div>
@@ -173,10 +227,12 @@ const Login = () => {
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
                       />
+
                       <label className="form-check-label" htmlFor="remember-me">
                         مرا به خاطر بسپار
                       </label>
                     </div>
+
                     <Link to="/forgot-password">
                       <p className="mb-0">رمز عبور را فراموش کرده‌اید؟</p>
                     </Link>
@@ -187,14 +243,16 @@ const Login = () => {
                   <button
                     className="btn btn-primary d-grid w-100"
                     type="submit"
+                    disabled={isSubmitting}
                   >
-                    ورود
+                    {isSubmitting ? "در حال ورود..." : "ورود"}
                   </button>
                 </div>
               </form>
 
               <p className="text-center">
                 <span>حساب کاربری ندارید؟</span>
+
                 <Link to="/register">
                   <span> ثبت‌نام کنید</span>
                 </Link>
