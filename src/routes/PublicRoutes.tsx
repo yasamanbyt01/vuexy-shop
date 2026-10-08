@@ -11,6 +11,7 @@ import Checkout from "../pages/public/Checkout";
 import Products from "../pages/public/Products";
 import SearchResults from "../pages/public/SearchResults";
 import SearchPage from "../pages/public/MobileSearch";
+import Profile from "../pages/public/Profile";
 
 const PublicRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const PublicRoutes = () => {
         <Route path="/products" element={<Products />} />
         <Route path="/categories/:slug" element={<Products />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
 
       <Route path="/mobile-search" element={<SearchPage />} />

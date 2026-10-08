@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../hooks/useAuth";
 import { getProducts, type ApiProduct } from "../../services/products";
 import { toFarsiNumber } from "../../utils/numbers";
 
 const PublicNavbar = () => {
   const { items } = useCart();
+  const { isAuthenticated, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<ApiProduct[]>([]);
@@ -307,14 +309,35 @@ const PublicNavbar = () => {
               </Link>
             </li>
 
-            <li>
-              <Link
-                to="/register"
-                className="btn btn-primary navbar-mobile-btn"
-              >
-                <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
-                <span className="navbar-login-text ms-1">ورود/ثبت نام</span>
-              </Link>
+            <li className="me-2">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/profile"
+                    className="btn btn-primary px-3 position-relative navbar-mobile-btn"
+                    aria-label="پروفایل کاربری"
+                    title="پروفایل کاربری"
+                  >
+                    <i className="icon-base ti tabler-user"></i>
+                  </Link>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary ms-2"
+                    onClick={logout}
+                  >
+                    خروج
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/register"
+                  className="btn btn-primary navbar-mobile-btn"
+                >
+                  <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
+                  <span className="navbar-login-text ms-1">ورود/ثبت نام</span>
+                </Link>
+              )}
             </li>
           </ul>
         </div>
