@@ -12,6 +12,7 @@ import Products from "../pages/public/Products";
 import SearchResults from "../pages/public/SearchResults";
 import SearchPage from "../pages/public/MobileSearch";
 import Profile from "../pages/public/Profile";
+import RequireAuth from "./RequireAuth";
 
 const PublicRoutes = () => {
   return (
@@ -20,7 +21,14 @@ const PublicRoutes = () => {
       <Route element={<PublicLayout />}>
         <Route index element={<Home />} />
         <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/checkout"
+          element={
+            <RequireAuth>
+              <Checkout />
+            </RequireAuth>
+          }
+        />
         <Route path="/products" element={<Products />} />
         <Route path="/categories/:slug" element={<Products />} />
         <Route path="/search" element={<SearchResults />} />

@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { validateLoginForm } from "../../utils/validation";
 import { useAuth } from "../../hooks/useAuth";
+
+type LoginRedirectState = {
+  from?: {
+    pathname: string;
+    search: string;
+    hash: string;
+  };
+};
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +30,9 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = (location.state as LoginRedirectState | null)?.from;
+
   const { login } = useAuth();
 
   const togglePasswordVisibility = () => {
@@ -69,7 +80,12 @@ const Login = () => {
         rememberMe,
       );
 
-      navigate("/");
+      navigate(
+        redirectTo
+          ? `${redirectTo.pathname}${redirectTo.search}${redirectTo.hash}`
+          : "/",
+        { replace: true },
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : "ورود انجام نشد";
 

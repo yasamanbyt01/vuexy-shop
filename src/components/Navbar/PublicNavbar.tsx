@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
@@ -17,6 +17,8 @@ const PublicNavbar = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [usingKeyboard, setUsingKeyboard] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const location = useLocation();
+  const [logoutAfterNavigation, setLogoutAfterNavigation] = useState(false);
 
   const navigate = useNavigate();
 
@@ -140,6 +142,18 @@ const PublicNavbar = () => {
     window.addEventListener("click", close);
     return () => window.removeEventListener("click", close);
   }, []);
+
+  useEffect(() => {
+    if (logoutAfterNavigation && location.pathname === "/") {
+      logout();
+      setLogoutAfterNavigation(false);
+    }
+  }, [logoutAfterNavigation, location.pathname, logout]);
+
+  const handleLogout = () => {
+    setLogoutAfterNavigation(true);
+    navigate("/", { replace: true });
+  };
 
   return (
     <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky navbar-mobile-fix">
@@ -324,7 +338,7 @@ const PublicNavbar = () => {
                   <button
                     type="button"
                     className="btn btn-outline-secondary ms-2"
-                    onClick={logout}
+                    onClick={handleLogout}
                   >
                     خروج
                   </button>
