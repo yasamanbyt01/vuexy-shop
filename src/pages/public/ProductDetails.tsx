@@ -13,6 +13,8 @@ import { toFarsiNumber } from "../../utils/numbers";
 import { formatSpecValue } from "../../utils/specValue";
 
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../hooks/useAuth";
+import LoginRequiredModal from "../../components/ui/LoginRequiredModal";
 
 import { getProductById, type ApiProduct } from "../../services/products";
 import { getReviews } from "../../services/reviews";
@@ -41,7 +43,10 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!id || Number.isNaN(productId)) {
@@ -159,6 +164,11 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -199,410 +209,419 @@ const ProductDetails = () => {
     : 0;
 
   return (
-    <main className="py-6 bg-body">
-      <div className="container">
-        {/* Breadcrumb */}
-        <div className="mb-4">
-          <BreadCrumbs items={breadcrumbItems} />
-        </div>
-
-        <div className="row g-5">
-          {/* Left Column - Carousel */}
-          <div className="col-lg-6">
-            <ProductDetailCarousel images={product.images} />
+    <>
+      <main className="py-6 bg-body">
+        <div className="container">
+          {/* Breadcrumb */}
+          <div className="mb-4">
+            <BreadCrumbs items={breadcrumbItems} />
           </div>
 
-          {/* Middle Column - Product Info */}
-          <div className="col-lg-4">
-            <div className="product-info">
-              {/* Category & SKU */}
-              <div className="mb-3 d-flex justify-content-between align-items-center">
-                <div>
-                  <span className="badge bg-light text-dark me-2">
-                    {CATEGORY_LABELS[product.category] ?? product.category}
-                  </span>
+          <div className="row g-5">
+            {/* Left Column - Carousel */}
+            <div className="col-lg-6">
+              <ProductDetailCarousel images={product.images} />
+            </div>
 
-                  <span className="text-muted small">
-                    {" "}
-                    کد محصول: {toFarsiNumber(product.sku)}
-                  </span>
-                </div>
-
-                {product.inStock ? (
-                  <span className="badge bg-success d-flex align-items-center">
-                    <i className="ti tabler-check me-1"></i>
-                    موجود ({toFarsiNumber(product.stockCount)})
-                  </span>
-                ) : (
-                  <span className="badge bg-danger">ناموجود</span>
-                )}
-              </div>
-
-              {/* Product Name */}
-              <h1 className="h2 fw-bold mb-3">{product.name}</h1>
-
-              {/* Rating */}
-              <div className="d-flex align-items-center mb-3">
-                <div className="text-warning me-2">
-                  {"★".repeat(Math.floor(product.rating))}
-                  <span className="text-warning">★</span>
-                  {"☆".repeat(5 - Math.ceil(product.rating))}
-                </div>
-
-                <span className="text-muted small mx-2">
-                  {toFarsiNumber(product.rating)}/۵
-                </span>
-              </div>
-
-              {/* Price */}
-              <div className="mb-4 p-3 bg-light rounded">
-                <div className="mb-4 p-3 bg-light rounded">
-                  <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
-                    <span className="h2 text-primary fw-bold">
-                      {formatPrice(price)}
+            {/* Middle Column - Product Info */}
+            <div className="col-lg-4">
+              <div className="product-info">
+                {/* Category & SKU */}
+                <div className="mb-3 d-flex justify-content-between align-items-center">
+                  <div>
+                    <span className="badge bg-light text-dark me-2">
+                      {CATEGORY_LABELS[product.category] ?? product.category}
                     </span>
 
-                    {hasDiscount ? (
-                      <>
-                        <span className="text-muted text-decoration-line-through ms-2">
-                          {formatPrice(originalPrice!)}
-                        </span>
-
-                        <span className="badge bg-danger ms-2">
-                          {toFarsiNumber(savingsPercentage)}٪ تخفیف
-                        </span>
-                      </>
-                    ) : (
-                      <span className="badge bg-success ms-2">بهترین قیمت</span>
-                    )}
+                    <span className="text-muted small">
+                      {" "}
+                      کد محصول: {toFarsiNumber(product.sku)}
+                    </span>
                   </div>
 
-                  {hasDiscount ? (
-                    <p className="mb-0 text-success small">
-                      <i className="ti tabler-discount me-1"></i>
-                      شما {formatPrice(savingsAmount)} صرفه‌جویی می‌کنید
-                    </p>
+                  {product.inStock ? (
+                    <span className="badge bg-success d-flex align-items-center">
+                      <i className="ti tabler-check me-1"></i>
+                      موجود ({toFarsiNumber(product.stockCount)})
+                    </span>
                   ) : (
-                    <p className="mb-0 text-muted small">
-                      <i className="ti tabler-shield-check me-1"></i>
-                      قیمت منصفانه · بدون تخفیف
-                    </p>
+                    <span className="badge bg-danger">ناموجود</span>
                   )}
                 </div>
-              </div>
 
-              {/* Description */}
-              <p className="mb-4">{product.description}</p>
+                {/* Product Name */}
+                <h1 className="h2 fw-bold mb-3">{product.name}</h1>
 
-              {/* Color Selection */}
-              <div className="mb-4">
-                <h6 className="mb-2 d-flex justify-content-between">
-                  <span>
-                    رنگ:{" "}
-                    <strong>
-                      {
-                        product.colors.find(
-                          (color) => color.value === selectedColor,
-                        )?.name
-                      }
-                    </strong>
+                {/* Rating */}
+                <div className="d-flex align-items-center mb-3">
+                  <div className="text-warning me-2">
+                    {"★".repeat(Math.floor(product.rating))}
+                    <span className="text-warning">★</span>
+                    {"☆".repeat(5 - Math.ceil(product.rating))}
+                  </div>
+
+                  <span className="text-muted small mx-2">
+                    {toFarsiNumber(product.rating)}/۵
                   </span>
-
-                  <span className="text-primary small">انتخاب الزامی</span>
-                </h6>
-
-                <div className="d-flex gap-2">
-                  {product.colors.map((color) => {
-                    const isSelected = selectedColor === color.value;
-
-                    return (
-                      <button
-                        key={color.value}
-                        onClick={() => setSelectedColor(color.value)}
-                        className="position-relative rounded-circle"
-                        title={color.name}
-                        style={{
-                          width: "36px",
-                          height: "36px",
-                          backgroundColor: color.hex,
-                          border: isSelected
-                            ? "2px solid #0d6efd"
-                            : color.hex.toUpperCase() === "#FFFFFF"
-                              ? "2px solid #ced4da"
-                              : "2px solid transparent",
-                          boxShadow:
-                            color.hex.toUpperCase() === "#FFFFFF"
-                              ? "inset 0 0 0 1px #dee2e6"
-                              : "none",
-                        }}
-                      >
-                        {isSelected && (
-                          <i
-                            className="ti tabler-check text-primary position-absolute top-50 start-50 translate-middle"
-                            style={{
-                              color:
-                                color.hex.toUpperCase() === "#FFFFFF"
-                                  ? "#000"
-                                  : "#fff",
-                              fontSize: "1rem",
-                            }}
-                          ></i>
-                        )}
-                      </button>
-                    );
-                  })}
                 </div>
-              </div>
 
-              {/* Size Selection */}
-              {product.sizes.length > 0 && (
+                {/* Price */}
+                <div className="mb-4 p-3 bg-light rounded">
+                  <div className="mb-4 p-3 bg-light rounded">
+                    <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
+                      <span className="h2 text-primary fw-bold">
+                        {formatPrice(price)}
+                      </span>
+
+                      {hasDiscount ? (
+                        <>
+                          <span className="text-muted text-decoration-line-through ms-2">
+                            {formatPrice(originalPrice!)}
+                          </span>
+
+                          <span className="badge bg-danger ms-2">
+                            {toFarsiNumber(savingsPercentage)}٪ تخفیف
+                          </span>
+                        </>
+                      ) : (
+                        <span className="badge bg-success ms-2">
+                          بهترین قیمت
+                        </span>
+                      )}
+                    </div>
+
+                    {hasDiscount ? (
+                      <p className="mb-0 text-success small">
+                        <i className="ti tabler-discount me-1"></i>
+                        شما {formatPrice(savingsAmount)} صرفه‌جویی می‌کنید
+                      </p>
+                    ) : (
+                      <p className="mb-0 text-muted small">
+                        <i className="ti tabler-shield-check me-1"></i>
+                        قیمت منصفانه · بدون تخفیف
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="mb-4">{product.description}</p>
+
+                {/* Color Selection */}
                 <div className="mb-4">
                   <h6 className="mb-2 d-flex justify-content-between">
                     <span>
-                      سایز:{" "}
+                      رنگ:{" "}
                       <strong>
-                        {selectedSize ? toFarsiNumber(selectedSize) : "—"}
+                        {
+                          product.colors.find(
+                            (color) => color.value === selectedColor,
+                          )?.name
+                        }
                       </strong>
                     </span>
 
-                    <Link to="#" className="text-primary small">
-                      راهنمای سایز
-                    </Link>
+                    <span className="text-primary small">انتخاب الزامی</span>
                   </h6>
 
-                  <div className="d-flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
-                      <button
-                        key={size}
-                        className={`btn ${
-                          selectedSize === size
-                            ? "btn-primary"
-                            : "btn-outline-secondary"
-                        }`}
-                        onClick={() => setSelectedSize(size)}
+                  <div className="d-flex gap-2">
+                    {product.colors.map((color) => {
+                      const isSelected = selectedColor === color.value;
+
+                      return (
+                        <button
+                          key={color.value}
+                          onClick={() => setSelectedColor(color.value)}
+                          className="position-relative rounded-circle"
+                          title={color.name}
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            backgroundColor: color.hex,
+                            border: isSelected
+                              ? "2px solid #0d6efd"
+                              : color.hex.toUpperCase() === "#FFFFFF"
+                                ? "2px solid #ced4da"
+                                : "2px solid transparent",
+                            boxShadow:
+                              color.hex.toUpperCase() === "#FFFFFF"
+                                ? "inset 0 0 0 1px #dee2e6"
+                                : "none",
+                          }}
+                        >
+                          {isSelected && (
+                            <i
+                              className="ti tabler-check text-primary position-absolute top-50 start-50 translate-middle"
+                              style={{
+                                color:
+                                  color.hex.toUpperCase() === "#FFFFFF"
+                                    ? "#000"
+                                    : "#fff",
+                                fontSize: "1rem",
+                              }}
+                            ></i>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Size Selection */}
+                {product.sizes.length > 0 && (
+                  <div className="mb-4">
+                    <h6 className="mb-2 d-flex justify-content-between">
+                      <span>
+                        سایز:{" "}
+                        <strong>
+                          {selectedSize ? toFarsiNumber(selectedSize) : "—"}
+                        </strong>
+                      </span>
+
+                      <Link to="#" className="text-primary small">
+                        راهنمای سایز
+                      </Link>
+                    </h6>
+
+                    <div className="d-flex flex-wrap gap-2">
+                      {product.sizes.map((size) => (
+                        <button
+                          key={size}
+                          className={`btn ${
+                            selectedSize === size
+                              ? "btn-primary"
+                              : "btn-outline-secondary"
+                          }`}
+                          onClick={() => setSelectedSize(size)}
+                        >
+                          {toFarsiNumber(size)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quantity */}
+                <div className="mb-4">
+                  <h6 className="mb-2">تعداد:</h6>
+
+                  <div
+                    className="d-flex align-items-center"
+                    style={{ maxWidth: "150px" }}
+                  >
+                    <button
+                      className="btn btn-outline-secondary"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      <i className="ti tabler-minus"></i>
+                    </button>
+
+                    <input
+                      type="text"
+                      className="form-control text-center border-0"
+                      value={toFarsiNumber(quantity)}
+                      readOnly
+                      style={{
+                        maxWidth: "60px",
+                        fontWeight: "600",
+                      }}
+                    />
+
+                    <button
+                      className="btn btn-outline-secondary"
+                      onClick={() =>
+                        setQuantity((q) => Math.min(product.stockCount, q + 1))
+                      }
+                      disabled={quantity >= product.stockCount}
+                    >
+                      <i className="ti tabler-plus"></i>
+                    </button>
+                  </div>
+
+                  <small className="text-muted mt-1 d-block">
+                    فقط {toFarsiNumber(product.stockCount)} عدد باقی مانده
+                  </small>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="d-grid gap-3 mb-4">
+                  <button
+                    className="btn btn-primary btn-lg py-3"
+                    onClick={handleAddToCart}
+                    disabled={!product.inStock}
+                  >
+                    <i className="ti tabler-shopping-cart me-2"></i>
+                    افزودن به سبد خرید – {formatPrice(price * quantity)}
+                  </button>
+
+                  <div className="d-flex gap-2">
+                    <button className="btn btn-outline-primary flex-grow-1">
+                      <i className="ti tabler-heart me-2"></i>
+                      افزودن به علاقه مندی ها
+                    </button>
+
+                    <button className="btn btn-outline-secondary">
+                      <i className="ti tabler-repeat"></i>
+                    </button>
+
+                    <button className="btn btn-outline-secondary">
+                      <i className="ti tabler-share"></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Secure Payment & Shipping */}
+                <div className="border rounded p-3 mb-4">
+                  <div className="row g-2">
+                    <div className="col-6">
+                      <div className="d-flex align-items-center">
+                        <i className="ti tabler-shield-check text-success me-2"></i>
+                        <span className="small">پرداخت امن</span>
+                      </div>
+                    </div>
+
+                    <div className="col-6">
+                      <div className="d-flex align-items-center">
+                        <i className="ti tabler-truck text-primary me-2"></i>
+                        <span className="small">ارسال رایگان</span>
+                      </div>
+                    </div>
+
+                    <div className="col-6">
+                      <div className="d-flex align-items-center">
+                        <i className="ti tabler-rotate-clockwise text-info me-2"></i>
+                        <span className="small">بازگشت ۳۰ روزه</span>
+                      </div>
+                    </div>
+
+                    <div className="col-6">
+                      <div className="d-flex align-items-center">
+                        <i className="ti tabler-headset text-warning me-2"></i>
+                        <span className="small">پشتیبانی ۲۴/۷</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Additional Info */}
+            <div className="col-lg-2">
+              {/* Product Highlights */}
+              <div className="card mb-4">
+                <div className="card-header bg-light">
+                  <h6 className="mb-0 d-flex align-items-center">
+                    <i className="ti tabler-sparkles me-2"></i>
+                    مزایای محصول
+                  </h6>
+                </div>
+
+                <div className="card-body p-3">
+                  <ul className="list-unstyled mb-0">
+                    {product.features.slice(0, 4).map((feature, index) => (
+                      <li key={index} className="mb-2 small">
+                        <i className="ti tabler-check text-success me-2"></i>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Specifications */}
+              <div className="card mb-4">
+                <div className="card-header bg-light">
+                  <h6 className="mb-0 d-flex align-items-center">
+                    <i className="ti tabler-list-details me-2"></i>
+                    مشخصات
+                  </h6>
+                </div>
+
+                <div className="card-body p-3">
+                  <dl className="row mb-0">
+                    {Object.entries(product.specifications).map(
+                      ([key, value]) => (
+                        <div key={key}>
+                          <dt className="col-6 small text-muted">
+                            {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ??
+                              key}
+                          </dt>
+
+                          <dd className="col-6 small">
+                            {formatSpecValue(value)}
+                          </dd>
+                        </div>
+                      ),
+                    )}
+                  </dl>
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="card mb-4">
+                <div className="card-header bg-light">
+                  <h6 className="mb-0 d-flex align-items-center">
+                    <i className="ti tabler-tags me-2"></i>
+                    برچسب ها
+                  </h6>
+                </div>
+
+                <div className="card-body p-3">
+                  <div className="d-flex flex-wrap gap-1">
+                    {product.tags.map((tag, index) => (
+                      <Link
+                        key={index}
+                        to={`/tag/${tag.toLowerCase()}`}
+                        className="badge bg-light text-dark text-decoration-none"
                       >
-                        {toFarsiNumber(size)}
-                      </button>
+                        {tag}
+                      </Link>
                     ))}
                   </div>
                 </div>
-              )}
-
-              {/* Quantity */}
-              <div className="mb-4">
-                <h6 className="mb-2">تعداد:</h6>
-
-                <div
-                  className="d-flex align-items-center"
-                  style={{ maxWidth: "150px" }}
-                >
-                  <button
-                    className="btn btn-outline-secondary"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={quantity <= 1}
-                  >
-                    <i className="ti tabler-minus"></i>
-                  </button>
-
-                  <input
-                    type="text"
-                    className="form-control text-center border-0"
-                    value={toFarsiNumber(quantity)}
-                    readOnly
-                    style={{
-                      maxWidth: "60px",
-                      fontWeight: "600",
-                    }}
-                  />
-
-                  <button
-                    className="btn btn-outline-secondary"
-                    onClick={() =>
-                      setQuantity((q) => Math.min(product.stockCount, q + 1))
-                    }
-                    disabled={quantity >= product.stockCount}
-                  >
-                    <i className="ti tabler-plus"></i>
-                  </button>
-                </div>
-
-                <small className="text-muted mt-1 d-block">
-                  فقط {toFarsiNumber(product.stockCount)} عدد باقی مانده
-                </small>
               </div>
 
-              {/* Action Buttons */}
-              <div className="d-grid gap-3 mb-4">
-                <button
-                  className="btn btn-primary btn-lg py-3"
-                  onClick={handleAddToCart}
-                  disabled={!product.inStock}
-                >
-                  <i className="ti tabler-shopping-cart me-2"></i>
-                  افزودن به سبد خرید – {formatPrice(price * quantity)}
-                </button>
+              {/* Share Product */}
+              <div className="card">
+                <div className="card-body p-3 text-center">
+                  <h6 className="mb-3">اشتراک‌گذاری محصول</h6>
 
-                <div className="d-flex gap-2">
-                  <button className="btn btn-outline-primary flex-grow-1">
-                    <i className="ti tabler-heart me-2"></i>
-                    افزودن به علاقه مندی ها
-                  </button>
+                  <div className="d-flex justify-content-center gap-2">
+                    <button className="btn btn-outline-primary btn-sm">
+                      <i className="ti tabler-brand-facebook"></i>
+                    </button>
 
-                  <button className="btn btn-outline-secondary">
-                    <i className="ti tabler-repeat"></i>
-                  </button>
+                    <button className="btn btn-outline-info btn-sm">
+                      <i className="ti tabler-brand-twitter"></i>
+                    </button>
 
-                  <button className="btn btn-outline-secondary">
-                    <i className="ti tabler-share"></i>
-                  </button>
-                </div>
-              </div>
+                    <button className="btn btn-outline-danger btn-sm">
+                      <i className="ti tabler-brand-pinterest"></i>
+                    </button>
 
-              {/* Secure Payment & Shipping */}
-              <div className="border rounded p-3 mb-4">
-                <div className="row g-2">
-                  <div className="col-6">
-                    <div className="d-flex align-items-center">
-                      <i className="ti tabler-shield-check text-success me-2"></i>
-                      <span className="small">پرداخت امن</span>
-                    </div>
-                  </div>
-
-                  <div className="col-6">
-                    <div className="d-flex align-items-center">
-                      <i className="ti tabler-truck text-primary me-2"></i>
-                      <span className="small">ارسال رایگان</span>
-                    </div>
-                  </div>
-
-                  <div className="col-6">
-                    <div className="d-flex align-items-center">
-                      <i className="ti tabler-rotate-clockwise text-info me-2"></i>
-                      <span className="small">بازگشت ۳۰ روزه</span>
-                    </div>
-                  </div>
-
-                  <div className="col-6">
-                    <div className="d-flex align-items-center">
-                      <i className="ti tabler-headset text-warning me-2"></i>
-                      <span className="small">پشتیبانی ۲۴/۷</span>
-                    </div>
+                    <button className="btn btn-outline-success btn-sm">
+                      <i className="ti tabler-brand-whatsapp"></i>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Additional Info */}
-          <div className="col-lg-2">
-            {/* Product Highlights */}
-            <div className="card mb-4">
-              <div className="card-header bg-light">
-                <h6 className="mb-0 d-flex align-items-center">
-                  <i className="ti tabler-sparkles me-2"></i>
-                  مزایای محصول
-                </h6>
-              </div>
-
-              <div className="card-body p-3">
-                <ul className="list-unstyled mb-0">
-                  {product.features.slice(0, 4).map((feature, index) => (
-                    <li key={index} className="mb-2 small">
-                      <i className="ti tabler-check text-success me-2"></i>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Specifications */}
-            <div className="card mb-4">
-              <div className="card-header bg-light">
-                <h6 className="mb-0 d-flex align-items-center">
-                  <i className="ti tabler-list-details me-2"></i>
-                  مشخصات
-                </h6>
-              </div>
-
-              <div className="card-body p-3">
-                <dl className="row mb-0">
-                  {Object.entries(product.specifications).map(
-                    ([key, value]) => (
-                      <div key={key}>
-                        <dt className="col-6 small text-muted">
-                          {SPEC_LABELS[key as keyof typeof SPEC_LABELS] ?? key}
-                        </dt>
-
-                        <dd className="col-6 small">
-                          {formatSpecValue(value)}
-                        </dd>
-                      </div>
-                    ),
-                  )}
-                </dl>
-              </div>
-            </div>
-
-            {/* Tags */}
-            <div className="card mb-4">
-              <div className="card-header bg-light">
-                <h6 className="mb-0 d-flex align-items-center">
-                  <i className="ti tabler-tags me-2"></i>
-                  برچسب ها
-                </h6>
-              </div>
-
-              <div className="card-body p-3">
-                <div className="d-flex flex-wrap gap-1">
-                  {product.tags.map((tag, index) => (
-                    <Link
-                      key={index}
-                      to={`/tag/${tag.toLowerCase()}`}
-                      className="badge bg-light text-dark text-decoration-none"
-                    >
-                      {tag}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Share Product */}
-            <div className="card">
-              <div className="card-body p-3 text-center">
-                <h6 className="mb-3">اشتراک‌گذاری محصول</h6>
-
-                <div className="d-flex justify-content-center gap-2">
-                  <button className="btn btn-outline-primary btn-sm">
-                    <i className="ti tabler-brand-facebook"></i>
-                  </button>
-
-                  <button className="btn btn-outline-info btn-sm">
-                    <i className="ti tabler-brand-twitter"></i>
-                  </button>
-
-                  <button className="btn btn-outline-danger btn-sm">
-                    <i className="ti tabler-brand-pinterest"></i>
-                  </button>
-
-                  <button className="btn btn-outline-success btn-sm">
-                    <i className="ti tabler-brand-whatsapp"></i>
-                  </button>
-                </div>
-              </div>
+          {/* Product Tabs */}
+          <div className="row mt-6">
+            <div className="col-12">
+              <ProductDetailTabs product={product} reviews={reviews} />
             </div>
           </div>
         </div>
-
-        {/* Product Tabs */}
-        <div className="row mt-6">
-          <div className="col-12">
-            <ProductDetailTabs product={product} reviews={reviews} />
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+      <LoginRequiredModal
+        show={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
+    </>
   );
 };
 
