@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
 import { useCart } from "../../context/CartContext";
@@ -19,6 +19,8 @@ const PublicNavbar = () => {
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const location = useLocation();
   const [logoutAfterNavigation, setLogoutAfterNavigation] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLLIElement>(null);
 
   const navigate = useNavigate();
 
@@ -155,6 +157,28 @@ const PublicNavbar = () => {
     setLogoutAfterNavigation(true);
     navigate("/", { replace: true });
   };
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!accountMenuRef.current?.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <nav className="layout-navbar py-1 bg-body position-sticky top-0 zindex-sticky navbar-mobile-fix">
@@ -324,32 +348,56 @@ const PublicNavbar = () => {
               </Link>
             </li>
 
-            <li className="me-2">
+            <li ref={accountMenuRef} className="navbar-account-dropdown">
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/profile"
-                    className="btn btn-primary px-3 position-relative navbar-mobile-btn"
-                    aria-label="پروفایل کاربری"
-                    title="پروفایل کاربری"
-                  >
-                    <i className="icon-base ti tabler-user"></i>
-                  </Link>
-
                   <button
                     type="button"
-                    className="btn btn-outline-secondary ms-2"
-                    onClick={handleLogout}
+                    className="btn btn-primary navbar-mobile-btn navbar-account-trigger"
+                    aria-label="منوی حساب کاربری"
+                    aria-expanded={isAccountMenuOpen}
+                    aria-controls="navbarAccountMenu"
+                    title="حساب کاربری"
+                    onClick={() => setIsAccountMenuOpen((open) => !open)}
                   >
-                    خروج
+                    <i className="icon-base ti tabler-user" />
                   </button>
+
+                  {isAccountMenuOpen && (
+                    <div
+                      id="navbarAccountMenu"
+                      className="navbar-account-menu"
+                      aria-label="گزینه‌های حساب کاربری"
+                    >
+                      <Link
+                        to="/profile"
+                        className="navbar-account-menu-item"
+                        onClick={() => setIsAccountMenuOpen(false)}
+                      >
+                        <i className="icon-base ti tabler-user" />
+                        <span>پروفایل کاربری</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        className="navbar-account-menu-item navbar-account-menu-logout"
+                        onClick={() => {
+                          setIsAccountMenuOpen(false);
+                          handleLogout();
+                        }}
+                      >
+                        <i className="icon-base ti tabler-logout" />
+                        <span>خروج از حساب</span>
+                      </button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <Link
                   to="/register"
                   className="btn btn-primary navbar-mobile-btn"
                 >
-                  <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1"></span>
+                  <span className="tf-icons icon-base ti tabler-login scaleX-n1-rtl me-md-1" />
                   <span className="navbar-login-text ms-1">ورود/ثبت نام</span>
                 </Link>
               )}
