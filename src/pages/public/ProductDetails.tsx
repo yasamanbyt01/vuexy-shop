@@ -21,6 +21,7 @@ import { getReviews } from "../../services/reviews";
 
 import type { Product } from "../../types/products";
 import type { Review } from "../../types/reviews";
+import type { CartItem } from "../../types/cart";
 
 const mapApiProductToProduct = (product: ApiProduct): Product => ({
   ...product,
@@ -44,6 +45,7 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [pendingCartItem, setPendingCartItem] = useState<CartItem | null>(null);
 
   const { addItem } = useCart();
   const { isAuthenticated } = useAuth();
@@ -164,11 +166,6 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return;
-    }
-
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -180,6 +177,12 @@ const ProductDetails = () => {
       seller: product.seller,
       rating: product.rating,
     };
+
+    if (!isAuthenticated) {
+      setPendingCartItem(cartItem);
+      setShowLoginModal(true);
+      return;
+    }
 
     addItem(cartItem);
   };
@@ -620,6 +623,7 @@ const ProductDetails = () => {
       <LoginRequiredModal
         show={showLoginModal}
         onClose={() => setShowLoginModal(false)}
+        pendingCartItem={pendingCartItem}
       />
     </>
   );

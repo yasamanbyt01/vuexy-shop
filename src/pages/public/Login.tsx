@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { validateLoginForm } from "../../utils/validation";
 import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../context/CartContext";
+import type { CartItem } from "../../types/cart";
 
 type LoginRedirectState = {
   from?: {
@@ -10,6 +12,7 @@ type LoginRedirectState = {
     search: string;
     hash: string;
   };
+  pendingCartItem?: CartItem;
 };
 
 const Login = () => {
@@ -31,9 +34,14 @@ const Login = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = (location.state as LoginRedirectState | null)?.from;
+
+  const locationState = location.state as LoginRedirectState | null;
+
+  const redirectTo = locationState?.from;
+  const pendingCartItem = locationState?.pendingCartItem;
 
   const { login } = useAuth();
+  const { addItem } = useCart();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -80,12 +88,18 @@ const Login = () => {
         rememberMe,
       );
 
-      navigate(
-        redirectTo
-          ? `${redirectTo.pathname}${redirectTo.search}${redirectTo.hash}`
-          : "/",
-        { replace: true },
-      );
+      if (pendingCartItem) {
+        addItem(pendingCartItem);
+
+        navigate("/checkout", { replace: true });
+      } else {
+        navigate(
+          redirectTo
+            ? `${redirectTo.pathname}${redirectTo.search}${redirectTo.hash}`
+            : "/",
+          { replace: true },
+        );
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "ورود انجام نشد";
 

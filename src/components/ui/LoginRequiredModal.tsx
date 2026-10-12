@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import type { CartItem } from "../../types/cart";
 
 interface LoginRequiredModalProps {
   show: boolean;
   onClose: () => void;
+  pendingCartItem?: CartItem | null;
 }
 
 const TRANSITION_DURATION = 150;
 
-const LoginRequiredModal = ({ show, onClose }: LoginRequiredModalProps) => {
+const LoginRequiredModal = ({
+  show,
+  onClose,
+  pendingCartItem,
+}: LoginRequiredModalProps) => {
   const [isMounted, setIsMounted] = useState(show);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -95,7 +101,12 @@ const LoginRequiredModal = ({ show, onClose }: LoginRequiredModalProps) => {
             </p>
 
             <div className="d-flex flex-column gap-2">
-              <Link to="/login" className="btn btn-primary" onClick={onClose}>
+              <Link
+                to="/login"
+                state={pendingCartItem ? { pendingCartItem } : undefined}
+                className="btn btn-primary"
+                onClick={onClose}
+              >
                 ورود به حساب
               </Link>
 

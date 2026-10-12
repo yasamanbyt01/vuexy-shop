@@ -8,7 +8,7 @@ import { getProducts, type ApiProduct } from "../../services/products";
 import { toFarsiNumber } from "../../utils/numbers";
 
 const PublicNavbar = () => {
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
   const { isAuthenticated, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [query, setQuery] = useState("");
@@ -145,10 +145,11 @@ const PublicNavbar = () => {
 
   useEffect(() => {
     if (logoutAfterNavigation && location.pathname === "/") {
+      clearCart();
       logout();
       setLogoutAfterNavigation(false);
     }
-  }, [logoutAfterNavigation, location.pathname, logout]);
+  }, [logoutAfterNavigation, location.pathname, logout, clearCart]);
 
   const handleLogout = () => {
     setLogoutAfterNavigation(true);
