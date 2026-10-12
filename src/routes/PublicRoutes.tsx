@@ -32,7 +32,14 @@ const PublicRoutes = () => {
         <Route path="/products" element={<Products />} />
         <Route path="/categories/:slug" element={<Products />} />
         <Route path="/search" element={<SearchResults />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          }
+        />
       </Route>
 
       <Route path="/mobile-search" element={<SearchPage />} />
