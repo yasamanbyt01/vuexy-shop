@@ -7,6 +7,7 @@ import { toFarsiNumber } from "../../utils/numbers";
 
 interface AddressStepProps {
   addresses: Address[];
+  addressesLoading: boolean;
   selectedAddressId: number | undefined;
   onSelectAddress: (id: number) => void;
   onRemoveAddress: (id: number) => void;
@@ -24,6 +25,7 @@ interface AddressStepProps {
 
 const AddressStep: React.FC<AddressStepProps> = ({
   addresses,
+  addressesLoading,
   selectedAddressId,
   onSelectAddress,
   onRemoveAddress,
@@ -116,9 +118,7 @@ const AddressStep: React.FC<AddressStepProps> = ({
       (address) => address.id === selectedAddressId,
     );
 
-    if (!selectedAddress) {
-      setAddressError(true);
-    }
+    setAddressError(!selectedAddress);
   }, [addressValidationTrigger, addresses, selectedAddressId]);
 
   return (
@@ -131,91 +131,102 @@ const AddressStep: React.FC<AddressStepProps> = ({
             آدرس مورد نظر خود را انتخاب کنید
           </p>
           <div className="row mb-6 g-6">
-            {addresses.map((address) => (
-              <div key={address.id} className="col-md">
-                <div
-                  className={`form-check custom-option custom-option-basic ${
-                    selectedAddressId === address.id ? "checked" : ""
-                  }`}
-                >
-                  <label className="form-check-label custom-option-content">
-                    <input
-                      type="radio"
-                      name="address"
-                      className="form-check-input"
-                      checked={selectedAddressId === address.id}
-                      onChange={() => {
-                        onSelectAddress(address.id);
-                        setAddressError(false);
-                      }}
-                    />
-                    <span className="custom-option-header mb-2">
-                      <span className="fw-medium text-heading mb-0">
-                        {address.name}
-                        {address.isDefault && " (پیش‌فرض)"}
-                      </span>
-                      <span
-                        className={`badge ${
-                          address.type === "home"
-                            ? "bg-label-primary"
-                            : "bg-label-success"
-                        }`}
-                      >
-                        {address.type === "home" ? "خانه" : "محل کار"}
-                      </span>
-                    </span>
-                    <span className="custom-option-body">
-                      <small>
-                        {getAddressDisplay(address)}
-                        <br />
-                        موبایل : {address.phone} پرداخت با کارت یا پرداخت در محل
-                        امکان‌پذیر است
-                      </small>
-                      <span className="my-3 border-bottom d-block"></span>
-                      <span className="d-flex">
-                        <button
-                          type="button"
-                          className="btn btn-link p-0 me-4 text-decoration-none"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            onEditAddress(address.id);
-                          }}
-                        >
-                          ویرایش
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-link p-0 me-4 text-decoration-none"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (!address.isDefault) {
-                              onSetDefaultAddress(address.id);
-                            }
-                          }}
-                          disabled={address.isDefault}
-                        >
-                          {address.isDefault ? "پیش‌فرض" : "انتخاب"}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-link p-0 text-decoration-none text-danger"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (addresses.length > 1) {
-                              onRemoveAddress(address.id);
-                            } else {
-                              alert("باید حداقل یک آدرس داشته باشید");
-                            }
-                          }}
-                        >
-                          حذف
-                        </button>
-                      </span>
-                    </span>
-                  </label>
+            {addressesLoading ? (
+              <div className="col-12 text-body-secondary" role="status">
+                در حال دریافت آدرس‌های شما…
+              </div>
+            ) : addresses.length === 0 ? (
+              <div className="col-12">
+                <div className="alert alert-info mb-0">
+                  هنوز آدرسی ثبت نکرده‌اید. برای ادامه، ابتدا یک آدرس ارسال
+                  اضافه کنید.
                 </div>
               </div>
-            ))}
+            ) : (
+              addresses.map((address) => (
+                <div key={address.id} className="col-md">
+                  <div
+                    className={`form-check custom-option custom-option-basic ${
+                      selectedAddressId === address.id ? "checked" : ""
+                    }`}
+                  >
+                    <label className="form-check-label custom-option-content">
+                      <input
+                        type="radio"
+                        name="address"
+                        className="form-check-input"
+                        checked={selectedAddressId === address.id}
+                        onChange={() => {
+                          onSelectAddress(address.id);
+                          setAddressError(false);
+                        }}
+                      />
+                      <span className="custom-option-header mb-2">
+                        <span className="fw-medium text-heading mb-0">
+                          {address.name}
+                          {address.isDefault && " (پیش‌فرض)"}
+                        </span>
+                        <span
+                          className={`badge ${
+                            address.type === "home"
+                              ? "bg-label-primary"
+                              : "bg-label-success"
+                          }`}
+                        >
+                          {address.type === "home" ? "خانه" : "محل کار"}
+                        </span>
+                      </span>
+                      <span className="custom-option-body">
+                        <small>
+                          {getAddressDisplay(address)}
+                          <br />
+                          موبایل : {address.phone} پرداخت با کارت یا پرداخت در
+                          محل امکان‌پذیر است
+                        </small>
+                        <span className="my-3 border-bottom d-block"></span>
+                        <span className="d-flex">
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 me-4 text-decoration-none"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              onEditAddress(address.id);
+                            }}
+                          >
+                            ویرایش
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 me-4 text-decoration-none"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (!address.isDefault) {
+                                onSetDefaultAddress(address.id);
+                              }
+                            }}
+                            disabled={address.isDefault}
+                          >
+                            {address.isDefault
+                              ? "پیش‌فرض"
+                              : "انتخاب به‌عنوان پیش‌فرض"}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none text-danger"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              onRemoveAddress(address.id);
+                            }}
+                          >
+                            حذف
+                          </button>
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           <button

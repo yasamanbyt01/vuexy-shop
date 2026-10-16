@@ -1,16 +1,6 @@
-import type { Address } from "../types/address";
-
-export const mockAddresses: Address[] = [
-  {
-    id: 1,
-    name: "علی رضایی",
-    type: "home",
-    addressLine1: "خیابان ولیعصر، پلاک ۲۳",
-    addressLine2: "واحد ۴",
-    city: "تهران",
-    state: "تهران",
-    zipCode: "1598745632",
-    phone: "09123456789",
-    isDefault: true,
-  },
-];
+/**
+ * Deprecated: checkout addresses are now fetched from NestJS. This file no
+ * longer defines demo addresses, so new accounts start with an empty address
+ * list until they save one through the API.
+ */
+export {};

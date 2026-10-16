@@ -170,7 +170,7 @@ const ProductDetails = () => {
       id: product.id,
       name: product.name,
       price: product.price,
-      discountedPrice: product.originalPrice || product.price,
+      originalPrice: product.originalPrice ?? undefined,
       image: product.images?.[0],
       quantity,
       inStock: product.inStock,

@@ -103,9 +103,23 @@ const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
                             onClick={() => removeItem(item.id)}
                           ></button>
                           <div className="my-2 mt-md-6 mb-md-4">
-                            <span className="text-primary">
-                              {formatPrice(item.price)}
-                            </span>
+                            {(() => {
+                              const originalPrice =
+                                item.originalPrice ?? item.discountedPrice;
+                              return (
+                                <>
+                                  {typeof originalPrice === "number" &&
+                                    originalPrice > item.price && (
+                                      <small className="d-block text-body-secondary text-decoration-line-through">
+                                        {formatPrice(originalPrice)}
+                                      </small>
+                                    )}
+                                  <span className="text-primary">
+                                    {formatPrice(item.price)}
+                                  </span>
+                                </>
+                              );
+                            })()}
                           </div>
                           <button
                             type="button"

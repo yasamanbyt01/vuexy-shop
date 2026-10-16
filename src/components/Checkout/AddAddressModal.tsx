@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Address } from "../../types/address";
+import type { AddressInput } from "../../services/addresses";
 
 interface AddAddressModalProps {
   show: boolean;
   onClose: () => void;
-  onSave: (
-    address: Omit<Address, "id" | "isDefault"> & { phone: string },
-  ) => void;
+  initialAddress?: Address;
+  customerName?: string;
+  onSave: (address: AddressInput) => Promise<void> | void;
 }
 
 const AddAddressModal: React.FC<AddAddressModalProps> = ({
   show,
   onClose,
+  initialAddress,
+  customerName,
   onSave,
 }) => {
   const [addressType, setAddressType] = useState<"home" | "office">("home");
+  const [isSaving, setIsSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,21 +33,57 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
     useAsBilling: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!show) return;
+
+    const fullName = (initialAddress?.name ?? customerName ?? "").trim();
+    const nameParts = fullName ? fullName.split(/\s+/) : [];
+
+    setFormData({
+      firstName: nameParts.shift() ?? "",
+      lastName: nameParts.join(" "),
+      addressLine1: initialAddress?.addressLine1 ?? "",
+      addressLine2: initialAddress?.addressLine2 ?? "",
+      landmark: "",
+      city: initialAddress?.city ?? "",
+      state: initialAddress?.state ?? "",
+      zipCode: initialAddress?.zipCode ?? "",
+      phone: initialAddress?.phone ?? "",
+      useAsBilling: false,
+    });
+    setAddressType(initialAddress?.type ?? "home");
+    setSubmitError(null);
+  }, [show, initialAddress, customerName]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const address = {
-      name: `${formData.firstName} ${formData.lastName}`,
+    if (isSaving) return;
+
+    const address: AddressInput = {
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
       type: addressType,
-      addressLine1: formData.addressLine1,
-      addressLine2: formData.addressLine2,
-      city: formData.city,
-      state: formData.state,
-      zipCode: formData.zipCode,
-      phone: formData.phone,
-      // id and isDefault will be set by the parent component
+      addressLine1: formData.addressLine1.trim(),
+      ...(formData.addressLine2.trim()
+        ? { addressLine2: formData.addressLine2.trim() }
+        : {}),
+      city: formData.city.trim(),
+      state: formData.state.trim(),
+      zipCode: formData.zipCode.trim(),
+      phone: formData.phone.trim(),
     };
-    onSave(address);
-    resetForm();
+
+    setIsSaving(true);
+    setSubmitError(null);
+    try {
+      await onSave(address);
+      resetForm();
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "ذخیره آدرس ناموفق بود.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const resetForm = () => {
@@ -89,6 +130,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
             <button
               type="button"
               className="btn-close"
+              disabled={isSaving}
               onClick={() => {
                 onClose();
                 resetForm();
@@ -96,9 +138,13 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
               aria-label="Close"
             ></button>
             <div className="text-center mb-6">
-              <h4 className="address-title mb-2">افزودن آدرس جدید</h4>
+              <h4 className="address-title mb-2">
+                {initialAddress ? "ویرایش آدرس" : "افزودن آدرس جدید"}
+              </h4>
               <p className="address-subtitle">
-                برای ارسال سریع، یک آدرس جدید اضافه کنید
+                {initialAddress
+                  ? "اطلاعات آدرس خود را به‌روزرسانی کنید"
+                  : "برای ارسال سریع، یک آدرس جدید اضافه کنید"}
               </p>
             </div>
             <form
@@ -333,13 +379,29 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({
                   </label>
                 </div>
               </div>
+              {submitError && (
+                <div className="col-12">
+                  <div className="alert alert-danger mb-0" role="alert">
+                    {submitError}
+                  </div>
+                </div>
+              )}
               <div className="col-12 text-center">
-                <button type="submit" className="btn btn-primary me-3">
-                  ثبت آدرس
+                <button
+                  type="submit"
+                  className="btn btn-primary me-3"
+                  disabled={isSaving}
+                >
+                  {isSaving
+                    ? "در حال ذخیره…"
+                    : initialAddress
+                      ? "ذخیره تغییرات"
+                      : "ثبت آدرس"}
                 </button>
                 <button
                   type="button"
                   className="btn btn-label-secondary"
+                  disabled={isSaving}
                   onClick={() => {
                     onClose();
                     resetForm();

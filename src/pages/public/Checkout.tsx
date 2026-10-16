@@ -1,5 +1,5 @@
 import Stepper from "bs-stepper";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CartStep from "../../components/Checkout/CartStep";
 import AddressStep from "../../components/Checkout/AddressStep";
 import PaymentStep from "../../components/Checkout/PaymentStep";
@@ -7,22 +7,33 @@ import ConfirmationStep from "../../components/Checkout/ConfirmationStep";
 import AddAddressModal from "../../components/Checkout/AddAddressModal";
 import type { Address } from "../../types/address";
 import {
+  createAddress,
+  deleteAddress,
   getAddresses,
-  addAddress,
-  removeAddress,
   setDefaultAddress,
-} from "../../lib/userStorage";
+  updateAddress,
+  type AddressInput,
+} from "../../services/addresses";
 
 import { useCart } from "../../context/CartContext";
 import { useCheckout } from "../../context/CheckoutContext";
 import { scrollTop } from "../../utils/scroll";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 const Checkout = () => {
   const stepperRef = useRef<Stepper | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(true);
+  const [addressLoadError, setAddressLoadError] = useState<string | null>(null);
+  const [addressActionError, setAddressActionError] = useState<string | null>(
+    null,
+  );
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [addressValidationTrigger, setAddressValidationTrigger] = useState(0);
+  const [hasCreatedOrder, setHasCreatedOrder] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const { state, dispatch } = useCheckout();
   const {
@@ -33,12 +44,23 @@ const Checkout = () => {
     freeShipping,
   } = state;
 
+  const currentStepRef = useRef(currentStep);
+  const selectedAddressIdRef = useRef<number | undefined>(selectedAddressId);
+  const addressesRef = useRef(addresses);
+  const addressLoadErrorRef = useRef(addressLoadError);
+  const promptedForFirstAddressRef = useRef(false);
+  currentStepRef.current = currentStep;
+  selectedAddressIdRef.current = selectedAddressId;
+  addressesRef.current = addresses;
+  addressLoadErrorRef.current = addressLoadError;
+
   const { items } = useCart();
 
   const navigate = useNavigate();
+  const { user, token } = useAuthContext();
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !hasCreatedOrder) {
       setTimeout(() => {
         window.scrollTo({
           top: 0,
@@ -46,7 +68,7 @@ const Checkout = () => {
         });
       }, 50);
     }
-  }, [items.length]);
+  }, [items.length, hasCreatedOrder]);
 
   const goNext = () => {
     stepperRef.current?.next();
@@ -58,31 +80,92 @@ const Checkout = () => {
     scrollTop();
   };
 
-  const isAddressValid = () => {
-    return addresses.some((address) => address.id === selectedAddressId);
-  };
+  const isAddressValid = useCallback(
+    () =>
+      addressesRef.current.some(
+        (address) => address.id === selectedAddressIdRef.current,
+      ),
+    [],
+  );
+
+  // Customer addresses belong to the authenticated user and are always loaded
+  // from NestJS. We never use browser storage as the source of truth.
+  useEffect(() => {
+    let isActive = true;
+
+    const loadAddresses = async () => {
+      if (!token) {
+        setAddresses([]);
+        setAddressesLoading(false);
+        dispatch({ type: "SET_SELECTED_ADDRESS", payload: undefined });
+        return;
+      }
+
+      setAddressesLoading(true);
+      setAddressLoadError(null);
+
+      try {
+        const result = await getAddresses(token);
+        if (!isActive) return;
+
+        setAddresses(result);
+        // Selection for this checkout is separate from the account's default.
+        // Keep the previous selection when it still exists; use the default
+        // only when there is no valid saved selection.
+        const previousSelectedId = selectedAddressIdRef.current;
+        const preferredAddress =
+          result.find((address) => address.id === previousSelectedId) ??
+          result.find((address) => address.isDefault) ??
+          result[0];
+
+        dispatch({
+          type: "SET_SELECTED_ADDRESS",
+          payload: preferredAddress?.id,
+        });
+
+        // If there are no saved addresses, start checkout at the cart step.
+        // The first-address form opens when the customer enters the address step.
+        if (result.length === 0) {
+          localStorage.removeItem("checkoutStep");
+          setEditingAddress(null);
+        }
+      } catch (error) {
+        if (!isActive) return;
+        setAddressLoadError(
+          error instanceof Error
+            ? error.message
+            : "دریافت آدرس‌ها ناموفق بود. دوباره تلاش کنید.",
+        );
+      } finally {
+        if (isActive) setAddressesLoading(false);
+      }
+    };
+
+    void loadAddresses();
+    return () => {
+      isActive = false;
+    };
+  }, [token, dispatch]);
 
   useEffect(() => {
-    const storedAddresses = getAddresses();
-
-    setAddresses(storedAddresses);
-
-    const defaultAddress = storedAddresses.find((address) => address.isDefault);
-
-    if (defaultAddress) {
-      dispatch({
-        type: "SET_SELECTED_ADDRESS",
-        payload: defaultAddress.id,
-      });
-    } else {
-      dispatch({
-        type: "SET_SELECTED_ADDRESS",
-        payload: undefined,
-      });
+    if (
+      currentStep !== 1 ||
+      addressesLoading ||
+      addressLoadError ||
+      addresses.length > 0 ||
+      promptedForFirstAddressRef.current
+    ) {
+      return;
     }
-  }, [dispatch]);
+
+    promptedForFirstAddressRef.current = true;
+    setEditingAddress(null);
+    setShowAddressModal(true);
+  }, [currentStep, addressesLoading, addressLoadError, addresses.length]);
 
   useEffect(() => {
+    if (addressesLoading) return;
+
     const element = document.querySelector("#wizard-checkout");
     if (!element) return;
 
@@ -113,7 +196,15 @@ const Checkout = () => {
         event.preventDefault();
         event.stopPropagation();
 
-        setAddressValidationTrigger((prev) => prev + 1);
+        if (currentStepRef.current === 0) {
+          if (addressesRef.current.length > 0) {
+            setAddressValidationTrigger((prev) => prev + 1);
+          }
+          stepperRef.current?.next();
+          scrollTop();
+        } else {
+          setAddressValidationTrigger((prev) => prev + 1);
+        }
       }
     };
 
@@ -122,7 +213,18 @@ const Checkout = () => {
     const STORAGE_KEY = "checkoutStep";
 
     // Restore saved step
-    const savedStep = Number(localStorage.getItem(STORAGE_KEY)) || 0;
+    const savedStep =
+      addressesRef.current.length > 0 && !addressLoadErrorRef.current
+        ? Number(localStorage.getItem(STORAGE_KEY)) || 0
+        : 0;
+
+    if (
+      savedStep === 0 &&
+      (addressesRef.current.length === 0 || addressLoadErrorRef.current)
+    ) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    setCurrentStep(savedStep);
 
     if (savedStep > 0) {
       // Move forward step by step
@@ -150,6 +252,7 @@ const Checkout = () => {
       const index = e.detail?.indexStep ?? 0;
 
       localStorage.setItem(STORAGE_KEY, index.toString());
+      setCurrentStep(index);
 
       updateCrossedSteps(index);
     };
@@ -160,55 +263,122 @@ const Checkout = () => {
       element.removeEventListener("click", handleStepClick, true);
       element.removeEventListener("shown.bs-stepper", handleStepChange);
     };
-  }, [addresses, selectedAddressId]);
+  }, [addressesLoading, isAddressValid]);
 
-  const handleAddAddress = (
-    newAddressData: Omit<Address, "id" | "isDefault">,
-  ) => {
-    const newAddress: Address = {
-      ...newAddressData,
-      id: addresses.length ? Math.max(...addresses.map((a) => a.id)) + 1 : 1,
-      isDefault: addresses.length === 0,
-    };
+  const refreshAddresses = async (preferredId?: number) => {
+    if (!token)
+      throw new Error("برای مدیریت آدرس‌ها ابتدا وارد حساب کاربری شوید.");
 
-    addAddress(newAddress);
-    setAddresses(getAddresses());
-
-    dispatch({ type: "SET_SELECTED_ADDRESS", payload: newAddress.id });
-
-    setShowAddressModal(false);
-  };
-
-  const handleRemoveAddress = (id: number) => {
-    removeAddress(id);
-
-    const updated = getAddresses();
+    const updated = await getAddresses(token);
     setAddresses(updated);
 
-    if (selectedAddressId === id) {
-      const nextId =
-        updated.find((a) => a.isDefault)?.id ??
-        (updated.length ? updated[0].id : undefined);
+    const preferredAddress =
+      updated.find((address) => address.id === preferredId) ??
+      updated.find((address) => address.isDefault) ??
+      updated[0];
 
-      dispatch({ type: "SET_SELECTED_ADDRESS", payload: nextId });
+    dispatch({
+      type: "SET_SELECTED_ADDRESS",
+      payload: preferredAddress?.id,
+    });
+
+    return updated;
+  };
+
+  const handleSaveAddress = async (addressData: AddressInput) => {
+    if (!token) throw new Error("برای ذخیره آدرس ابتدا وارد حساب کاربری شوید.");
+
+    setAddressActionError(null);
+
+    try {
+      const savedAddress = editingAddress
+        ? await updateAddress(editingAddress.id, addressData, token)
+        : await createAddress(addressData, token);
+
+      await refreshAddresses(savedAddress.id);
+      setShowAddressModal(false);
+      setEditingAddress(null);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "ذخیره آدرس ناموفق بود.";
+      setAddressActionError(message);
+      throw error;
+    }
+  };
+
+  const handleRemoveAddress = async (id: number) => {
+    if (!token) return;
+    setAddressActionError(null);
+
+    try {
+      await deleteAddress(id, token);
+      const updated = await getAddresses(token);
+      setAddresses(updated);
+
+      if (selectedAddressId === id) {
+        const nextAddress =
+          updated.find((address) => address.isDefault) ?? updated[0];
+        dispatch({
+          type: "SET_SELECTED_ADDRESS",
+          payload: nextAddress?.id,
+        });
+      }
+
+      if (updated.length === 0) {
+        dispatch({ type: "SET_SELECTED_ADDRESS", payload: undefined });
+        setEditingAddress(null);
+        setShowAddressModal(true);
+      }
+    } catch (error) {
+      setAddressActionError(
+        error instanceof Error ? error.message : "حذف آدرس ناموفق بود.",
+      );
     }
   };
 
   const handleEditAddress = (id: number) => {
-    // For now, we'll just log. You can implement edit modal later
-    console.log("Edit address:", id);
+    const addressToEdit = addresses.find((address) => address.id === id);
+    if (!addressToEdit) return;
+
+    setAddressActionError(null);
+    setEditingAddress(addressToEdit);
+    setShowAddressModal(true);
   };
 
-  const handleSetDefaultAddress = (id: number) => {
-    setDefaultAddress(id);
+  const handleSetDefaultAddress = async (id: number) => {
+    if (!token) return;
+    setAddressActionError(null);
 
-    const updated = getAddresses();
-    setAddresses(updated);
-
-    dispatch({ type: "SET_SELECTED_ADDRESS", payload: id });
+    try {
+      await setDefaultAddress(id, token);
+      // In checkout, the customer's explicit "set as default" action should
+      // also select that address for the order they are placing right now.
+      // The default remains saved by NestJS for future checkouts as well.
+      await refreshAddresses(id);
+    } catch (error) {
+      setAddressActionError(
+        error instanceof Error
+          ? error.message
+          : "تغییر آدرس پیش‌فرض ناموفق بود.",
+      );
+    }
   };
 
-  if (items.length === 0) {
+  if (addressesLoading && items.length > 0) {
+    return (
+      <section className="section-py bg-body">
+        <div className="container text-center py-5" role="status">
+          <div
+            className="spinner-border text-primary mb-3"
+            aria-hidden="true"
+          />
+          <p className="mb-0">در حال دریافت آدرس‌های شما…</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (items.length === 0 && !hasCreatedOrder) {
     return (
       <section className="checkout-empty-cart flex-grow-1 d-flex align-items-center justify-content-center bg-body py-5">
         <div className="container">
@@ -296,8 +466,24 @@ const Checkout = () => {
                 <CartStep onNext={goNext} />
 
                 {/* Address */}
+                {(addressLoadError ||
+                  (addressActionError && !showAddressModal)) && (
+                  <div className="alert alert-danger" role="alert">
+                    {addressLoadError || addressActionError}
+                    {addressLoadError && (
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-label-danger ms-3"
+                        onClick={() => window.location.reload()}
+                      >
+                        تلاش دوباره
+                      </button>
+                    )}
+                  </div>
+                )}
                 <AddressStep
                   addresses={addresses}
+                  addressesLoading={addressesLoading}
                   selectedAddressId={selectedAddressId}
                   onSelectAddress={(id) =>
                     dispatch({ type: "SET_SELECTED_ADDRESS", payload: id })
@@ -343,6 +529,17 @@ const Checkout = () => {
                   finalPrice={finalPrice}
                   selectedDeliveryOption={deliveryOption}
                   freeShipping={freeShipping}
+                  customer={user}
+                  token={token}
+                  paymentMethod={state.paymentMethod ?? "card"}
+                  onOrderCreated={() => {
+                    // A successful order ends this checkout session. Keep the
+                    // confirmation visible in component state, but don't let a
+                    // refresh or the next cart reuse the old wizard step/state.
+                    setHasCreatedOrder(true);
+                    localStorage.removeItem("checkoutStep");
+                    dispatch({ type: "RESET_CHECKOUT" });
+                  }}
                   onComplete={() => {
                     localStorage.removeItem("checkoutStep");
                     dispatch({ type: "RESET_CHECKOUT" });
@@ -359,8 +556,14 @@ const Checkout = () => {
       {/* Address Modal */}
       <AddAddressModal
         show={showAddressModal}
-        onClose={() => setShowAddressModal(false)}
-        onSave={handleAddAddress}
+        onClose={() => {
+          setShowAddressModal(false);
+          setEditingAddress(null);
+          setAddressActionError(null);
+        }}
+        initialAddress={editingAddress ?? undefined}
+        customerName={user?.name}
+        onSave={handleSaveAddress}
       />
     </>
   );

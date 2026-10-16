@@ -3,12 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import MegaDropdown from "./MegaDropdown";
 import MegaDropdownMobile from "./MegaDropdownMobile";
 import { useCart } from "../../context/CartContext";
+import { useCheckout } from "../../context/CheckoutContext";
 import { useAuth } from "../../hooks/useAuth";
 import { getProducts, type ApiProduct } from "../../services/products";
 import { toFarsiNumber } from "../../utils/numbers";
 
 const PublicNavbar = () => {
   const { items, clearCart } = useCart();
+  const { dispatch: dispatchCheckout } = useCheckout();
   const { isAuthenticated, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [query, setQuery] = useState("");
@@ -147,13 +149,17 @@ const PublicNavbar = () => {
 
   useEffect(() => {
     if (logoutAfterNavigation && location.pathname === "/") {
-      clearCart();
       logout();
       setLogoutAfterNavigation(false);
     }
-  }, [logoutAfterNavigation, location.pathname, logout, clearCart]);
+  }, [logoutAfterNavigation, location.pathname, logout]);
 
   const handleLogout = () => {
+    // Reset checkout synchronously before leaving the current page so a later
+    // login cannot resume the previous user's abandoned checkout.
+    clearCart();
+    dispatchCheckout({ type: "RESET_CHECKOUT" });
+    localStorage.removeItem("checkoutStep");
     setLogoutAfterNavigation(true);
     navigate("/", { replace: true });
   };
