@@ -22,6 +22,7 @@ interface AuthContextValue {
   login: (data: LoginRequest, rememberMe?: boolean) => Promise<void>;
   register: (data: RegisterRequest) => Promise<AuthUser>;
   logout: () => void;
+  updateAuthUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -86,6 +87,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setAuth(null);
   };
 
+  const updateAuthUser = (updatedUser: AuthUser) => {
+    if (!auth) return;
+
+    const nextAuth = { ...auth, user: updatedUser };
+    const useLocalStorage = localStorage.getItem(AUTH_STORAGE_KEY) !== null;
+    const storage = useLocalStorage ? localStorage : sessionStorage;
+    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextAuth));
+    setAuth(nextAuth);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -95,6 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         register,
         logout,
+        updateAuthUser,
       }}
     >
       {children}

@@ -2,7 +2,9 @@ import type { Address } from "../types/address";
 
 const API_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, "");
 
-export type AddressInput = Omit<Address, "id" | "isDefault">;
+export type AddressInput = Omit<Address, "id" | "isDefault"> & {
+  isDefault?: boolean;
+};
 
 interface ApiErrorResponse {
   message?: string | string[];

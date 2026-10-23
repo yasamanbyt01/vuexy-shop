@@ -15,6 +15,11 @@ import { formatSpecValue } from "../../utils/specValue";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../hooks/useAuth";
 import LoginRequiredModal from "../../components/ui/LoginRequiredModal";
+import {
+  addFavorite,
+  getFavorites,
+  removeFavorite,
+} from "../../services/favorites";
 
 import { getProductById, type ApiProduct } from "../../services/products";
 import { getReviews } from "../../services/reviews";
@@ -46,9 +51,14 @@ const ProductDetails = () => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState<CartItem | null>(null);
+  const [loginIntent, setLoginIntent] = useState<"cart" | "favorite">("cart");
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteBusy, setFavoriteBusy] = useState(false);
+  const [favoriteError, setFavoriteError] = useState("");
+  const [favoriteMessage, setFavoriteMessage] = useState("");
 
   const { addItem } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
   useEffect(() => {
     if (!id || Number.isNaN(productId)) {
@@ -89,6 +99,29 @@ const ProductDetails = () => {
       cancelled = true;
     };
   }, [id, productId]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!token || !id || Number.isNaN(productId)) {
+      setIsFavorite(false);
+      return;
+    }
+
+    getFavorites(token)
+      .then((products) => {
+        if (!cancelled) {
+          setIsFavorite(products.some((favorite) => favorite.id === productId));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setIsFavorite(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, productId, token]);
 
   useEffect(() => {
     if (!id || Number.isNaN(productId)) {
@@ -179,12 +212,48 @@ const ProductDetails = () => {
     };
 
     if (!isAuthenticated) {
+      setLoginIntent("cart");
       setPendingCartItem(cartItem);
       setShowLoginModal(true);
       return;
     }
 
     addItem(cartItem);
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!product) return;
+
+    if (!isAuthenticated || !token) {
+      setLoginIntent("favorite");
+      setPendingCartItem(null);
+      setShowLoginModal(true);
+      return;
+    }
+
+    setFavoriteBusy(true);
+    setFavoriteError("");
+    setFavoriteMessage("");
+
+    try {
+      if (isFavorite) {
+        await removeFavorite(product.id, token);
+        setIsFavorite(false);
+        setFavoriteMessage("محصول از علاقه‌مندی‌ها حذف شد.");
+      } else {
+        await addFavorite(product.id, token);
+        setIsFavorite(true);
+        setFavoriteMessage("محصول به علاقه‌مندی‌ها اضافه شد.");
+      }
+    } catch (favoriteRequestError) {
+      setFavoriteError(
+        favoriteRequestError instanceof Error
+          ? favoriteRequestError.message
+          : "در به‌روزرسانی علاقه‌مندی‌ها مشکلی پیش آمد.",
+      );
+    } finally {
+      setFavoriteBusy(false);
+    }
   };
 
   const breadcrumbItems = [
@@ -459,9 +528,21 @@ const ProductDetails = () => {
                   </button>
 
                   <div className="d-flex gap-2">
-                    <button className="btn btn-outline-primary flex-grow-1">
-                      <i className="ti tabler-heart me-2"></i>
-                      افزودن به علاقه مندی ها
+                    <button
+                      type="button"
+                      className={`btn flex-grow-1 ${isFavorite ? "btn-primary" : "btn-outline-primary"}`}
+                      onClick={() => void handleToggleFavorite()}
+                      disabled={favoriteBusy}
+                      aria-pressed={isFavorite}
+                    >
+                      <i
+                        className={`ti ${isFavorite ? "tabler-heart-filled" : "tabler-heart"} me-2`}
+                      ></i>
+                      {favoriteBusy
+                        ? "در حال ذخیره..."
+                        : isFavorite
+                          ? "حذف از علاقه‌مندی‌ها"
+                          : "افزودن به علاقه‌مندی‌ها"}
                     </button>
 
                     <button className="btn btn-outline-secondary">
@@ -473,6 +554,16 @@ const ProductDetails = () => {
                     </button>
                   </div>
                 </div>
+                {favoriteError && (
+                  <div className="alert alert-danger py-2" role="alert">
+                    {favoriteError}
+                  </div>
+                )}
+                {favoriteMessage && (
+                  <div className="alert alert-success py-2" role="status">
+                    {favoriteMessage}
+                  </div>
+                )}
 
                 {/* Secure Payment & Shipping */}
                 <div className="border rounded p-3 mb-4">
@@ -624,6 +715,7 @@ const ProductDetails = () => {
         show={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         pendingCartItem={pendingCartItem}
+        intent={loginIntent}
       />
     </>
   );

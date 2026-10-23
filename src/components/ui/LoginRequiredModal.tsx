@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import type { CartItem } from "../../types/cart";
 
 interface LoginRequiredModalProps {
   show: boolean;
   onClose: () => void;
   pendingCartItem?: CartItem | null;
+  intent?: "cart" | "favorite";
 }
 
 const TRANSITION_DURATION = 150;
@@ -14,7 +15,9 @@ const LoginRequiredModal = ({
   show,
   onClose,
   pendingCartItem,
+  intent = "cart",
 }: LoginRequiredModalProps) => {
+  const location = useLocation();
   const [isMounted, setIsMounted] = useState(show);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -97,26 +100,30 @@ const LoginRequiredModal = ({
             </h5>
 
             <p className="text-body-secondary mb-5">
-              برای افزودن محصول به سبد خرید، ابتدا وارد حساب کاربری خود شوید.
+              {intent === "favorite"
+                ? "برای افزودن محصول به علاقه‌مندی‌ها، ابتدا وارد حساب کاربری خود شوید."
+                : "برای افزودن محصول به سبد خرید، ابتدا وارد حساب کاربری خود شوید."}
             </p>
 
             <div className="d-flex flex-column gap-2">
               <Link
                 to="/login"
-                state={pendingCartItem ? { pendingCartItem } : undefined}
+                state={
+                  pendingCartItem
+                    ? { pendingCartItem }
+                    : {
+                        from: {
+                          pathname: location.pathname,
+                          search: location.search,
+                          hash: location.hash,
+                        },
+                      }
+                }
                 className="btn btn-primary"
                 onClick={onClose}
               >
                 ورود به حساب
               </Link>
-
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={onClose}
-              >
-                ادامه خرید
-              </button>
             </div>
           </div>
         </div>

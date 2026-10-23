@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { toFarsiNumber } from "../../utils/numbers";
 import { formatPrice } from "../../utils/price";
@@ -10,9 +11,7 @@ interface CartStepProps {
 const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
   const { items, updateQuantity, removeItem, getTotalPrice } = useCart();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-
   const subtotal = getTotalPrice();
-
   return (
     <div id="checkout-cart" className="content active">
       <div className="row">
@@ -121,12 +120,6 @@ const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
                               );
                             })()}
                           </div>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-label-primary"
-                          >
-                            انتقال به علاقه‌مندی‌ها
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -138,15 +131,13 @@ const CartStep: React.FC<CartStepProps> = ({ onNext }) => {
 
           {/* Wishlist */}
           <div className="list-group">
-            <a
-              href="javascript:void(0)"
+            <Link
+              to="/profile#favorites"
               className="list-group-item text-primary border-primary d-flex justify-content-between"
             >
-              <span className="fw-medium">
-                افزودن محصولات بیشتر از علاقه‌مندی‌ها
-              </span>
+              <span className="fw-medium">مشاهده محصولات علاقه‌مندی‌ها</span>
               <i className="icon-base ti tabler-arrow-right icon-xs scaleX-n1-rtl mt-50"></i>
-            </a>
+            </Link>
           </div>
         </div>
 

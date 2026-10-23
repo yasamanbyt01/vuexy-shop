@@ -60,6 +60,39 @@ export interface CreatedOrder {
   items: CreatedOrderItem[];
 }
 
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export interface UserOrder {
+  id: number;
+  subtotal: number;
+  deliveryPrice: number;
+  total: number;
+  status: OrderStatus;
+  customerName: string;
+  customerEmail: string;
+  shippingName: string;
+  shippingPhone: string;
+  shippingAddressLine1: string;
+  shippingAddressLine2: string | null;
+  shippingCity: string;
+  shippingState: string;
+  shippingZipCode: string;
+  deliveryOption: "standard" | "express" | null;
+  paymentMethod: PaymentMethod | null;
+  createdAt: string;
+  items: CreatedOrderItem[];
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
 interface ApiErrorResponse {
   message?: string | string[];
 }
@@ -70,14 +103,17 @@ function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function getErrorMessage(data: unknown): string {
+function getErrorMessage(
+  data: unknown,
+  fallback = "ثبت سفارش با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+): string {
   if (isRecord(data) && "message" in data) {
     const message = (data as ApiErrorResponse).message;
     if (Array.isArray(message)) return message.join(", ");
     if (typeof message === "string") return message;
   }
 
-  return "ثبت سفارش با خطا مواجه شد. لطفاً دوباره تلاش کنید.";
+  return fallback;
 }
 
 function stringField(
@@ -256,4 +292,85 @@ export async function createOrder(
       typeof result.createdAt === "string" ? result.createdAt : undefined,
     items,
   };
+}
+
+async function requestOrdersApi<T>(
+  path: string,
+  token: string,
+  options: RequestInit = {},
+): Promise<T> {
+  if (!API_URL) {
+    throw new Error("VITE_API_URL تنظیم نشده است.");
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const result: unknown = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      getErrorMessage(
+        result,
+        "در دریافت یا به‌روزرسانی سفارش مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
+      ),
+    );
+  }
+
+  return result as T;
+}
+
+function normalizeUserOrder(value: unknown): UserOrder {
+  if (!isRecord(value) || !Array.isArray(value.items)) {
+    throw new Error("پاسخ سفارش از API معتبر نیست.");
+  }
+
+  const order = value as unknown as UserOrder;
+  const items = order.items.map((item) => {
+    const imagePath = item.productImage;
+
+    return {
+      ...item,
+      productImage:
+        typeof imagePath === "string" && imagePath.length > 0
+          ? getProductImageUrl(
+              imagePath.startsWith("http")
+                ? imagePath
+                : imagePath.startsWith("/")
+                  ? imagePath
+                  : `/${imagePath}`,
+            )
+          : imagePath,
+    };
+  });
+
+  return { ...order, items };
+}
+
+export async function getMyOrders(token: string): Promise<UserOrder[]> {
+  const result = await requestOrdersApi<unknown>("/orders/mine", token);
+
+  if (!Array.isArray(result)) {
+    throw new Error("پاسخ فهرست سفارش‌ها از API معتبر نیست.");
+  }
+
+  return result.map(normalizeUserOrder);
+}
+
+export async function cancelOrder(
+  orderId: number,
+  token: string,
+): Promise<UserOrder> {
+  const result = await requestOrdersApi<unknown>(
+    `/orders/${orderId}/cancel`,
+    token,
+    { method: "PATCH" },
+  );
+
+  return normalizeUserOrder(result);
 }
