@@ -1,0 +1,373 @@
+/* Admin-only shell styles. Vuexy core/theme classes provide the components. */
+.admin-shell {
+  min-height: 100vh;
+  direction: rtl;
+  color: var(--bs-body-color, #6f6b7d);
+  background: var(--bs-body-bg, #f8f7fa);
+}
+
+.admin-layout-container {
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  position: fixed !important;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 1045;
+  display: flex;
+  width: 260px;
+  flex-direction: column;
+  padding: 0 1rem 1rem;
+  overflow-y: auto;
+  background: var(--bs-paper-bg, #fff);
+  border-inline-end: 1px solid var(--bs-border-color, #dbdade);
+  box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.08);
+  transition: transform 220ms ease;
+}
+
+.admin-sidebar-brand {
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--bs-border-color, #dbdade);
+  margin-bottom: 1rem;
+}
+
+.admin-brand-link {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--bs-heading-color, #444050);
+  text-decoration: none;
+}
+
+.admin-brand-mark {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  color: #fff;
+  background: #7367f0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.admin-brand-name {
+  overflow: hidden;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-sidebar-caption {
+  margin: 0.35rem 0.75rem 0.75rem;
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.admin-sidebar-nav {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.45rem;
+  color: var(--bs-body-color, #6f6b7d);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.admin-sidebar-link .icon-base {
+  width: 1.25rem;
+  font-size: 1.2rem;
+}
+
+.admin-sidebar-link:hover {
+  color: #7367f0;
+  background: rgba(115, 103, 240, 0.08);
+}
+
+.admin-sidebar-link.active {
+  color: #fff;
+  background: #7367f0;
+  box-shadow: 0 0.125rem 0.25rem rgba(115, 103, 240, 0.25);
+}
+
+.admin-sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding: 1rem 0.25rem 0.25rem;
+  border-top: 1px solid var(--bs-border-color, #dbdade);
+}
+
+.admin-user-avatar {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #7367f0;
+  background: rgba(115, 103, 240, 0.14);
+  font-weight: 700;
+}
+
+.admin-user-summary {
+  min-width: 0;
+}
+
+.admin-user-name {
+  overflow: hidden;
+  color: var(--bs-heading-color, #444050);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-user-role {
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 0.75rem;
+}
+
+.admin-main {
+  min-width: 0;
+  min-height: 100vh;
+  margin-inline-start: 260px;
+}
+
+.admin-topbar {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 1030;
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid rgba(165, 163, 174, 0.12);
+  border-radius: 0.5rem;
+  background: var(--bs-paper-bg, #fff);
+  box-shadow: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.08);
+}
+
+.admin-topbar-title {
+  min-width: 0;
+}
+
+.admin-topbar-title .small {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.72rem;
+}
+
+.admin-content {
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+.admin-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem 1.5rem;
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 0.8rem;
+}
+
+.admin-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-page-heading h2 {
+  color: var(--bs-heading-color, #444050);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 600;
+}
+
+.admin-dashboard-tip {
+  background: linear-gradient(
+    135deg,
+    rgba(115, 103, 240, 0.07),
+    rgba(40, 199, 111, 0.035)
+  );
+}
+
+.admin-product-thumb {
+  display: inline-block;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 0.45rem;
+  border: 1px solid var(--bs-border-color, #dbdade);
+  background: var(--bs-tertiary-bg, #f5f5f9);
+  object-fit: contain;
+  padding: 0.15rem;
+}
+
+.admin-product-thumb-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 1.2rem;
+}
+
+.admin-product-name {
+  max-width: 310px;
+}
+
+.admin-products-table th {
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-products-table td {
+  vertical-align: middle;
+}
+
+.admin-sku {
+  color: var(--bs-secondary-color, #a5a3ae);
+  font-size: 0.83rem;
+}
+
+.admin-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem;
+  border: 1px solid var(--bs-border-color, #dbdade);
+  border-radius: 0.5rem;
+  color: var(--bs-body-color, #6f6b7d);
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.admin-quick-link:hover {
+  border-color: rgba(115, 103, 240, 0.45);
+  background: rgba(115, 103, 240, 0.04);
+}
+
+.admin-dashboard-note {
+  padding-top: 0.5rem;
+  line-height: 1.8;
+}
+
+.admin-placeholder-copy {
+  max-width: 580px;
+  line-height: 1.9;
+}
+
+.admin-sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+  .admin-sidebar {
+    transform: translateX(105%);
+  }
+
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: rgba(47, 43, 61, 0.45);
+  }
+
+  .admin-main {
+    margin-inline-start: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .admin-topbar {
+    top: 0.4rem;
+    min-height: 56px;
+    margin: 0.4rem 0.5rem 0;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .admin-content {
+    padding: 1rem 0.75rem;
+  }
+
+  .admin-footer {
+    padding: 0.5rem 0.75rem 1rem;
+  }
+
+  .admin-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-page-heading > .btn,
+  .admin-page-heading > button {
+    align-self: stretch;
+  }
+
+  .admin-store-link {
+    display: none;
+  }
+
+  .admin-products-name-cell {
+    min-width: 220px;
+  }
+
+  .admin-product-name {
+    max-width: 190px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-sidebar-link,
+  .admin-quick-link {
+    transition: none;
+  }
+}
+
+.admin-shell .min-w-0 {
+  min-width: 0;
+}
