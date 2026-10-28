@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import AdminConfirmModal from "../../components/Admin/AdminConfirmModal";
 import { getCategories, type ApiCategory } from "../../services/categories";
-import { getProducts, type ApiProduct } from "../../services/products";
+import {
+  deleteProduct,
+  getProducts,
+  type ApiProduct,
+} from "../../services/products";
 import { formatPrice } from "../../utils/price";
 
 const PAGE_SIZE = 10;
 
 const Products = () => {
+  const { token } = useAuth();
+  const location = useLocation();
   const [products, setProducts] = useState<ApiProduct[]>([]);
   const [categories, setCategories] = useState<ApiCategory[]>([]);
   const [searchInput, setSearchInput] = useState("");
@@ -20,24 +28,38 @@ const Products = () => {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [error, setError] = useState("");
   const [categoriesError, setCategoriesError] = useState("");
+  const [success, setSuccess] = useState("");
   const [retryKey, setRetryKey] = useState(0);
+  const [productToDelete, setProductToDelete] = useState<ApiProduct | null>(
+    null,
+  );
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  useEffect(() => {
+    const state = location.state as { adminSuccess?: string } | null;
+    if (state?.adminSuccess) setSuccess(state.adminSuccess);
+  }, [location.state]);
 
   useEffect(() => {
     let cancelled = false;
-
     const loadCategories = async () => {
       setCategoriesLoading(true);
       setCategoriesError("");
       try {
         const result = await getCategories();
         if (!cancelled) setCategories(result);
-      } catch {
-        if (!cancelled) setCategoriesError("دریافت دسته‌بندی‌ها ناموفق بود.");
+      } catch (requestError) {
+        if (!cancelled)
+          setCategoriesError(
+            requestError instanceof Error
+              ? requestError.message
+              : "دریافت دسته‌بندی‌ها ناموفق بود.",
+          );
       } finally {
         if (!cancelled) setCategoriesLoading(false);
       }
     };
-
     void loadCategories();
     return () => {
       cancelled = true;
@@ -46,7 +68,6 @@ const Products = () => {
 
   useEffect(() => {
     let cancelled = false;
-
     const loadProducts = async () => {
       setLoading(true);
       setError("");
@@ -57,23 +78,25 @@ const Products = () => {
           page,
           limit: PAGE_SIZE,
         });
-
         if (cancelled) return;
         setProducts(result.data);
         setTotal(result.meta.total);
         setTotalPages(Math.max(result.meta.totalPages, 1));
-      } catch {
+      } catch (requestError) {
         if (!cancelled) {
           setProducts([]);
           setTotal(0);
           setTotalPages(1);
-          setError("دریافت محصولات ناموفق بود. اتصال API را بررسی کنید.");
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : "دریافت محصولات ناموفق بود. اتصال API را بررسی کنید.",
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
-
     void loadProducts();
     return () => {
       cancelled = true;
@@ -93,6 +116,27 @@ const Products = () => {
     setPage(1);
   };
 
+  const handleDelete = async () => {
+    if (!productToDelete || !token) return;
+    setDeleteLoading(true);
+    setDeleteError("");
+    try {
+      await deleteProduct(token, productToDelete.id);
+      setProductToDelete(null);
+      setSuccess("محصول با موفقیت حذف شد.");
+      if (products.length === 1 && page > 1) setPage((value) => value - 1);
+      else setRetryKey((value) => value + 1);
+    } catch (requestError) {
+      setDeleteError(
+        requestError instanceof Error
+          ? requestError.message
+          : "حذف محصول ناموفق بود.",
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const startItem = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const endItem = Math.min(page * PAGE_SIZE, total);
 
@@ -102,35 +146,29 @@ const Products = () => {
         <div>
           <h2 className="mb-1">محصولات</h2>
           <p className="text-body-secondary mb-0">
-            فهرست محصولات فروشگاه، جست‌وجو و بررسی موجودی.
+            فهرست محصولات فروشگاه، جست‌وجو و مدیریت موجودی.
           </p>
         </div>
-        <button
-          type="button"
-          className="btn btn-primary"
-          disabled
-          title="فرم افزودن محصول در مرحله بعد پیاده‌سازی می‌شود"
-        >
+        <Link to="/admin/products/new" className="btn btn-primary">
           <i className="icon-base ti tabler-plus me-1" aria-hidden="true" />
           افزودن محصول
-          <span className="d-none d-md-inline small ms-1">(مرحله بعد)</span>
-        </button>
+        </Link>
       </div>
 
-      <div
-        className="alert alert-info d-flex align-items-start gap-2"
-        role="note"
-      >
-        <i
-          className="icon-base ti tabler-info-circle icon-lg mt-1"
-          aria-hidden="true"
-        />
-        <div>
-          این نسخه فهرست زنده، جست‌وجو، فیلتر دسته‌بندی و صفحه‌بندی را
-          پیاده‌سازی می‌کند. فرم‌های افزودن و ویرایش و عملیات حذف را در مرحله
-          بعد کامل می‌کنیم.
+      {success && (
+        <div
+          className="alert alert-success d-flex align-items-center justify-content-between gap-2"
+          role="status"
+        >
+          <span>{success}</span>
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="بستن"
+            onClick={() => setSuccess("")}
+          />
         </div>
-      </div>
+      )}
 
       <section className="card">
         <div className="card-header border-bottom">
@@ -157,7 +195,6 @@ const Products = () => {
             </button>
           </div>
         </div>
-
         <div className="card-body pt-4">
           <form
             onSubmit={handleSearch}
@@ -287,11 +324,11 @@ const Products = () => {
                       <th scope="col">قیمت</th>
                       <th scope="col">موجودی</th>
                       <th scope="col">وضعیت</th>
-                      <th scope="col">مشاهده</th>
+                      <th scope="col">عملیات</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((product: ApiProduct) => (
+                    {products.map((product) => (
                       <tr key={product.id}>
                         <td className="admin-products-name-cell">
                           <div className="d-flex align-items-center gap-3">
@@ -337,25 +374,52 @@ const Products = () => {
                             {product.stockCount > 0 ? "موجود" : "ناموجود"}
                           </span>
                         </td>
-                        <td>
-                          <Link
-                            to={`/products/${product.id}`}
-                            className="btn btn-icon btn-text-secondary btn-sm"
-                            title="مشاهده در فروشگاه"
-                            aria-label={`مشاهده ${product.name} در فروشگاه`}
-                          >
-                            <i
-                              className="icon-base ti tabler-external-link"
-                              aria-hidden="true"
-                            />
-                          </Link>
+                        <td className="text-nowrap">
+                          <div className="d-flex align-items-center gap-1">
+                            <Link
+                              to={`/admin/products/${product.id}/edit`}
+                              className="btn btn-icon btn-text-secondary btn-sm"
+                              title="ویرایش محصول"
+                              aria-label={`ویرایش ${product.name}`}
+                            >
+                              <i
+                                className="icon-base ti tabler-edit"
+                                aria-hidden="true"
+                              />
+                            </Link>
+                            <button
+                              type="button"
+                              className="btn btn-icon btn-text-danger btn-sm"
+                              title="حذف محصول"
+                              aria-label={`حذف ${product.name}`}
+                              onClick={() => {
+                                setProductToDelete(product);
+                                setDeleteError("");
+                              }}
+                            >
+                              <i
+                                className="icon-base ti tabler-trash"
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <Link
+                              to={`/products/${product.id}`}
+                              className="btn btn-icon btn-text-secondary btn-sm"
+                              title="مشاهده در فروشگاه"
+                              aria-label={`مشاهده ${product.name} در فروشگاه`}
+                            >
+                              <i
+                                className="icon-base ti tabler-external-link"
+                                aria-hidden="true"
+                              />
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-
               <div className="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-4">
                 <p className="text-body-secondary small mb-0">
                   نمایش {startItem.toLocaleString("fa-IR")} تا{" "}
@@ -411,6 +475,26 @@ const Products = () => {
           )}
         </div>
       </section>
+
+      <AdminConfirmModal
+        show={Boolean(productToDelete)}
+        title="حذف محصول"
+        message={
+          productToDelete
+            ? `آیا از حذف محصول «${productToDelete.name}» مطمئن هستید؟ این عملیات قابل بازگشت نیست.`
+            : ""
+        }
+        confirmLabel="بله، حذف شود"
+        loading={deleteLoading}
+        error={deleteError}
+        onCancel={() => {
+          if (!deleteLoading) {
+            setProductToDelete(null);
+            setDeleteError("");
+          }
+        }}
+        onConfirm={() => void handleDelete()}
+      />
     </div>
   );
 };

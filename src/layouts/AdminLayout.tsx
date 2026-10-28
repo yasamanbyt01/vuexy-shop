@@ -26,6 +26,8 @@ const navItems = [
 ];
 
 const getPageTitle = (pathname: string) => {
+  if (pathname === "/admin/products/new") return "افزودن محصول";
+  if (/^\/admin\/products\/\d+\/edit$/.test(pathname)) return "ویرایش محصول";
   if (pathname.startsWith("/admin/products")) return "مدیریت محصولات";
   if (pathname.startsWith("/admin/categories")) return "مدیریت دسته‌بندی‌ها";
   return "داشبورد فروشگاه";
