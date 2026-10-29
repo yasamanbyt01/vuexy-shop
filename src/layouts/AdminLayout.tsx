@@ -66,7 +66,7 @@ const AdminLayout = () => {
               onClick={() => setSidebarOpen(false)}
             >
               <span className="admin-brand-mark" aria-hidden="true">
-                V
+                <span className="admin-brand-letter">V</span>
               </span>
               <span className="admin-brand-name">VuexyShop</span>
             </Link>
@@ -133,27 +133,32 @@ const AdminLayout = () => {
                 <i className="icon-base ti tabler-menu-2" aria-hidden="true" />
               </button>
               <div className="admin-topbar-title">
-                <span className="text-body-secondary small">
+                <span className="text-body-secondary small admin-topbar-breadcrumb">
                   VuexyShop / پنل مدیریت
                 </span>
                 <h1 className="h5 mb-0">{getPageTitle(location.pathname)}</h1>
               </div>
             </div>
 
-            <div className="d-flex align-items-center gap-2 flex-shrink-0">
+            <div className="d-flex align-items-center gap-2 flex-shrink-0 admin-topbar-actions">
               <Link
                 to="/"
-                className="btn btn-label-secondary btn-sm admin-store-link"
+                className="btn btn-label-secondary admin-topbar-action admin-store-link"
+                aria-label="مشاهده فروشگاه"
+                title="مشاهده فروشگاه"
               >
                 <i
-                  className="icon-base ti tabler-external-link me-1"
+                  className="icon-base ti tabler-external-link"
                   aria-hidden="true"
                 />
-                مشاهده فروشگاه
+                <span className="admin-store-link-label-full">
+                  مشاهده فروشگاه
+                </span>
+                <span className="admin-store-link-label-compact">فروشگاه</span>
               </Link>
               <button
                 type="button"
-                className="btn btn-outline-danger btn-sm"
+                className="btn btn-outline-danger admin-topbar-action"
                 onClick={handleLogout}
               >
                 <i
