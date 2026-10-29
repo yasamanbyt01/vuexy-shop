@@ -23,6 +23,12 @@ const navItems = [
     icon: "tabler-category",
     end: false,
   },
+  {
+    to: "/admin/orders",
+    label: "سفارش‌ها",
+    icon: "tabler-shopping-cart",
+    end: false,
+  },
 ];
 
 const getPageTitle = (pathname: string) => {
@@ -30,6 +36,8 @@ const getPageTitle = (pathname: string) => {
   if (/^\/admin\/products\/\d+\/edit$/.test(pathname)) return "ویرایش محصول";
   if (pathname.startsWith("/admin/products")) return "مدیریت محصولات";
   if (pathname.startsWith("/admin/categories")) return "مدیریت دسته‌بندی‌ها";
+  if (/^\/admin\/orders\/\d+$/.test(pathname)) return "جزئیات سفارش";
+  if (pathname.startsWith("/admin/orders")) return "مدیریت سفارش‌ها";
   return "داشبورد فروشگاه";
 };
 

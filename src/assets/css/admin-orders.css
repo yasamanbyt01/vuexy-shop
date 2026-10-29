@@ -1,0 +1,116 @@
+/* UI polish for the admin order list and order details pages. */
+.admin-orders-page .admin-order-stat-card-body {
+  min-height: 6.25rem;
+  padding: 1.15rem 1.35rem;
+}
+
+.admin-orders-page .admin-order-stat-icon {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
+}
+
+.admin-orders-page .admin-order-stat-icon .icon-base {
+  display: block;
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.admin-orders-page .admin-order-stat-card-body > div {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+}
+
+.admin-order-details .admin-order-main-card {
+  align-self: flex-start;
+}
+
+.admin-order-details .admin-order-main-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.admin-order-details .admin-order-main-body .table > :not(caption) > * > * {
+  padding-block: 0.85rem;
+}
+
+.admin-order-details .admin-order-product-image {
+  display: block;
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  padding: 0.2rem;
+  border: 1px solid var(--bs-border-color, #dbdade);
+  background: var(--bs-tertiary-bg, #f5f5f9);
+}
+
+.admin-order-details .admin-order-sidebar-card .card-header {
+  padding: 1.1rem 1.25rem;
+}
+
+.admin-order-details .admin-order-sidebar-card > .card-body {
+  padding: 1.75rem 1.25rem 1.45rem !important;
+}
+
+.admin-order-details .admin-order-info-group + .admin-order-info-group {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bs-border-color, #dbdade);
+}
+
+.admin-order-details .admin-order-address {
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.admin-order-details .admin-order-payment-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  line-height: 1.8;
+}
+
+.admin-order-details .admin-order-payment-row + .admin-order-payment-row {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bs-border-color, #dbdade);
+}
+
+.admin-order-details .admin-order-payment-row > :last-child {
+  max-width: 65%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+  .admin-orders-page .admin-order-stat-card-body {
+    gap: 0.75rem !important;
+    min-height: 5.75rem;
+    padding: 1rem;
+  }
+
+  .admin-orders-page .admin-order-stat-icon {
+    width: 2.65rem;
+    height: 2.65rem;
+    flex-basis: 2.65rem;
+  }
+
+  .admin-order-details .admin-order-main-body {
+    padding: 1rem;
+  }
+
+  .admin-order-details .admin-order-sidebar-card .card-header {
+    padding: 1rem 1.1rem;
+  }
+
+  .admin-order-details .admin-order-sidebar-card > .card-body {
+    padding: 1.5rem 1.1rem 1.25rem !important;
+  }
+}

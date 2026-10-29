@@ -27,7 +27,7 @@ import "../../assets/css/customer-profile.css";
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "در انتظار بررسی",
   processing: "در حال پردازش",
-  shipped: "ززززززززز",
+  shipped: "در حال ارسال",
   delivered: "تحویل داده شده",
   cancelled: "لغو شده",
 };

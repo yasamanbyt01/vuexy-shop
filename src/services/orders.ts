@@ -374,3 +374,73 @@ export async function cancelOrder(
 
   return normalizeUserOrder(result);
 }
+
+export interface AdminOrderItem {
+  id: number;
+  productId: number;
+  productName: string;
+  productImage?: string | null;
+  unitPrice: number;
+  quantity: number;
+  lineTotal: number;
+}
+
+export interface AdminOrder {
+  id: number;
+  subtotal: number;
+  deliveryPrice: number;
+  total: number;
+  status: OrderStatus;
+  customerName?: string | null;
+  customerEmail?: string | null;
+  shippingName?: string | null;
+  shippingPhone?: string | null;
+  shippingAddressLine1?: string | null;
+  shippingAddressLine2?: string | null;
+  shippingCity?: string | null;
+  shippingState?: string | null;
+  shippingZipCode?: string | null;
+  deliveryOption?: string | null;
+  paymentMethod?: string | null;
+  createdAt?: string | null;
+  user?: { id?: number; name?: string; email?: string } | null;
+  items: AdminOrderItem[];
+}
+
+async function authenticatedOrderRequest<T>(
+  path: string,
+  token: string,
+  init: RequestInit = {},
+): Promise<T> {
+  if (!API_URL) throw new Error("VITE_API_URL تنظیم نشده است.");
+  const response = await fetch(`${API_URL}${path}`, {
+    ...init,
+    headers: {
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
+      Authorization: `Bearer ${token}`,
+      ...init.headers,
+    },
+  });
+  const result: unknown = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(getErrorMessage(result));
+  return result as T;
+}
+
+export function getAdminOrders(token: string): Promise<AdminOrder[]> {
+  return authenticatedOrderRequest<AdminOrder[]>("/orders", token);
+}
+
+export function getAdminOrder(token: string, id: number): Promise<AdminOrder> {
+  return authenticatedOrderRequest<AdminOrder>(`/orders/${id}`, token);
+}
+
+export function updateAdminOrderStatus(
+  token: string,
+  id: number,
+  status: OrderStatus,
+): Promise<AdminOrder> {
+  return authenticatedOrderRequest<AdminOrder>(`/orders/${id}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
