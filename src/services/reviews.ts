@@ -1,9 +1,15 @@
 import type { Review } from "../types/reviews";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, "");
 
 export interface GetReviewsParams {
   productId?: number;
+}
+
+export interface CreateReviewInput {
+  productId: number;
+  rating: number;
+  comment: string;
 }
 
 interface ApiReview {
@@ -48,4 +54,42 @@ export const getReviews = async (
     createdAt: review.createdAt,
     updatedAt: review.updatedAt,
   }));
+};
+
+interface ApiErrorResponse {
+  message?: string | string[];
+}
+
+function getCreateReviewErrorMessage(data: unknown): string {
+  if (typeof data === "object" && data !== null && "message" in data) {
+    const message = (data as ApiErrorResponse).message;
+    if (Array.isArray(message)) return message.join("، ");
+    if (typeof message === "string") return message;
+  }
+
+  return "ثبت نظر با مشکل مواجه شد. لطفاً دوباره تلاش کنید.";
+}
+
+export const createReview = async (
+  input: CreateReviewInput,
+  token: string,
+): Promise<void> => {
+  if (!API_URL) {
+    throw new Error("VITE_API_URL تنظیم نشده است.");
+  }
+
+  const response = await fetch(`${API_URL}/reviews`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(input),
+  });
+
+  const result: unknown = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(getCreateReviewErrorMessage(result));
+  }
 };

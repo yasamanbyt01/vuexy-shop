@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Product } from "../../types/products";
 import type { Review } from "../../types/reviews";
 import { SPEC_LABELS } from "../../constants/specificationLabels";
@@ -6,16 +6,91 @@ import { formatSpecValue } from "../../utils/specValue";
 import { formatPrice } from "../../utils/price";
 import { toFarsiNumber } from "../../utils/numbers";
 import { formatReviewDate } from "../../utils/date";
+import { createReview } from "../../services/reviews";
 
 interface ProductDetailTabsProps {
   product: Product;
   reviews: Review[];
+  isAuthenticated: boolean;
+  token: string | null;
+  onRequireLogin: () => void;
+  onReviewSubmitted: () => Promise<void>;
 }
 
 const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
   product,
   reviews,
+  isAuthenticated,
+  token,
+  onRequireLogin,
+  onReviewSubmitted,
 }) => {
+  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+  const [reviewSuccess, setReviewSuccess] = useState("");
+
+  const handleReviewAction = () => {
+    if (!isAuthenticated || !token) {
+      onRequireLogin();
+      return;
+    }
+
+    setReviewError("");
+    setReviewSuccess("");
+    setIsReviewFormOpen((open) => !open);
+  };
+
+  const handleReviewSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    setReviewError("");
+    setReviewSuccess("");
+
+    const comment = reviewComment.trim();
+    if (!comment) {
+      setReviewError("لطفاً متن نظر خود را وارد کنید.");
+      return;
+    }
+
+    if (!token || !isAuthenticated) {
+      onRequireLogin();
+      return;
+    }
+
+    setReviewSubmitting(true);
+    try {
+      await createReview(
+        { productId: product.id, rating: reviewRating, comment },
+        token,
+      );
+
+      setReviewComment("");
+      setReviewRating(5);
+      setIsReviewFormOpen(false);
+      setReviewSuccess("نظر شما با موفقیت ثبت شد.");
+
+      try {
+        await onReviewSubmitted();
+      } catch {
+        setReviewSuccess(
+          "نظر شما ثبت شد، اما فهرست نظرات به‌روزرسانی نشد. صفحه را تازه‌سازی کنید.",
+        );
+      }
+    } catch (error) {
+      setReviewError(
+        error instanceof Error
+          ? error.message
+          : "ثبت نظر با مشکل مواجه شد. لطفاً دوباره تلاش کنید.",
+      );
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
   return (
     <div className="nav-align-top nav-tabs-shadow">
       {/* =======================
@@ -156,6 +231,106 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
 
         {/* Reviews */}
         <div className="tab-pane fade" id="product-reviews" role="tabpanel">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <h5 className="mb-0">نظرات کاربران</h5>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={handleReviewAction}
+              aria-expanded={isReviewFormOpen}
+            >
+              <i className="ti tabler-message-plus me-1" aria-hidden="true"></i>
+              {isAuthenticated && token ? "ثبت نظر" : "ورود برای ثبت نظر"}
+            </button>
+          </div>
+
+          {reviewSuccess && (
+            <div className="alert alert-success py-2" role="status">
+              {reviewSuccess}
+            </div>
+          )}
+
+          {isReviewFormOpen && (
+            <div className="card border mb-4">
+              <div className="card-body">
+                <h6 className="mb-3">نظر خود را درباره این محصول بنویسید</h6>
+                <form onSubmit={handleReviewSubmit}>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="product-review-rating"
+                      className="form-label"
+                    >
+                      امتیاز شما
+                    </label>
+                    <select
+                      id="product-review-rating"
+                      className="form-select"
+                      value={reviewRating}
+                      onChange={(event) =>
+                        setReviewRating(Number(event.target.value))
+                      }
+                      disabled={reviewSubmitting}
+                    >
+                      <option value={5}>۵ ستاره — عالی</option>
+                      <option value={4}>۴ ستاره — خوب</option>
+                      <option value={3}>۳ ستاره — متوسط</option>
+                      <option value={2}>۲ ستاره — ضعیف</option>
+                      <option value={1}>۱ ستاره — خیلی ضعیف</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-3">
+                    <label
+                      htmlFor="product-review-comment"
+                      className="form-label"
+                    >
+                      متن نظر
+                    </label>
+                    <textarea
+                      id="product-review-comment"
+                      className="form-control"
+                      rows={4}
+                      maxLength={2000}
+                      value={reviewComment}
+                      onChange={(event) => setReviewComment(event.target.value)}
+                      placeholder="تجربه خود از این محصول را بنویسید..."
+                      required
+                      disabled={reviewSubmitting}
+                    />
+                    <div className="form-text">حداکثر ۲۰۰۰ نویسه</div>
+                  </div>
+
+                  {reviewError && (
+                    <div className="alert alert-danger py-2" role="alert">
+                      {reviewError}
+                    </div>
+                  )}
+
+                  <div className="d-flex flex-wrap gap-2">
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={reviewSubmitting || !reviewComment.trim()}
+                    >
+                      {reviewSubmitting ? "در حال ثبت..." : "ارسال نظر"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => {
+                        setIsReviewFormOpen(false);
+                        setReviewError("");
+                      }}
+                      disabled={reviewSubmitting}
+                    >
+                      انصراف
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {reviews.length === 0 && (
             <p className="text-muted">هنوز نظری برای این محصول ثبت نشده است.</p>
           )}

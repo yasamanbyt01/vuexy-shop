@@ -51,7 +51,9 @@ const ProductDetails = () => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingCartItem, setPendingCartItem] = useState<CartItem | null>(null);
-  const [loginIntent, setLoginIntent] = useState<"cart" | "favorite">("cart");
+  const [loginIntent, setLoginIntent] = useState<
+    "cart" | "favorite" | "review"
+  >("cart");
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteBusy, setFavoriteBusy] = useState(false);
   const [favoriteError, setFavoriteError] = useState("");
@@ -197,6 +199,17 @@ const ProductDetails = () => {
       </section>
     );
   }
+
+  const handleReviewLoginRequired = () => {
+    setLoginIntent("review");
+    setPendingCartItem(null);
+    setShowLoginModal(true);
+  };
+
+  const reloadReviews = async () => {
+    const updatedReviews = await getReviews({ productId });
+    setReviews(updatedReviews);
+  };
 
   const handleAddToCart = () => {
     const cartItem = {
@@ -706,7 +719,14 @@ const ProductDetails = () => {
           {/* Product Tabs */}
           <div className="row mt-6">
             <div className="col-12">
-              <ProductDetailTabs product={product} reviews={reviews} />
+              <ProductDetailTabs
+                product={product}
+                reviews={reviews}
+                isAuthenticated={isAuthenticated}
+                token={token}
+                onRequireLogin={handleReviewLoginRequired}
+                onReviewSubmitted={reloadReviews}
+              />
             </div>
           </div>
         </div>

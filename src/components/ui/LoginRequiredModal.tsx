@@ -6,7 +6,7 @@ interface LoginRequiredModalProps {
   show: boolean;
   onClose: () => void;
   pendingCartItem?: CartItem | null;
-  intent?: "cart" | "favorite";
+  intent?: "cart" | "favorite" | "review";
 }
 
 const TRANSITION_DURATION = 150;
@@ -102,7 +102,9 @@ const LoginRequiredModal = ({
             <p className="text-body-secondary mb-5">
               {intent === "favorite"
                 ? "برای افزودن محصول به علاقه‌مندی‌ها، ابتدا وارد حساب کاربری خود شوید."
-                : "برای افزودن محصول به سبد خرید، ابتدا وارد حساب کاربری خود شوید."}
+                : intent === "review"
+                  ? "برای ثبت نظر درباره این محصول، ابتدا وارد حساب کاربری خود شوید."
+                  : "برای افزودن محصول به سبد خرید، ابتدا وارد حساب کاربری خود شوید."}
             </p>
 
             <div className="d-flex flex-column gap-2">
