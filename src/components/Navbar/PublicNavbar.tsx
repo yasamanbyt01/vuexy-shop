@@ -11,7 +11,7 @@ import { toFarsiNumber } from "../../utils/numbers";
 const PublicNavbar = () => {
   const { items, clearCart } = useCart();
   const { dispatch: dispatchCheckout } = useCheckout();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<ApiProduct[]>([]);
@@ -383,6 +383,20 @@ const PublicNavbar = () => {
                         <i className="icon-base ti tabler-user" />
                         <span>پروفایل کاربری</span>
                       </Link>
+
+                      {user?.role === "admin" && (
+                        <Link
+                          to="/admin"
+                          className="navbar-account-menu-item"
+                          onClick={() => setIsAccountMenuOpen(false)}
+                        >
+                          <i
+                            className="icon-base ti tabler-smart-home"
+                            aria-hidden="true"
+                          />
+                          <span>داشبورد مدیریت</span>
+                        </Link>
+                      )}
 
                       <button
                         type="button"
