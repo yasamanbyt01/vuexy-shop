@@ -656,3 +656,292 @@
   max-width: 100%;
   overflow-wrap: anywhere;
 }
+
+/* Admin review moderation */
+.admin-review-stat-icon {
+  display: inline-flex;
+  width: 2.85rem;
+  height: 2.85rem;
+  flex: 0 0 2.85rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  font-size: 1.35rem;
+}
+
+.admin-reviews-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-reviews-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: min(100%, 620px);
+}
+
+.admin-reviews-search {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1 1 340px;
+  min-width: 0;
+  border: 1px solid var(--bs-border-color, #dbdade);
+  border-radius: 0.375rem;
+  padding-inline: 0.75rem;
+  color: var(--bs-secondary-color, #a5a3ae);
+}
+
+.admin-reviews-search .form-control {
+  min-width: 0;
+  border: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+
+.admin-reviews-status-filter {
+  flex: 0 0 175px;
+}
+
+.admin-reviews-table th,
+.admin-reviews-table td {
+  vertical-align: middle;
+}
+
+.admin-review-comment {
+  min-width: 180px;
+  max-width: 340px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  line-height: 1.8;
+}
+
+.admin-review-actions .btn {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 767.98px) {
+  .admin-reviews-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-reviews-filters {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-reviews-status-filter {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* Review dashboard insights, delete confirmation, and pagination spacing */
+.admin-reviews-page .admin-reviews-pagination {
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.admin-review-average-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--bs-primary);
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.admin-review-average-value .icon-base {
+  color: #ffb400;
+  font-size: 1.5rem;
+}
+
+.admin-review-average strong {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.admin-review-rating-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.admin-review-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-review-rating-label {
+  flex: 0 0 4.2rem;
+  color: var(--bs-secondary-color);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.admin-review-rating-progress {
+  flex: 1 1 auto;
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.admin-review-rating-count {
+  flex: 0 0 2rem;
+  font-size: 0.8rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-review-insight-metric {
+  display: flex;
+  min-height: 4.25rem;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--bs-tertiary-bg, #f5f5f9);
+}
+
+.admin-review-insight-metric strong {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.admin-review-insight-metric span {
+  color: var(--bs-secondary-color);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.admin-review-weekly-chart {
+  display: grid;
+  min-height: 6.25rem;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.65rem;
+  padding-top: 0.25rem;
+}
+
+.admin-review-weekly-day {
+  display: flex;
+  min-width: 0;
+  height: 6.25rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.admin-review-weekly-count,
+.admin-review-weekly-label {
+  color: var(--bs-secondary-color);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.admin-review-weekly-track {
+  display: flex;
+  width: min(100%, 1.4rem);
+  height: 4rem;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 0.35rem;
+  background: var(--bs-tertiary-bg, #f5f5f9);
+}
+
+.admin-review-weekly-bar {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 0.35rem;
+  background: var(--bs-primary);
+  transition: height 180ms ease;
+}
+
+.admin-review-delete-overlay {
+  position: fixed;
+  z-index: 1090;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(34 48 62 / 55%);
+}
+
+.admin-review-delete-dialog {
+  width: min(100%, 28rem);
+  border: 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1rem 3rem rgb(34 48 62 / 22%);
+}
+
+.admin-review-delete-icon {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bs-danger-bg-subtle, #fceaea);
+  color: var(--bs-danger);
+  font-size: 1.4rem;
+}
+
+.admin-review-delete-summary {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+}
+
+.admin-review-delete-comment {
+  display: -webkit-box;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  line-height: 1.7;
+}
+
+@media (max-width: 575.98px) {
+  .admin-review-average-value {
+    font-size: 2rem;
+  }
+
+  .admin-review-insight-metric {
+    padding: 0.55rem;
+  }
+
+  .admin-review-insight-metric strong {
+    font-size: 1.05rem;
+  }
+
+  .admin-review-insight-metric span {
+    font-size: 0.65rem;
+  }
+
+  .admin-reviews-page .admin-reviews-pagination {
+    padding-top: 1rem;
+    padding-bottom: 0.85rem;
+  }
+}

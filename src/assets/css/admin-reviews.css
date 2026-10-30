@@ -1,0 +1,97 @@
+/* Review dashboard spacing fixes and modal motion.
+   Imported only by Reviews.tsx, so existing admin.css remains untouched. */
+
+/* Add breathing room between the insight-card header divider and its content. */
+.admin-reviews-page .admin-review-insights .card > .card-body {
+  padding-top: 1.75rem !important;
+}
+
+/* Keep the footer divider, but put spacing on an inner wrapper so Bootstrap or
+   theme .card-footer rules cannot collapse the gap above the pagination controls. */
+.admin-reviews-page > section.card > .admin-reviews-pagination {
+  padding: 0 !important;
+}
+
+.admin-reviews-page .admin-reviews-pagination-content {
+  min-height: 4.5rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+}
+
+/* Modal entrance and exit. The React component keeps the dialog mounted for
+   the exit duration before removing it from the DOM. */
+.admin-review-delete-overlay {
+  animation: admin-review-backdrop-in 180ms ease-out both;
+}
+
+.admin-review-delete-dialog {
+  transform-origin: center;
+  animation: admin-review-dialog-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.admin-review-delete-overlay.is-closing {
+  animation: admin-review-backdrop-out 160ms ease-in both;
+}
+
+.admin-review-delete-overlay.is-closing .admin-review-delete-dialog {
+  animation: admin-review-dialog-out 160ms ease-in both;
+}
+
+@keyframes admin-review-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes admin-review-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes admin-review-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes admin-review-dialog-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(0.35rem) scale(0.98);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .admin-reviews-page .admin-review-insights .card > .card-body {
+    padding-top: 1.35rem !important;
+  }
+
+  .admin-reviews-page .admin-reviews-pagination-content {
+    min-height: 4rem;
+    padding: 1.2rem 1rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-review-delete-overlay,
+  .admin-review-delete-dialog,
+  .admin-review-delete-overlay.is-closing,
+  .admin-review-delete-overlay.is-closing .admin-review-delete-dialog {
+    animation-duration: 1ms !important;
+  }
+}

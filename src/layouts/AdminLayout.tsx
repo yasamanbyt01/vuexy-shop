@@ -35,6 +35,12 @@ const navItems = [
     icon: "tabler-users",
     end: false,
   },
+  {
+    to: "/admin/reviews",
+    label: "نظرات کاربران",
+    icon: "tabler-message-circle",
+    end: false,
+  },
 ];
 
 const getPageTitle = (pathname: string) => {
@@ -45,6 +51,7 @@ const getPageTitle = (pathname: string) => {
   if (/^\/admin\/orders\/\d+$/.test(pathname)) return "جزئیات سفارش";
   if (pathname.startsWith("/admin/orders")) return "مدیریت سفارش‌ها";
   if (/^\/admin\/users\/\d+$/.test(pathname)) return "جزئیات مشتری";
+  if (pathname.startsWith("/admin/reviews")) return "مدیریت نظرات";
   if (pathname.startsWith("/admin/users")) return "مدیریت مشتریان";
   return "داشبورد فروشگاه";
 };

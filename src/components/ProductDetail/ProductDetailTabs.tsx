@@ -71,15 +71,10 @@ const ProductDetailTabs: React.FC<ProductDetailTabsProps> = ({
       setReviewComment("");
       setReviewRating(5);
       setIsReviewFormOpen(false);
-      setReviewSuccess("نظر شما با موفقیت ثبت شد.");
-
-      try {
-        await onReviewSubmitted();
-      } catch {
-        setReviewSuccess(
-          "نظر شما ثبت شد، اما فهرست نظرات به‌روزرسانی نشد. صفحه را تازه‌سازی کنید.",
-        );
-      }
+      setReviewSuccess(
+        "نظر شما ثبت شد و پس از بررسی مدیر در صفحه محصول نمایش داده می‌شود.",
+      );
+      void onReviewSubmitted().catch(() => undefined);
     } catch (error) {
       setReviewError(
         error instanceof Error
