@@ -29,6 +29,12 @@ const navItems = [
     icon: "tabler-shopping-cart",
     end: false,
   },
+  {
+    to: "/admin/users",
+    label: "مشتریان",
+    icon: "tabler-users",
+    end: false,
+  },
 ];
 
 const getPageTitle = (pathname: string) => {
@@ -38,6 +44,7 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/categories")) return "مدیریت دسته‌بندی‌ها";
   if (/^\/admin\/orders\/\d+$/.test(pathname)) return "جزئیات سفارش";
   if (pathname.startsWith("/admin/orders")) return "مدیریت سفارش‌ها";
+  if (pathname.startsWith("/admin/users")) return "مدیریت مشتریان";
   return "داشبورد فروشگاه";
 };
 
