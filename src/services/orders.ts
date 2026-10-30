@@ -430,6 +430,22 @@ export function getAdminOrders(token: string): Promise<AdminOrder[]> {
   return authenticatedOrderRequest<AdminOrder[]>("/orders", token);
 }
 
+export async function getAdminCustomerOrders(
+  token: string,
+  customerId: number,
+): Promise<AdminOrder[]> {
+  const result = await authenticatedOrderRequest<unknown>(
+    `/orders/admin/customer/${customerId}`,
+    token,
+  );
+
+  if (!Array.isArray(result)) {
+    throw new Error("فهرست سفارش‌های مشتری از API معتبر نیست.");
+  }
+
+  return result as AdminOrder[];
+}
+
 export function getAdminOrder(token: string, id: number): Promise<AdminOrder> {
   return authenticatedOrderRequest<AdminOrder>(`/orders/${id}`, token);
 }

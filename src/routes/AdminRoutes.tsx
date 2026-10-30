@@ -7,6 +7,7 @@ import Categories from "../pages/admin/Categories";
 import Orders from "../pages/admin/Orders";
 import OrderDetails from "../pages/admin/OrderDetails";
 import Users from "../pages/admin/Users";
+import UserDetails from "../pages/admin/UserDetails";
 import RequireAdmin from "./RequireAdmin";
 
 const AdminRoutes = () => (
@@ -26,6 +27,7 @@ const AdminRoutes = () => (
     <Route path="orders" element={<Orders />} />
     <Route path="orders/:id" element={<OrderDetails />} />
     <Route path="users" element={<Users />} />
+    <Route path="users/:id" element={<UserDetails />} />
   </Route>
 );
 

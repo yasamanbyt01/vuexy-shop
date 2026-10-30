@@ -563,3 +563,96 @@
     position: static;
   }
 }
+
+/* Admin customer details */
+.admin-customer-details-avatar {
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: 1.2rem;
+}
+
+.admin-customer-metric-icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  font-size: 1.25rem;
+}
+
+.admin-customer-info-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-customer-info-list > div {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.admin-customer-info-list > div + div {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--bs-border-color, #dbdade);
+}
+
+.admin-customer-info-list strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+
+.admin-customer-email {
+  text-align: right;
+}
+
+.admin-customer-order-products {
+  min-width: 180px;
+  max-width: 290px;
+}
+
+.admin-customer-address-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-customer-address-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-customer-address-item + .admin-customer-address-item {
+  padding-top: 1rem;
+  border-top: 1px solid var(--bs-border-color, #dbdade);
+}
+
+@media (max-width: 767.98px) {
+  .admin-customer-details .admin-page-heading {
+    align-items: stretch;
+  }
+
+  .admin-customer-details .admin-page-heading > a {
+    align-self: stretch;
+  }
+}
+
+/* Customer overview identity block, adapted from Vuexy's customer details layout. */
+.admin-customer-profile-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.admin-customer-profile-identity .admin-customer-details-avatar {
+  width: 5rem;
+  height: 5rem;
+  font-size: 1.75rem;
+}
+
+.admin-customer-profile-identity > span[dir="ltr"] {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}

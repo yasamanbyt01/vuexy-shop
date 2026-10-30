@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
   createAdminUser,
@@ -306,6 +307,9 @@ const Users = () => {
                       <th scope="col" className="text-nowrap">
                         شناسه مشتری
                       </th>
+                      <th scope="col" className="text-end">
+                        جزئیات
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -334,6 +338,14 @@ const Users = () => {
                           <span dir="ltr" className="text-body-secondary">
                             #{customer.id.toLocaleString("fa-IR")}
                           </span>
+                        </td>
+                        <td className="text-end">
+                          <Link
+                            to={`/admin/users/${customer.id}`}
+                            className="btn btn-sm btn-label-primary"
+                          >
+                            مشاهده جزئیات
+                          </Link>
                         </td>
                       </tr>
                     ))}

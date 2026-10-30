@@ -105,6 +105,31 @@ export async function createAdminUser(
   return normalizeAdminUser(result);
 }
 
+export async function getAdminUser(
+  token: string,
+  id: number,
+): Promise<AdminUser> {
+  const result = await authenticatedUserRequest<unknown>(`/users/${id}`, token);
+  return normalizeAdminUser(result);
+}
+
+export async function updateAdminUser(
+  token: string,
+  id: number,
+  input: Pick<AdminUser, "name" | "email">,
+): Promise<AdminUser> {
+  const result = await authenticatedUserRequest<unknown>(
+    `/users/${id}`,
+    token,
+    {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    },
+  );
+
+  return normalizeAdminUser(result);
+}
+
 function getErrorMessage(data: unknown): string {
   if (typeof data === "object" && data !== null && "message" in data) {
     const message = (data as ApiErrorResponse).message;

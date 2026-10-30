@@ -52,6 +52,13 @@ export function getAddresses(token: string): Promise<Address[]> {
   return request<Address[]>("/addresses", token);
 }
 
+export function getAdminUserAddresses(
+  userId: number,
+  token: string,
+): Promise<Address[]> {
+  return request<Address[]>(`/addresses/admin/users/${userId}`, token);
+}
+
 export function createAddress(
   address: AddressInput,
   token: string,

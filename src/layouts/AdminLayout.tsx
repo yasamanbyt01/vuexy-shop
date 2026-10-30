@@ -44,6 +44,7 @@ const getPageTitle = (pathname: string) => {
   if (pathname.startsWith("/admin/categories")) return "مدیریت دسته‌بندی‌ها";
   if (/^\/admin\/orders\/\d+$/.test(pathname)) return "جزئیات سفارش";
   if (pathname.startsWith("/admin/orders")) return "مدیریت سفارش‌ها";
+  if (/^\/admin\/users\/\d+$/.test(pathname)) return "جزئیات مشتری";
   if (pathname.startsWith("/admin/users")) return "مدیریت مشتریان";
   return "داشبورد فروشگاه";
 };
