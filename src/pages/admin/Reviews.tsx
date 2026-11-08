@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import "../../assets/css/admin-review-polish-overrides.css";
+import "../../assets/css/admin-reviews.css";
 import { useAuth } from "../../hooks/useAuth";
 import {
   deleteAdminReview,
